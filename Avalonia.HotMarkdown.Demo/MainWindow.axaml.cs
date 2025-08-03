@@ -8,7 +8,11 @@ namespace Avalonia.HotMarkdown.Demo
         {
             InitializeComponent();
 
-            Content = new HotMarkdown();
+            var control = new HotMarkdown();
+            control.Width = 500;
+            control.Height = 500;   
+
+            Content = control;
         }
     }
 }

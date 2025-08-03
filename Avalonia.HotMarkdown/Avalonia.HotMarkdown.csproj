@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.2" />
+    <PackageReference Include="Markdig" Version="0.41.3" />
   </ItemGroup>
 
 </Project>
