@@ -75,8 +75,6 @@ namespace Avalonia.HotMarkdown
 
             var blocks = markdownParser.Parse(text);
 
-            Debug.WriteLine(text.Length);
-
             foreach (var block in blocks)
             {
                 if (block.StartIndex == 0 && block.EndIndex == 0)
@@ -84,16 +82,16 @@ namespace Avalonia.HotMarkdown
 
                 var textPresenter = new TextPresenter()
                 {
-                    Text = text.Substring(block.StartIndex, block.EndIndex-block.StartIndex+1),
+                    Text = text.Substring(block.ActualStartIndex, block.EndIndex-block.ActualStartIndex+1),
                     FontSize = block.FontSize,
                 };
 
                 presenters.Add(new AvaloniaBlock()
                 {
-                    StartIndex = block.StartIndex,
-                    EndIndex = block.EndIndex,
-                    TextPresenter = textPresenter
+                    TextPresenter = textPresenter,
+                    BaseBlock = block,
                 });
+
                 mainPanel.Children.Add(textPresenter);
             }
 
@@ -102,14 +100,13 @@ namespace Avalonia.HotMarkdown
 
         void HandleCursor()
         {
-            foreach(var block in presenters)
+            foreach(var avaloniaBlock in presenters)
             {
-                var presenter = block.TextPresenter;
+                var presenter = avaloniaBlock.TextPresenter;
+                var block = avaloniaBlock.BaseBlock;    
 
-                if(textCursor.Index < block.StartIndex)
+                if (textCursor.Index < block.StartIndex)
                 {
-                    Debug.WriteLine("yep");
-
                     presenter.CaretBrush = Brushes.Red;
                     presenter.CaretIndex = 0;
                     presenter.ShowCaret();
@@ -118,8 +115,6 @@ namespace Avalonia.HotMarkdown
 
                 if(textCursor.Index <= block.EndIndex+1)
                 {
-                    Debug.WriteLine("ye2p");
-
                     presenter.CaretBrush = Brushes.Red;
                     presenter.CaretIndex = textCursor.Index - block.StartIndex;
                     presenter.ShowCaret();

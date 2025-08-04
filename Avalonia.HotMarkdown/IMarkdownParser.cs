@@ -9,6 +9,6 @@ namespace Avalonia.HotMarkdown
 {
     public interface IMarkdownParser
     {
-        public AvaloniaBlock[] Parse(string markdownText);
+        public Block[] Parse(string markdownText);
     }
 }

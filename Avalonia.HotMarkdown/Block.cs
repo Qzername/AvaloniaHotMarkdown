@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Avalonia.HotMarkdown
 {
-    public struct AvaloniaBlock
+    public struct Block
     {
-        public Block BaseBlock { get; set; }
+        public string Content { get; set; }
+        public int FontSize { get; set; }
+        public int StartIndex { get; set; }
+        public int ActualStartIndex { get; set; }
+        public int EndIndex { get; set; }   
         public TextPresenter TextPresenter { get; set; }
     }
 }
