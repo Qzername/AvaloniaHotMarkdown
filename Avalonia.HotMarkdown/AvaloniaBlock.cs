@@ -9,6 +9,8 @@ namespace Avalonia.HotMarkdown
 {
     public struct AvaloniaBlock
     {
+        public string ShortText { get; set; }
+        public string LongText { get; set; }
         public Block BaseBlock { get; set; }
         public TextPresenter TextPresenter { get; set; }
     }

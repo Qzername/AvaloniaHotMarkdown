@@ -18,11 +18,11 @@ namespace Avalonia.HotMarkdown
 
             foreach (var child in doc.Descendants().ToArray())
             {
-                if (child is LeafBlock || child is LineBreakInline || child is HtmlInline)
+                if (child is LeafBlock || child is LineBreakInline)
                 {
                     Block newBlock = new Block()
                     {
-                        Content = string.Empty,
+                        Content = GetPrefixFromObject(child),
                         FontSize = 16, // Default font size
                         StartIndex = child.Span.Start,
                         ActualStartIndex = child.Span.Start,
@@ -44,13 +44,28 @@ namespace Avalonia.HotMarkdown
 
                 var slice = (inline as LiteralInline)!.Content;
 
-                currentBlock.ActualStartIndex = slice.Start;
+                if(slice.Start> currentBlock.StartIndex)
+                    currentBlock.ActualStartIndex = slice.Start;
+    
                 currentBlock.Content += slice.Text.Substring(slice.Start, slice.Length);
 
                 blocks[^1] = currentBlock;
             }
 
             return [.. blocks];
+        }
+
+        string GetPrefixFromObject(MarkdownObject leafBlock)
+        {
+            var type = leafBlock.GetType();
+
+            if (type == typeof(HeadingBlock))
+            {
+                var headingBlock = (HeadingBlock)leafBlock;
+                return new string('#', headingBlock.Level) + " ";
+            }
+
+            return string.Empty;
         }
     }
 }
