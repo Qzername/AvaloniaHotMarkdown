@@ -42,7 +42,7 @@ namespace Avalonia.HotMarkdown
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && text[textCursor.Index - 1] != '\n')
             {
                 text = text.Insert(textCursor.Index, "\n");
                 textCursor.Index++;
@@ -103,7 +103,6 @@ namespace Avalonia.HotMarkdown
             HandleCursor();
         }
         
-
         void MoveCursorLineDown()
         {
             var lines = text.Split('\n');
