@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.HotMarkdown
+namespace Avalonia.HotMarkdown.MarkdownParsing
 {
     public interface IMarkdownParser
     {

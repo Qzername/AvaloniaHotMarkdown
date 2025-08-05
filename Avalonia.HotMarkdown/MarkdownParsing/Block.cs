@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.HotMarkdown
+namespace Avalonia.HotMarkdown.MarkdownParsing
 {
     public struct Block
     {
@@ -13,7 +13,7 @@ namespace Avalonia.HotMarkdown
         public int FontSize { get; set; }
         public int StartIndex { get; set; }
         public int ActualStartIndex { get; set; }
-        public int EndIndex { get; set; }   
+        public int EndIndex { get; set; }
         public TextPresenter TextPresenter { get; set; }
     }
 }

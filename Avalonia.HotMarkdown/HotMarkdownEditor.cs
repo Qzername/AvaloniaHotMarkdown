@@ -149,6 +149,11 @@ namespace Avalonia.HotMarkdown
             presenters = new List<AvaloniaBlock>();
             mainPanel.Children.Clear();
 
+            string text =
+                """
+                *abc*sadasd**sdasd**
+                """;
+
             var blocks = markdownParser.Parse(text);
 
             foreach (var block in blocks)
@@ -156,12 +161,12 @@ namespace Avalonia.HotMarkdown
                 if (block.StartIndex == 0 && block.EndIndex == 0)
                     continue;
 
-                string shortText = text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex + 1);
-                string longText = text.Substring(block.StartIndex, block.EndIndex - block.StartIndex + 1);
+                string shortText = text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex);
+                string longText = text.Substring(block.StartIndex, block.EndIndex - block.StartIndex);
 
                 var textPresenter = new TextPresenter()
                 {
-                    Text = shortText,
+                    Text = block.Content,
                     Width = Bounds.Width,
                     Background = Brushes.Transparent,
                     FontSize = block.FontSize,
