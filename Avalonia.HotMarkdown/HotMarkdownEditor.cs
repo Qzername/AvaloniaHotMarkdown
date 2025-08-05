@@ -1,12 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
-using Markdig.Syntax;
-using Markdig;
-using Markdig.Syntax.Inlines;
-using System.Diagnostics;
 using Avalonia.Media;
 using Avalonia.Input;
-using System.Diagnostics.Tracing;
+using System.Diagnostics;
 
 namespace Avalonia.HotMarkdown
 {
@@ -166,19 +162,39 @@ namespace Avalonia.HotMarkdown
                 var textPresenter = new TextPresenter()
                 {
                     Text = shortText,
+                    Width = Bounds.Width,
+                    Background = Brushes.Transparent,
                     FontSize = block.FontSize,
                 };
 
-                presenters.Add(new AvaloniaBlock()
+                var avaloniaBlock = new AvaloniaBlock()
                 {
                     ShortText = shortText,
                     LongText = longText,
                     TextPresenter = textPresenter,
                     BaseBlock = block,
-                });
+                };
+
+                presenters.Add(avaloniaBlock);
+                textPresenter.PointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e.GetPosition(this));
 
                 mainPanel.Children.Add(textPresenter);
             }
+
+            HandleCursor();
+        }
+
+        void HandleClickedBlock(AvaloniaBlock block, Point position)
+        {
+            var textPresenter = block.TextPresenter;
+
+            Debug.WriteLine(textPresenter.Text);
+
+            textPresenter.MoveCaretToPoint(position);
+
+            Debug.WriteLine(textPresenter.CaretIndex);
+
+            textCursor.Index = block.BaseBlock.StartIndex + textPresenter.CaretIndex;
 
             HandleCursor();
         }
