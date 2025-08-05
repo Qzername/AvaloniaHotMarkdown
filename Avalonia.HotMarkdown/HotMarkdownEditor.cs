@@ -10,7 +10,7 @@ using System.Diagnostics.Tracing;
 
 namespace Avalonia.HotMarkdown
 {
-    public class HotMarkdown : ContentControl
+    public class HotMarkdownEditor : ContentControl
     {
         string text = string.Empty;
 
@@ -21,10 +21,10 @@ namespace Avalonia.HotMarkdown
 
         IMarkdownParser markdownParser;
 
-        public HotMarkdown()
+        public HotMarkdownEditor()
         {
             //this line allows the control to receive focus
-            FocusableProperty.OverrideDefaultValue<HotMarkdown>(true);
+            FocusableProperty.OverrideDefaultValue<HotMarkdownEditor>(true);
             
             textCursor = new TextCursor(0, true);
 
