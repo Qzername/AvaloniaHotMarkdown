@@ -135,7 +135,7 @@ namespace Avalonia.HotMarkdown
             HandleCursor();
         }
 
-        private void OnTextInput(object? sender, Input.TextInputEventArgs e)
+        private void OnTextInput(object? sender, TextInputEventArgs e)
         {
             text = text.Insert(textCursor.Index, e.Text!);
 
@@ -176,7 +176,7 @@ namespace Avalonia.HotMarkdown
                 };
 
                 presenters.Add(avaloniaBlock);
-                textPresenter.PointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e.GetPosition(this));
+                textPresenter.PointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e.GetPosition(textPresenter));
 
                 mainPanel.Children.Add(textPresenter);
             }
@@ -188,11 +188,7 @@ namespace Avalonia.HotMarkdown
         {
             var textPresenter = block.TextPresenter;
 
-            Debug.WriteLine(textPresenter.Text);
-
             textPresenter.MoveCaretToPoint(position);
-
-            Debug.WriteLine(textPresenter.CaretIndex);
 
             textCursor.Index = block.BaseBlock.StartIndex + textPresenter.CaretIndex;
 
@@ -241,10 +237,10 @@ namespace Avalonia.HotMarkdown
             presenter.ShowCaret();
         }
 
-        //exists for debug reasons
         public override void Render(DrawingContext context)
         {
-            context.DrawRectangle(Brushes.Gray, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+            //avalonia will not register keys pressed without this line
+            context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
             base.Render(context);
         }
