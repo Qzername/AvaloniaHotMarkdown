@@ -7,6 +7,6 @@
 		xmlns:HotMarkdown="clr-namespace:Avalonia.HotMarkdown;assembly=Avalonia.HotMarkdown"
         Title="Avalonia.HotMarkdown.Demo">
 	<Panel>
-		<HotMarkdown:HotMarkdownEditor/>
+		<HotMarkdown:HotMarkdownEditor Padding="10"/>
 	</Panel>
 </Window>

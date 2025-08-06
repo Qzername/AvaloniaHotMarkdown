@@ -1,8 +1,7 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Media;
 using Avalonia.Input;
-using System.Diagnostics;
+using Avalonia.HotMarkdown.MarkdownParsing; 
 
 namespace Avalonia.HotMarkdown
 {
@@ -149,11 +148,6 @@ namespace Avalonia.HotMarkdown
             presenters = new List<AvaloniaBlock>();
             mainPanel.Children.Clear();
 
-            string text =
-                """
-                *abc*sadasd**sdasd**
-                """;
-
             var blocks = markdownParser.Parse(text);
 
             foreach (var block in blocks)
@@ -164,38 +158,32 @@ namespace Avalonia.HotMarkdown
                 string shortText = text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex);
                 string longText = text.Substring(block.StartIndex, block.EndIndex - block.StartIndex);
 
-                var textPresenter = new TextPresenter()
-                {
-                    Text = block.Content,
-                    Width = Bounds.Width,
-                    Background = Brushes.Transparent,
-                    FontSize = block.FontSize,
-                };
+                var lineHandler = new LineHandler(block);
 
                 var avaloniaBlock = new AvaloniaBlock()
                 {
                     ShortText = shortText,
                     LongText = longText,
-                    TextPresenter = textPresenter,
+                    LineHandler = lineHandler,
                     BaseBlock = block,
                 };
 
-                presenters.Add(avaloniaBlock);
-                textPresenter.PointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e.GetPosition(textPresenter));
+                lineHandler.OnPointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e);
 
-                mainPanel.Children.Add(textPresenter);
+                presenters.Add(avaloniaBlock);
+
+                mainPanel.Children.Add(lineHandler.LineContainer);
             }
 
             HandleCursor();
         }
 
-        void HandleClickedBlock(AvaloniaBlock block, Point position)
+        void HandleClickedBlock(AvaloniaBlock block, PointerReleasedEventArgs args)
         {
-            var textPresenter = block.TextPresenter;
+            var lineHandler = block.LineHandler;
+            lineHandler.MoveCaretToPoint(args);
 
-            textPresenter.MoveCaretToPoint(position);
-
-            textCursor.Index = block.BaseBlock.StartIndex + textPresenter.CaretIndex;
+            textCursor.Index = block.BaseBlock.StartIndex + lineHandler.CaretIndex;
 
             HandleCursor();
         }
@@ -203,43 +191,36 @@ namespace Avalonia.HotMarkdown
         void HandleCursor()
         {
             foreach (var avaloniaBlock in presenters)
-            {
-                var presenter = avaloniaBlock.TextPresenter;
+                avaloniaBlock.LineHandler.HideCaret();
 
-                presenter.Text = avaloniaBlock.ShortText;
-                presenter.HideCaret();
-            }
-
-            for(int i = 0 ; i < presenters.Count; i++)
+            for (int i = 0 ; i < presenters.Count; i++)
             {
                 var avaloniaBlock = presenters[i];
-                var presenter = avaloniaBlock.TextPresenter;
+                var lineHandler = avaloniaBlock.LineHandler;
                 var block = avaloniaBlock.BaseBlock;
 
                 //we are on \n block
                 //go to 0 index of the next line
                 if (textCursor.Index < block.StartIndex)
                 {
-                    ConfigurePresenter(presenter, avaloniaBlock, 0);
+                    ConfigurePresenter(lineHandler, avaloniaBlock, 0);
                     break;
                 }
 
                 //we are on actual text on actual block
                 if(textCursor.Index <= block.EndIndex+1)
                 {
-                    ConfigurePresenter(presenter, avaloniaBlock, textCursor.Index - block.StartIndex);
+                    ConfigurePresenter(lineHandler, avaloniaBlock, textCursor.Index - block.StartIndex);
                     break;
                 }
             }
         }
 
-        void ConfigurePresenter(TextPresenter presenter, AvaloniaBlock avaloniaBlock, int caretIndex)
+        void ConfigurePresenter(LineHandler lineHandler, AvaloniaBlock avaloniaBlock, int caretIndex)
         {
-            presenter.Text = avaloniaBlock.LongText;
-            presenter.FontSize = avaloniaBlock.BaseBlock.FontSize;
-            presenter.CaretBrush = Brushes.Red;
-            presenter.CaretIndex = caretIndex;
-            presenter.ShowCaret();
+            lineHandler.CaretBrush = Brushes.Red;
+            lineHandler.CaretIndex = caretIndex;
+            lineHandler.ShowCaret();
         }
 
         public override void Render(DrawingContext context)

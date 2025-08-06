@@ -9,7 +9,7 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
 {
     public struct Block
     {
-        public string Content { get; set; }
+        public TextInfo[] Content { get; set; }
         public int FontSize { get; set; }
         public int StartIndex { get; set; }
         public int ActualStartIndex { get; set; }
