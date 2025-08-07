@@ -67,6 +67,8 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
                         }
                         else if(emphasisInline.DelimiterChar == '~')
                             currentTextInfo.IsStrikethrough = true;
+                        else if(emphasisInline.DelimiterChar == '+')
+                            currentTextInfo.IsUnderline = true;
                     }
 
                     if (node is LiteralInline literalInline)

@@ -109,7 +109,7 @@ namespace Avalonia.HotMarkdown
 
             foreach (var textInfo in _currentBlock.Content[startingIndex..])
             {
-                string endings = HandleCurrentChildEmphasis(textInfo.IsBold, textInfo.IsItalic);
+                string endings = HandleCurrentChildEmphasis(textInfo);
 
                 string finalText = textInfo.Text;
                 
@@ -130,12 +130,35 @@ namespace Avalonia.HotMarkdown
             currentChild = CreateEmpty();
         }
 
-        string HandleCurrentChildEmphasis(bool isBold, bool isItalic)
+        string HandleCurrentChildEmphasis(TextInfo textInfo)
         {
-            currentChild.FontWeight = isBold ? FontWeight.Bold : FontWeight.Normal;
-            currentChild.FontStyle = isItalic ? FontStyle.Italic : FontStyle.Normal;
-         
-            return $"{(isBold ? "**" : "")}{(isItalic ? "*" : "")}";
+            string ending = string.Empty;
+
+            if(textInfo.IsBold)
+            {
+                ending += "**";
+                currentChild.FontWeight = FontWeight.Bold;
+            }
+
+            if(textInfo.IsItalic)
+            {
+                ending += "*";
+                currentChild.FontStyle = FontStyle.Italic;
+            }
+
+            if(textInfo.IsStrikethrough)
+            {
+                ending += "~~";
+                currentChild.ShowStrikethrough = true;
+            }
+
+            if(textInfo.IsUnderline)
+            {
+                ending += "++";
+                currentChild.ShowUnderline = true;
+            }
+
+            return ending;
         }
 
         RichTextPresenter CreateEmpty()
