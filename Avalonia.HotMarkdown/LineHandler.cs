@@ -11,7 +11,7 @@ namespace Avalonia.HotMarkdown
     public class LineHandler
     {
         public event Action<object, PointerReleasedEventArgs> OnPointerReleased;
-        List<TextPresenter> presenters;
+        List<RichTextPresenter> presenters;
 
         public StackPanel LineContainer { get; private set; }
         public IBrush? CaretBrush { get; set; } = Brushes.White;
@@ -19,11 +19,11 @@ namespace Avalonia.HotMarkdown
 
         readonly Block _currentBlock;
 
-        TextPresenter currentChild;
+        RichTextPresenter currentChild;
 
         public LineHandler(Block block)
         {
-            presenters = new List<TextPresenter>();
+            presenters = new List<RichTextPresenter>();
 
             _currentBlock = block;
 
@@ -134,13 +134,13 @@ namespace Avalonia.HotMarkdown
         {
             currentChild.FontWeight = isBold ? FontWeight.Bold : FontWeight.Normal;
             currentChild.FontStyle = isItalic ? FontStyle.Italic : FontStyle.Normal;
-
+         
             return $"{(isBold ? "**" : "")}{(isItalic ? "*" : "")}";
         }
 
-        TextPresenter CreateEmpty()
+        RichTextPresenter CreateEmpty()
         {
-            var textPresenter = new TextPresenter()
+            var textPresenter = new RichTextPresenter()
             {
                 Text = string.Empty,
                 FontSize = _currentBlock.FontSize,

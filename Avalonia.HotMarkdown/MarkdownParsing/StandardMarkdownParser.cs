@@ -19,6 +19,7 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
         {
             pipeline = new MarkdownPipelineBuilder()
                 .UseSoftlineBreakAsHardlineBreak()
+                .UseEmphasisExtras()
                 .Build();
         }
 
@@ -57,10 +58,15 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
 
                     if(node is EmphasisInline emphasisInline)
                     {
-                        if (emphasisInline.DelimiterCount == 1)
-                            currentTextInfo.IsItalic = true;
-                        else if(emphasisInline.DelimiterCount == 2)
-                            currentTextInfo.IsBold = true;
+                        if(emphasisInline.DelimiterChar =='*')
+                        {
+                            if (emphasisInline.DelimiterCount == 1)
+                                currentTextInfo.IsItalic = true;
+                            else if (emphasisInline.DelimiterCount == 2)
+                                currentTextInfo.IsBold = true;
+                        }
+                        else if(emphasisInline.DelimiterChar == '~')
+                            currentTextInfo.IsStrikethrough = true;
                     }
 
                     if (node is LiteralInline literalInline)

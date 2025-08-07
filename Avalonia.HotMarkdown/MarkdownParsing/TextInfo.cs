@@ -11,12 +11,14 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
         public string Text;
         public bool IsBold;
         public bool IsItalic;
+        public bool IsStrikethrough;
 
-        public TextInfo(string text, bool isBold = false, bool isItalic = false)
+        public TextInfo(string text, bool isBold = false, bool isItalic = false, bool isStrikethrough = false)
         {
             Text = text;
             IsBold = isBold;
             IsItalic = isItalic;
+            IsStrikethrough = isStrikethrough;
         }
 
         public TextInfo()
@@ -24,6 +26,7 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
             Text = string.Empty;
             IsBold = false;
             IsItalic = false;
+            IsStrikethrough = false;
         }
     }
 }
