@@ -1,9 +1,4 @@
 ﻿using Avalonia.Controls.Presenters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Avalonia.HotMarkdown.MarkdownParsing
 {
@@ -14,6 +9,7 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
         public int StartIndex { get; set; }
         public int ActualStartIndex { get; set; }
         public int EndIndex { get; set; }
+        public TextInfo? ReplacementPrefix { get; set; }
         public TextPresenter TextPresenter { get; set; }
     }
 }

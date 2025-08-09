@@ -107,7 +107,12 @@ namespace Avalonia.HotMarkdown
             if(_currentBlock.Content.Length == 0)
                 startingIndex = 0;
 
-            foreach (var textInfo in _currentBlock.Content[startingIndex..])
+            TextInfo[] finalArray = _currentBlock.Content[startingIndex..];
+
+            if (!showLongText && _currentBlock.ReplacementPrefix is not null)
+                finalArray = [_currentBlock.ReplacementPrefix.Value, .. finalArray];
+
+            foreach (var textInfo in finalArray)
             {
                 string endings = HandleCurrentChildEmphasis(textInfo);
 
@@ -169,7 +174,7 @@ namespace Avalonia.HotMarkdown
                 FontSize = _currentBlock.FontSize,
             };
 
-            textPresenter.PointerReleased += TextPresenter_PointerReleased; ;
+            textPresenter.PointerReleased += TextPresenter_PointerReleased;
 
             return textPresenter;
         }

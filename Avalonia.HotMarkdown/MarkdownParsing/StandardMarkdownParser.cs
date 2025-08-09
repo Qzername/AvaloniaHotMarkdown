@@ -51,10 +51,17 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
 
                 TextInfo currentTextInfo = new();
 
+                bool prefixGenerated = false;
+
                 foreach (var node in nodes.Descendants().ToArray())
                 {
-                    if (node is LeafBlock leafBlock)
-                        ModifyBlockBasedOnLeafBlock(ref newBlock, node);
+                    if (node is LeafBlock leafBlock || node is ListBlock)
+                    {
+                        if(!prefixGenerated)
+                            ModifyBlockBasedOnLeafBlock(ref newBlock, node);
+
+                        prefixGenerated = true;
+                    }
 
                     if(node is EmphasisInline emphasisInline)
                     {
@@ -95,20 +102,27 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
             return blocks.ToArray();
         }
 
-        void ModifyBlockBasedOnLeafBlock(ref Block block, MarkdownObject leafBlock)
+        void ModifyBlockBasedOnLeafBlock(ref Block block, MarkdownObject markdownObject)
         {
-            block.Content = [new(GetPrefixFromObject(leafBlock)), ..block.Content];
-
+            block.Content = [new(GetPrefixFromObject(markdownObject)), ..block.Content];
+                
             block.ActualStartIndex += block.Content.Length;
 
-            if (leafBlock is HeadingBlock headingBlock)
+            if (markdownObject is HeadingBlock headingBlock)
                 block.FontSize = 60 / headingBlock.Level;
+
+            if(markdownObject is ListBlock)
+                block.ReplacementPrefix = new TextInfo()
+                {
+                    Text= " •  ",
+                    IsBold = true,
+                };
         }
 
         string GetPrefixFromObject(MarkdownObject node) => node switch
         {
             HeadingBlock heading => new string('#', heading.Level) + " ",
-            ListItemBlock listItem => "- ",
+            ListBlock listItem => "- ",
             _ => string.Empty,
         };
     }
