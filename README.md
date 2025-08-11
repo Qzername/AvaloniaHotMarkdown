@@ -1,4 +1,4 @@
-# Avalonia.HotMarkdown
+# AvaloniaHotMarkdown
 
 A work-in-progress prototype of an Obsidian-inspired live-preview Markdown editor for Avalonia.
 

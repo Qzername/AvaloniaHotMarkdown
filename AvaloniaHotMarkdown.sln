@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.HotMarkdown", "Avalonia.HotMarkdown\Avalonia.HotMarkdown.csproj", "{ED904455-CE4F-4D91-AA6E-A0870F3CF406}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown.Demo", "AvaloniaHotMarkdown.Demo\AvaloniaHotMarkdown.Demo.csproj", "{ED904455-CE4F-4D91-AA6E-A0870F3CF406}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.HotMarkdown.Demo", "Avalonia.HotMarkdown.Demo\Avalonia.HotMarkdown.Demo.csproj", "{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown", "AvaloniaHotMarkdown\AvaloniaHotMarkdown.csproj", "{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,12 +1,6 @@
-﻿using Avalonia.Controls.Presenters;
-using Avalonia.HotMarkdown.MarkdownParsing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AvaloniaHotMarkdown.MarkdownParsing;
 
-namespace Avalonia.HotMarkdown
+namespace AvaloniaHotMarkdown
 {
     public struct AvaloniaBlock
     {

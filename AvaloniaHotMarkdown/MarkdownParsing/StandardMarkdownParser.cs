@@ -1,15 +1,8 @@
-﻿using Avalonia.Controls.Presenters;
-using Markdig;
+﻿using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Avalonia.HotMarkdown.MarkdownParsing
+namespace AvaloniaHotMarkdown.MarkdownParsing
 {
     public class StandardMarkdownParser : IMarkdownParser
     {
@@ -114,7 +107,7 @@ namespace Avalonia.HotMarkdown.MarkdownParsing
             if(markdownObject is ListBlock)
                 block.ReplacementPrefix = new TextInfo()
                 {
-                    Text= " •  ",
+                    Text= "   ⭘ ",
                     IsBold = true,
                 };
         }

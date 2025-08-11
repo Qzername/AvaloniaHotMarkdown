@@ -1,9 +1,10 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Input;
-using Avalonia.HotMarkdown.MarkdownParsing; 
+using AvaloniaHotMarkdown.MarkdownParsing;
+using Avalonia;
 
-namespace Avalonia.HotMarkdown
+namespace AvaloniaHotMarkdown
 {
     public class HotMarkdownEditor : ContentControl
     {

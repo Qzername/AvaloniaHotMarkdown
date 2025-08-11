@@ -1,12 +1,10 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.HotMarkdown.MarkdownParsing;
+using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using System.Diagnostics;
 
-namespace Avalonia.HotMarkdown
+namespace AvaloniaHotMarkdown
 {
     public class LineHandler
     {

@@ -1,9 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media;
-using System.Diagnostics;
 
-namespace Avalonia.HotMarkdown;
+namespace AvaloniaHotMarkdown;
 
 /*
  * i hate the fact that this control has to exist

@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avalonia.HotMarkdown\Avalonia.HotMarkdown.csproj" />
+    <ProjectReference Include="..\AvaloniaHotMarkdown\AvaloniaHotMarkdown.csproj" />
   </ItemGroup>
 </Project>

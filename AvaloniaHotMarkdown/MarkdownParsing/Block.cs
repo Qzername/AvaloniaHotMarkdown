@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls.Presenters;
 
-namespace Avalonia.HotMarkdown.MarkdownParsing
+namespace AvaloniaHotMarkdown.MarkdownParsing
 {
     public struct Block
     {
