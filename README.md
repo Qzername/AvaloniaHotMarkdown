@@ -4,7 +4,10 @@ A work-in-progress prototype of an Obsidian-inspired live-preview Markdown edito
 
 This was made for my private project that maybe I will release later on. For this reason this project is heavily incomplete as I don't need anything special.
 
-**This project does not have NuGet package yet.** As I mentioned earlier, this project is a prototype and I will release NuGet package when all the features mentioned below are fully implemented.
+![Nuget.AvaloniaHotMarkdown](https://img.shields.io/nuget/v/AvaloniaHotMarkdown?label=Nuget&style=flat-square)
+
+> [!WARNING]
+> This project is still a work in progress. Expect frequent changes between versions, bugs, and missing features.
 
 ![FIANL](https://github.com/user-attachments/assets/7732a4f6-86f7-48f6-8eb2-a4b88a04fdf2)
 
