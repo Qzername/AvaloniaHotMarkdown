@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Avalonia.HotMarkdown</Title>
+    <Title>AvaloniaHotMarkdown</Title>
     <Authors>Qzername</Authors>
     <Company>Qzername</Company>
     <Description>Work-in-progress prototype of a live-preview markdown editor for Avalonia</Description>
