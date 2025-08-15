@@ -8,7 +8,18 @@ namespace AvaloniaHotMarkdown
 {
     public class HotMarkdownEditor : ContentControl
     {
-        string text = string.Empty;
+        public static readonly StyledProperty<string> TextProperty =
+           AvaloniaProperty.Register<HotMarkdownEditor, string>(nameof(Text), defaultValue: string.Empty);
+
+        public string Text
+        {
+            get => GetValue(TextProperty);
+            set
+            {
+                SetValue(TextProperty, value);
+                RenderText();
+            }
+        }
 
         TextCursor textCursor;
         List<AvaloniaBlock> presenters = null!;
@@ -38,21 +49,21 @@ namespace AvaloniaHotMarkdown
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Key.Enter && text[textCursor.Index - 1] != '\n')
+            if (e.Key == Key.Enter && Text[textCursor.Index - 1] != '\n')
             {
-                text = text.Insert(textCursor.Index, "\n");
+                Text = Text.Insert(textCursor.Index, "\n");
                 textCursor.Index++;
             }
 
             if (e.Key == Key.Back)
             {
-                text = text.Remove(textCursor.Index-1, 1);
+                Text = Text.Remove(textCursor.Index-1, 1);
                 textCursor.Index--;
             }
 
             if (e.Key == Key.Left && textCursor.Index > 0)
                 textCursor.Index--;
-            else if (e.Key == Key.Right && textCursor.Index < text.Length)
+            else if (e.Key == Key.Right && textCursor.Index < Text.Length)
                 textCursor.Index++;
 
             if (e.Key == Key.Up)
@@ -65,7 +76,7 @@ namespace AvaloniaHotMarkdown
 
         void MoveCursorLineUp()
         {
-            var lines = text.Split('\n');
+            var lines = Text.Split('\n');
 
             int countLineLength = 0;
 
@@ -101,7 +112,7 @@ namespace AvaloniaHotMarkdown
         
         void MoveCursorLineDown()
         {
-            var lines = text.Split('\n');
+            var lines = Text.Split('\n');
 
             int countLineLength = 0;
 
@@ -137,7 +148,7 @@ namespace AvaloniaHotMarkdown
 
         private void OnTextInput(object? sender, TextInputEventArgs e)
         {
-            text = text.Insert(textCursor.Index, e.Text!);
+            Text = Text.Insert(textCursor.Index, e.Text!);
 
             textCursor.Index += e.Text.Length;
 
@@ -149,15 +160,15 @@ namespace AvaloniaHotMarkdown
             presenters = new List<AvaloniaBlock>();
             mainPanel.Children.Clear();
 
-            var blocks = markdownParser.Parse(text);
+            var blocks = markdownParser.Parse(Text);
 
             foreach (var block in blocks)
             {
                 if (block.StartIndex == 0 && block.EndIndex == 0)
                     continue;
 
-                string shortText = text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex);
-                string longText = text.Substring(block.StartIndex, block.EndIndex - block.StartIndex);
+                string shortText = Text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex);
+                string longText = Text.Substring(block.StartIndex, block.EndIndex - block.StartIndex);
 
                 var lineHandler = new LineHandler(block);
 
