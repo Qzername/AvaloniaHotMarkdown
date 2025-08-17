@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace Avalonia.HotMarkdown.Demo
+namespace AvaloniaHotMarkdown.Demo
 {
     internal class Program
     {

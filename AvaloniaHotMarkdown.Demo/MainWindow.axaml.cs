@@ -1,6 +1,7 @@
 using Avalonia.Controls;
+using AvaloniaHotMarkdown.Demo;
 
-namespace Avalonia.HotMarkdown.Demo
+namespace AvaloniaHotMarkdown.Demo
 {
     public partial class MainWindow : Window
     {

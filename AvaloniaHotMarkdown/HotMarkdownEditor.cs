@@ -3,20 +3,22 @@ using Avalonia.Media;
 using Avalonia.Input;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown
 {
     public class HotMarkdownEditor : ContentControl
     {
-        public static readonly StyledProperty<string> TextProperty =
-           AvaloniaProperty.Register<HotMarkdownEditor, string>(nameof(Text), defaultValue: string.Empty);
+        public static readonly DirectProperty<HotMarkdownEditor, string> TextProperty =
+           AvaloniaProperty.RegisterDirect<HotMarkdownEditor, string>(nameof(Text), (hme) => hme.Text, (hme, s) => hme.Text = s, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
+        string _text = string.Empty;
         public string Text
         {
-            get => GetValue(TextProperty);
+            get => _text;
             set
             {
-                SetValue(TextProperty, value);
+                _text = value;
                 RenderText();
             }
         }
@@ -31,7 +33,8 @@ namespace AvaloniaHotMarkdown
         public HotMarkdownEditor()
         {
             //this line allows the control to receive focus
-            FocusableProperty.OverrideDefaultValue<HotMarkdownEditor>(true);
+            if(!IsFocused)
+                FocusableProperty.OverrideDefaultValue<HotMarkdownEditor>(true);
             
             textCursor = new TextCursor(0, true);
 
@@ -55,7 +58,7 @@ namespace AvaloniaHotMarkdown
                 textCursor.Index++;
             }
 
-            if (e.Key == Key.Back)
+            if (e.Key == Key.Back && textCursor.Index > 0)
             {
                 Text = Text.Remove(textCursor.Index-1, 1);
                 textCursor.Index--;
