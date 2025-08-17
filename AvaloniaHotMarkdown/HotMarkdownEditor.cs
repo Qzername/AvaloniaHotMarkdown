@@ -29,13 +29,15 @@ namespace AvaloniaHotMarkdown
         StackPanel mainPanel;
 
         IMarkdownParser markdownParser;
+        
+        static HotMarkdownEditor()
+        {
+            //this line allows the control to receive focus
+            FocusableProperty.OverrideDefaultValue<HotMarkdownEditor>(true);
+        }
 
         public HotMarkdownEditor()
         {
-            //this line allows the control to receive focus
-            if(!IsFocused)
-                FocusableProperty.OverrideDefaultValue<HotMarkdownEditor>(true);
-            
             textCursor = new TextCursor(0, true);
 
             mainPanel = new StackPanel();  
