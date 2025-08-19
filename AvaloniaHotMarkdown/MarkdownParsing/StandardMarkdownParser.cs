@@ -26,8 +26,13 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
             int textIndex = 0;
 
             for(int i = 0; i < lines.Length; i++)
+            {
+                // Replace empty lines with a zero-width space to make them actually render
                 if (string.IsNullOrEmpty(lines[i]))
-                    lines[i] = "­"; // Replace empty lines with a zero-width space to make them actually render
+                    lines[i] = "­";
+                else if (lines[i].EndsWith(' '))
+                    lines[i] += "­"; // Ensure there's a space at the end for proper parsing
+            }
 
             foreach (var line in lines)
             {
