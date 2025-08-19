@@ -157,15 +157,10 @@ namespace AvaloniaHotMarkdown
                 if (block.StartIndex == 0 && block.EndIndex == 0)
                     continue;
 
-                string shortText = Text.Substring(block.ActualStartIndex, block.EndIndex - block.ActualStartIndex);
-                string longText = Text.Substring(block.StartIndex, block.EndIndex - block.StartIndex);
-
                 var lineHandler = new LineHandler(block);
 
                 var avaloniaBlock = new AvaloniaBlock()
                 {
-                    ShortText = shortText,
-                    LongText = longText,
                     LineHandler = lineHandler,
                     BaseBlock = block,
                 };
@@ -200,7 +195,7 @@ namespace AvaloniaHotMarkdown
                 avaloniaBlock.LineHandler.HideCaret();
 
             var lineHandler = presenters[textCursor.Y].LineHandler;
-            lineHandler.CaretBrush = Brushes.Red;
+            lineHandler.CaretBrush = Brushes.White;
             lineHandler.CaretIndex = textCursor.X;
             lineHandler.ShowCaret();
         }

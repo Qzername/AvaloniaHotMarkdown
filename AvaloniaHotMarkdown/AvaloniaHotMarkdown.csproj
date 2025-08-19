@@ -10,7 +10,7 @@
     <Authors>Qzername</Authors>
     <Company>Qzername</Company>
     <Description>Work-in-progress prototype of a live-preview markdown editor for Avalonia</Description>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-alpha.6</Version>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 

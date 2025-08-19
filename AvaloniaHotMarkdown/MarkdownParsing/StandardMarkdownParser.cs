@@ -1,6 +1,7 @@
 ﻿using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing
 {
@@ -23,6 +24,10 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
             string[] lines = markdownText.Split('\n');
 
             int textIndex = 0;
+
+            for(int i = 0; i < lines.Length; i++)
+                if (string.IsNullOrEmpty(lines[i]))
+                    lines[i] = "­"; // Replace empty lines with a zero-width space to make them actually render
 
             foreach (var line in lines)
             {
