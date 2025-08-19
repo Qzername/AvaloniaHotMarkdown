@@ -1,6 +1,6 @@
 # AvaloniaHotMarkdown
 
-A work-in-progress prototype of an Obsidian-inspired live-preview Markdown editor for Avalonia.
+A work-in-progress project of an Obsidian-inspired live-preview Markdown editor for Avalonia.
 
 This was made for my private project that maybe I will release later on. For this reason this project is heavily incomplete as I don't need anything special.
 
