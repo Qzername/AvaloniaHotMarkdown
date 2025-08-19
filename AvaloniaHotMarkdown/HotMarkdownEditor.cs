@@ -70,7 +70,6 @@ namespace AvaloniaHotMarkdown
                 //previ
                 //|
                 _actualText.Insert(textCursor.Y+1, string.Empty);
-                Debug.WriteLine(_actualText.Count);
 
                 textCursor.X = 0;
                 textCursor.Y++;
