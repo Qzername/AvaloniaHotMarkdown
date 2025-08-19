@@ -11,7 +11,7 @@ namespace AvaloniaHotMarkdown
         public event Action<object, PointerReleasedEventArgs> OnPointerReleased;
         List<RichTextPresenter> presenters;
 
-        public StackPanel LineContainer { get; private set; }
+        public DockPanel LineContainer { get; private set; }
         public IBrush? CaretBrush { get; set; } = Brushes.White;
         public int CaretIndex { get; set; } = 0;
 
@@ -25,9 +25,9 @@ namespace AvaloniaHotMarkdown
 
             _currentBlock = block;
 
-            LineContainer = new StackPanel
+            LineContainer = new DockPanel
             {
-                Orientation = Orientation.Horizontal
+                HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
             RenderLine(showLongText: false);

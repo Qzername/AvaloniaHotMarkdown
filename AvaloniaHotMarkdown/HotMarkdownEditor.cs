@@ -56,9 +56,9 @@ namespace AvaloniaHotMarkdown
             RenderText();
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
-            base.OnKeyUp(e);
+            base.OnKeyDown(e);
 
             if (e.Key == Key.Enter)
             {
@@ -69,7 +69,9 @@ namespace AvaloniaHotMarkdown
 
                 //previ
                 //|
-                _actualText.Add(string.Empty);
+                _actualText.Insert(textCursor.Y+1, string.Empty);
+                Debug.WriteLine(_actualText.Count);
+
                 textCursor.X = 0;
                 textCursor.Y++;
 
@@ -106,12 +108,12 @@ namespace AvaloniaHotMarkdown
 
             if (e.Key == Key.Left)
             {
-                if (textCursor.X == 0)
+                if (textCursor.X == 0 && textCursor.Y != 0)
                 {
                     textCursor.Y--;
                     textCursor.X = _actualText[textCursor.Y].Length; //move to the end of the previous line
                 }
-                else
+                else if(textCursor.X != 0)
                     textCursor.X--;
             }
             else if (e.Key == Key.Right)
@@ -121,15 +123,18 @@ namespace AvaloniaHotMarkdown
                     textCursor.Y++;
                     textCursor.X = 0; //move to the start of the next line
                 }
-                else
+                else if (textCursor.X != _actualText[textCursor.Y].Length)
                     textCursor.X++;
             }
 
-            if (e.Key == Key.Up)
+            if (e.Key == Key.Up && textCursor.Y != 0)
                 textCursor.Y--;
-            else if (e.Key == Key.Down)
+            else if (e.Key == Key.Down && textCursor.Y != presenters.Count-1)
                 textCursor.Y++;
             
+            if(textCursor.X > _actualText[textCursor.Y].Length)
+                textCursor.X = _actualText[textCursor.Y].Length;
+
             RenderText();
         }
 
@@ -204,7 +209,7 @@ namespace AvaloniaHotMarkdown
         public override void Render(DrawingContext context)
         {
             //avalonia will not register keys pressed without this line
-            context.DrawRectangle(Brushes.Gray, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+            context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
             base.Render(context);
         }

@@ -61,13 +61,16 @@ public class RichTextPresenter : Control
     {
         _textPresenter = new()
         {
-            Foreground = Brushes.White
+            Foreground = Brushes.White,
+            Background = Brushes.Transparent,
         };
     }
 
     public override void Render(DrawingContext context)
     {
         base.Render(context);
+
+        context.DrawRectangle(Brushes.Transparent, null, new Rect(0,0, Bounds.Width, Bounds.Height));
 
         _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
