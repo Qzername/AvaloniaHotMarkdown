@@ -12,13 +12,19 @@ namespace AvaloniaHotMarkdown
         public static readonly DirectProperty<HotMarkdownEditor, string> TextProperty =
            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, string>(nameof(Text), (hme) => hme.Text, (hme, s) => hme.Text = s, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
-        string _text = string.Empty;
+        List<string> _actualText = [string.Empty]; 
+
         public string Text
         {
-            get => _text;
+            get => string.Join("\n", _actualText);
             set
             {
-                _text = value;
+                var old = _actualText;
+
+                _actualText.Clear();
+                _actualText.AddRange(value.Split(["\r\n", "n"], StringSplitOptions.None));
+                
+                RaisePropertyChanged(TextProperty, string.Join("\n", old), value);
                 RenderText();
             }
         }
@@ -54,108 +60,83 @@ namespace AvaloniaHotMarkdown
         {
             base.OnKeyUp(e);
 
-            if (e.Key == Key.Enter && Text[textCursor.Index - 1] != '\n')
+            if (e.Key == Key.Enter)
             {
-                Text = Text.Insert(textCursor.Index, "\n");
-                textCursor.Index++;
+                //previ|[ous line] <- substring
+                var substring = _actualText[textCursor.Y].Substring(textCursor.X);
+                //previ|
+                _actualText[textCursor.Y] = _actualText[textCursor.Y].Remove(textCursor.X);
+
+                //previ
+                //|
+                _actualText.Add(string.Empty);
+                textCursor.X = 0;
+                textCursor.Y++;
+
+                //previ
+                //|ous line
+                _actualText[textCursor.Y] = substring + _actualText[textCursor.Y];
             }
 
-            if (e.Key == Key.Back && textCursor.Index > 0)
+            if (e.Key == Key.Back)
             {
-                Text = Text.Remove(textCursor.Index-1, 1);
-                textCursor.Index--;
+                //previous line
+                //|current line
+                if(textCursor.X == 0)
+                {
+                    var currentLine = _actualText[textCursor.Y];
+
+                    //previous linecurrent line
+                    //|current line
+                    _actualText[textCursor.Y - 1] += currentLine;
+
+                    //previous linecurrent line
+                    _actualText.RemoveAt(textCursor.Y);
+
+                    //previous line|current line
+                    textCursor.Y--;
+                    textCursor.X = _actualText[textCursor.Y].Length - currentLine.Length; 
+                }                
+                else //in other case remove just last character
+                {
+                    _actualText[textCursor.Y] = _actualText[textCursor.Y].Remove(textCursor.X - 1, 1);
+                    textCursor.X--;
+                }
             }
 
-            if (e.Key == Key.Left && textCursor.Index > 0)
-                textCursor.Index--;
-            else if (e.Key == Key.Right && textCursor.Index < Text.Length)
-                textCursor.Index++;
+            if (e.Key == Key.Left)
+            {
+                if (textCursor.X == 0)
+                {
+                    textCursor.Y--;
+                    textCursor.X = _actualText[textCursor.Y].Length; //move to the end of the previous line
+                }
+                else
+                    textCursor.X--;
+            }
+            else if (e.Key == Key.Right)
+            {
+                if (textCursor.X == _actualText[textCursor.Y].Length && textCursor.Y != _actualText.Count-1)
+                {
+                    textCursor.Y++;
+                    textCursor.X = 0; //move to the start of the next line
+                }
+                else
+                    textCursor.X++;
+            }
 
             if (e.Key == Key.Up)
-                MoveCursorLineUp();
+                textCursor.Y--;
             else if (e.Key == Key.Down)
-                MoveCursorLineDown();
-
+                textCursor.Y++;
+            
             RenderText();
-        }
-
-        void MoveCursorLineUp()
-        {
-            var lines = Text.Split('\n');
-
-            int countLineLength = 0;
-
-            int finalIndex = 0;
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                countLineLength += lines[i].Length+1; //plus one for \n
-
-                if (countLineLength < textCursor.Index)
-                    continue;
-
-                finalIndex = i;
-                break;
-            }
-
-            if (finalIndex == 0)
-                return;
-
-            int currentLineLength = lines[finalIndex].Length;
-            int previousLineLength = lines[finalIndex - 1].Length;
-
-            int currentLineLeftOffset = currentLineLength - countLineLength + textCursor.Index +1;
-            int previousLineRightOffset = previousLineLength - currentLineLeftOffset;
-
-            if (previousLineLength > currentLineLeftOffset)
-                textCursor.Index -= currentLineLeftOffset + previousLineRightOffset + 1;
-            else
-                textCursor.Index -= currentLineLeftOffset + 1;
-
-            HandleCursor();
-        }
-        
-        void MoveCursorLineDown()
-        {
-            var lines = Text.Split('\n');
-
-            int countLineLength = 0;
-
-            int finalIndex = 0;
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                countLineLength += lines[i].Length+1; //plus one for \n
-
-                if (countLineLength < textCursor.Index)
-                    continue;
-
-                finalIndex = i;
-                break;
-            }
-
-            if(finalIndex == lines.Length - 1)
-                return;
-
-            int currentLineLength = lines[finalIndex].Length;
-            int nextLineLength = lines[finalIndex + 1].Length;
-
-            int currentLineRightOffset = countLineLength - textCursor.Index;
-            int currentLineLeftOffset = currentLineLength - currentLineRightOffset + 1;//plus one for \n
-
-            if (nextLineLength < currentLineLeftOffset)
-                textCursor.Index += currentLineRightOffset + nextLineLength;
-            else
-                textCursor.Index += currentLineRightOffset + currentLineLeftOffset;
-
-            HandleCursor();
         }
 
         private void OnTextInput(object? sender, TextInputEventArgs e)
         {
-            Text = Text.Insert(textCursor.Index, e.Text!);
-
-            textCursor.Index += e.Text.Length;
+            _actualText[textCursor.Y] = _actualText[textCursor.Y].Insert(textCursor.X, e.Text!);
+            textCursor.X+=e.Text!.Length;
 
             RenderText();
         }
@@ -200,57 +181,38 @@ namespace AvaloniaHotMarkdown
             var lineHandler = block.LineHandler;
             lineHandler.MoveCaretToPoint(args);
 
-            textCursor.Index = block.BaseBlock.StartIndex + lineHandler.CaretIndex;
+            textCursor.X = lineHandler.CaretIndex;
+            textCursor.Y = presenters.IndexOf(block);
 
             HandleCursor();
         }
 
         void HandleCursor()
         {
+            if(presenters.Count == 0)
+                return;
+           
             foreach (var avaloniaBlock in presenters)
                 avaloniaBlock.LineHandler.HideCaret();
 
-            for (int i = 0 ; i < presenters.Count; i++)
-            {
-                var avaloniaBlock = presenters[i];
-                var lineHandler = avaloniaBlock.LineHandler;
-                var block = avaloniaBlock.BaseBlock;
-
-                //we are on \n block
-                //go to 0 index of the next line
-                if (textCursor.Index < block.StartIndex)
-                {
-                    ConfigurePresenter(lineHandler, avaloniaBlock, 0);
-                    break;
-                }
-
-                //we are on actual text on actual block
-                if(textCursor.Index <= block.EndIndex+1)
-                {
-                    ConfigurePresenter(lineHandler, avaloniaBlock, textCursor.Index - block.StartIndex);
-                    break;
-                }
-            }
-        }
-
-        void ConfigurePresenter(LineHandler lineHandler, AvaloniaBlock avaloniaBlock, int caretIndex)
-        {
+            var lineHandler = presenters[textCursor.Y].LineHandler;
             lineHandler.CaretBrush = Brushes.Red;
-            lineHandler.CaretIndex = caretIndex;
+            lineHandler.CaretIndex = textCursor.X;
             lineHandler.ShowCaret();
         }
 
         public override void Render(DrawingContext context)
         {
             //avalonia will not register keys pressed without this line
-            context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+            context.DrawRectangle(Brushes.Gray, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
             base.Render(context);
         }
 
         struct TextCursor(int index, bool showCursor)
         {
-            public int Index { get; set; } = index;
+            public int X { get; set; } = 0;
+            public int Y { get; set; } = 0;
             public bool ShowCursor { get; set; } = showCursor;
         }
     }
