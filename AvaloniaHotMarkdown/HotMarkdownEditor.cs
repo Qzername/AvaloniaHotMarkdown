@@ -58,6 +58,8 @@ namespace AvaloniaHotMarkdown
         {
             base.OnKeyDown(e);
 
+            var oldText = Text;
+
             if (e.Key == Key.Enter)
             {
                 //previ|[ous line] <- substring
@@ -132,13 +134,18 @@ namespace AvaloniaHotMarkdown
             if(textCursor.X > _actualText[textCursor.Y].Length)
                 textCursor.X = _actualText[textCursor.Y].Length;
 
+            RaisePropertyChanged(TextProperty, oldText, Text);
             RenderText();
         }
 
         private void OnTextInput(object? sender, TextInputEventArgs e)
         {
+            var oldText = Text;
+
             _actualText[textCursor.Y] = _actualText[textCursor.Y].Insert(textCursor.X, e.Text!);
             textCursor.X+=e.Text!.Length;
+
+            RaisePropertyChanged(TextProperty, oldText, Text);
 
             RenderText();
         }

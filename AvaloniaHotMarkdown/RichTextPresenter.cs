@@ -75,7 +75,7 @@ public class RichTextPresenter : Control
         _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
         
-        var pen = new Pen(_textPresenter.Foreground, 3);
+        var pen = new Pen(Brushes.Red, 2);
 
         if(ShowUnderline)
             context.DrawLine(pen, new Point(0, rightDownCorner.Y), rightDownCorner);
