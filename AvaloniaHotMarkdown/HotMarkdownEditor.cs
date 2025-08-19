@@ -22,7 +22,7 @@ namespace AvaloniaHotMarkdown
                 var old = _actualText;
 
                 _actualText.Clear();
-                _actualText.AddRange(value.Split(["\r\n", "n"], StringSplitOptions.None));
+                _actualText.AddRange(value.Split(["\r\n", "\n"], StringSplitOptions.None));
                 
                 RaisePropertyChanged(TextProperty, string.Join("\n", old), value);
                 RenderText();
@@ -52,8 +52,6 @@ namespace AvaloniaHotMarkdown
             markdownParser = new StandardMarkdownParser();
 
             TextInput += OnTextInput;
-
-            RenderText();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
