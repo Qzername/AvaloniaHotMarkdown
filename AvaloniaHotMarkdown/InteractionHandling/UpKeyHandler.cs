@@ -8,7 +8,8 @@ internal class UpKeyHandler : IKeyInteractionHandler
 
     public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
     {
-        caretPositionData.Y++;
+        if(caretPositionData.Y != 0)
+            caretPositionData.Y--;
 
         if (caretPositionData.X > actualText[caretPositionData.Y].Length)
             caretPositionData.X = actualText[caretPositionData.Y].Length;
