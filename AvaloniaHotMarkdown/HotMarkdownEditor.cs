@@ -3,7 +3,7 @@ using Avalonia.Media;
 using Avalonia.Input;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia;
-using System.Diagnostics;
+using AvaloniaHotMarkdown.InteractionHandling;
 
 namespace AvaloniaHotMarkdown
 {
@@ -12,7 +12,8 @@ namespace AvaloniaHotMarkdown
         public static readonly DirectProperty<HotMarkdownEditor, string> TextProperty =
            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, string>(nameof(Text), (hme) => hme.Text, (hme, s) => hme.Text = s, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
-        List<string> _actualText = [string.Empty]; 
+        List<string> _actualText = [string.Empty];
+        Dictionary<Key, IKeyInteractionHandler> interactions;
 
         public string Text
         {
@@ -25,15 +26,13 @@ namespace AvaloniaHotMarkdown
                 _actualText.AddRange(value.Split(["\r\n", "\n"], StringSplitOptions.None));
                 
                 RaisePropertyChanged(TextProperty, string.Join("\n", old), value);
-                RenderText();
+                GenerateText();
             }
         }
+        public TextCursor CaretPositionData;
 
-        TextCursor textCursor;
         List<AvaloniaBlock> presenters = null!;
-
         StackPanel mainPanel;
-
         IMarkdownParser markdownParser;
         
         static HotMarkdownEditor()
@@ -44,12 +43,14 @@ namespace AvaloniaHotMarkdown
 
         public HotMarkdownEditor()
         {
-            textCursor = new TextCursor(0, true);
+            CaretPositionData = new TextCursor(0, true);
 
             mainPanel = new StackPanel();  
             Content = mainPanel;
 
             markdownParser = new StandardMarkdownParser();
+
+            GenerateInteractions();
 
             TextInput += OnTextInput;
         }
@@ -60,97 +61,50 @@ namespace AvaloniaHotMarkdown
 
             var oldText = Text;
 
-            if (e.Key == Key.Enter)
-            {
-                //previ|[ous line] <- substring
-                var substring = _actualText[textCursor.Y].Substring(textCursor.X);
-                //previ|
-                _actualText[textCursor.Y] = _actualText[textCursor.Y].Remove(textCursor.X);
-
-                //previ
-                //|
-                _actualText.Insert(textCursor.Y+1, string.Empty);
-
-                textCursor.X = 0;
-                textCursor.Y++;
-
-                //previ
-                //|ous line
-                _actualText[textCursor.Y] = substring + _actualText[textCursor.Y];
-            }
-
-            if (e.Key == Key.Back)
-            {
-                //previous line
-                //|current line
-                if(textCursor.X == 0)
-                {
-                    var currentLine = _actualText[textCursor.Y];
-
-                    //previous linecurrent line
-                    //|current line
-                    _actualText[textCursor.Y - 1] += currentLine;
-
-                    //previous linecurrent line
-                    _actualText.RemoveAt(textCursor.Y);
-
-                    //previous line|current line
-                    textCursor.Y--;
-                    textCursor.X = _actualText[textCursor.Y].Length - currentLine.Length; 
-                }                
-                else //in other case remove just last character
-                {
-                    _actualText[textCursor.Y] = _actualText[textCursor.Y].Remove(textCursor.X - 1, 1);
-                    textCursor.X--;
-                }
-            }
-
-            if (e.Key == Key.Left)
-            {
-                if (textCursor.X == 0 && textCursor.Y != 0)
-                {
-                    textCursor.Y--;
-                    textCursor.X = _actualText[textCursor.Y].Length; //move to the end of the previous line
-                }
-                else if(textCursor.X != 0)
-                    textCursor.X--;
-            }
-            else if (e.Key == Key.Right)
-            {
-                if (textCursor.X == _actualText[textCursor.Y].Length && textCursor.Y != _actualText.Count-1)
-                {
-                    textCursor.Y++;
-                    textCursor.X = 0; //move to the start of the next line
-                }
-                else if (textCursor.X != _actualText[textCursor.Y].Length)
-                    textCursor.X++;
-            }
-
-            if (e.Key == Key.Up && textCursor.Y != 0)
-                textCursor.Y--;
-            else if (e.Key == Key.Down && textCursor.Y != presenters.Count-1)
-                textCursor.Y++;
+            if(interactions.ContainsKey(e.Key))
+                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData);
             
-            if(textCursor.X > _actualText[textCursor.Y].Length)
-                textCursor.X = _actualText[textCursor.Y].Length;
-
             RaisePropertyChanged(TextProperty, oldText, Text);
-            RenderText();
+            GenerateText();
+        }
+
+        void GenerateInteractions()
+        {
+            interactions = new Dictionary<Key, IKeyInteractionHandler>();
+
+            IKeyInteractionHandler[] interactionList = [
+                new EnterKeyHandler(),
+                new BackKeyHandler(),
+                new LeftKeyHandler(),
+                new RightKeyHandler(),
+                new UpKeyHandler(),
+                new DownKeyHandler(),
+                new DeleteKeyHandler(),
+                new HomeKeyHandler(),
+                new EndKeyHandler(),
+                new TabKeyHandler(),
+            ];
+
+            foreach (var interaction in interactionList)
+                interactions.Add(interaction.MainKey, interaction);
         }
 
         private void OnTextInput(object? sender, TextInputEventArgs e)
         {
             var oldText = Text;
 
-            _actualText[textCursor.Y] = _actualText[textCursor.Y].Insert(textCursor.X, e.Text!);
-            textCursor.X+=e.Text!.Length;
+            _actualText[CaretPositionData.Y] = _actualText[CaretPositionData.Y].Insert(CaretPositionData.X, e.Text!);
+            CaretPositionData.X+=e.Text!.Length;
 
             RaisePropertyChanged(TextProperty, oldText, Text);
 
-            RenderText();
+            GenerateText();
         }
 
-        void RenderText()
+        /// <summary>
+        /// Generates or regenerates text objects that are used to render the markdown text.
+        /// </summary>
+        void GenerateText()
         {
             presenters = new List<AvaloniaBlock>();
             mainPanel.Children.Clear();
@@ -185,8 +139,8 @@ namespace AvaloniaHotMarkdown
             var lineHandler = block.LineHandler;
             lineHandler.MoveCaretToPoint(args);
 
-            textCursor.X = lineHandler.CaretIndex;
-            textCursor.Y = presenters.IndexOf(block);
+            CaretPositionData.X = lineHandler.CaretIndex;
+            CaretPositionData.Y = presenters.IndexOf(block);
 
             HandleCursor();
         }
@@ -199,9 +153,9 @@ namespace AvaloniaHotMarkdown
             foreach (var avaloniaBlock in presenters)
                 avaloniaBlock.LineHandler.HideCaret();
 
-            var lineHandler = presenters[textCursor.Y].LineHandler;
+            var lineHandler = presenters[CaretPositionData.Y].LineHandler;
             lineHandler.CaretBrush = Brushes.White;
-            lineHandler.CaretIndex = textCursor.X;
+            lineHandler.CaretIndex = CaretPositionData.X;
             lineHandler.ShowCaret();
         }
 
@@ -211,13 +165,6 @@ namespace AvaloniaHotMarkdown
             context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
             base.Render(context);
-        }
-
-        struct TextCursor(int index, bool showCursor)
-        {
-            public int X { get; set; } = 0;
-            public int Y { get; set; } = 0;
-            public bool ShowCursor { get; set; } = showCursor;
         }
     }
 }
