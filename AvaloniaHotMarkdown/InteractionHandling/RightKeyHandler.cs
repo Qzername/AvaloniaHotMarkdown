@@ -6,8 +6,10 @@ internal class RightKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Right;
 
-    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
     {
+        var caretPositionData = editor.CaretPositionData;
+
         if (keyModifiers.HasFlag(KeyModifiers.Control))
         {
             if (caretPositionData.X == actualText[caretPositionData.Y].Length && caretPositionData.Y != actualText.Count - 1)
@@ -40,5 +42,7 @@ internal class RightKeyHandler : IKeyInteractionHandler
                 caretPositionData.X++;
             }
         }
+
+        editor.CaretPositionData = caretPositionData;
     }
 }

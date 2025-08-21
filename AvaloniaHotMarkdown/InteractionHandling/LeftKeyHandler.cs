@@ -6,8 +6,10 @@ internal class LeftKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Left;
 
-    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
     {
+        var caretPositionData = editor.CaretPositionData;
+
         if (keyModifiers.HasFlag(KeyModifiers.Control))
         {
             if (caretPositionData.X > 0)
@@ -47,5 +49,7 @@ internal class LeftKeyHandler : IKeyInteractionHandler
                 caretPositionData.X--;
             }
         }
+
+        editor.CaretPositionData = caretPositionData;
     }
 }

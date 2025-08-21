@@ -11,23 +11,23 @@ namespace AvaloniaHotMarkdown.InteractionHandling
     {
         public Key MainKey => Key.Enter;
 
-        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
+        public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
         {
             //previ|[ous line] <- substring
-            var substring = actualText[caretPositionData.Y].Substring(caretPositionData.X);
+            var substring = actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X);
             //previ|
-            actualText[caretPositionData.Y] = actualText[caretPositionData.Y].Remove(caretPositionData.X);
+            actualText[editor.CaretPositionData.Y] = actualText[editor.CaretPositionData.Y].Remove(editor.CaretPositionData.X);
 
             //previ
             //|
-            actualText.Insert(caretPositionData.Y + 1, string.Empty);
+            actualText.Insert(editor.CaretPositionData.Y + 1, string.Empty);
 
-            caretPositionData.X = 0;
-            caretPositionData.Y++;
+            editor.CaretPositionData.X = 0;
+            editor.CaretPositionData.Y++;
 
             //previ
             //|ous line
-            actualText[caretPositionData.Y] = substring + actualText[caretPositionData.Y];
+            actualText[editor.CaretPositionData.Y] = substring + actualText[editor.CaretPositionData.Y];
         }
     }
 }

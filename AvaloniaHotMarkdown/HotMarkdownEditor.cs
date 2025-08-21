@@ -6,6 +6,7 @@ using Avalonia;
 using AvaloniaHotMarkdown.InteractionHandling;
 using System.Diagnostics;
 using Avalonia.Controls.Presenters;
+using AvaloniaHotMarkdown.InteractionHandling.KeyCombinations;
 
 namespace AvaloniaHotMarkdown
 {
@@ -32,6 +33,7 @@ namespace AvaloniaHotMarkdown
             }
         }
         string selectedText = string.Empty;
+        public string SelectedText => selectedText;
 
         public TextCursor CaretPositionData;
         public TextCursor SelectionPositionData;
@@ -76,6 +78,7 @@ namespace AvaloniaHotMarkdown
                 new HomeKeyHandler(),
                 new EndKeyHandler(),
                 new TabKeyHandler(),
+
                 new SelectAllHandler(),
             ];
 
@@ -109,13 +112,12 @@ namespace AvaloniaHotMarkdown
 
                 SelectionPositionData.IsVisible = true;
             }
-            else
-                SelectionPositionData.IsVisible = false;    
 
             var oldText = Text;
 
             if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData, ref SelectionPositionData);
+                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText);
+
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

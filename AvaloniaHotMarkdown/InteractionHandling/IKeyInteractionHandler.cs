@@ -6,5 +6,5 @@ public interface IKeyInteractionHandler
 {
     public Key MainKey { get; }
 
-    public abstract void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData);
+    public abstract void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText);
 }

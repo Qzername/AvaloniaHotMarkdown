@@ -1,22 +1,16 @@
 ﻿using Avalonia.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AvaloniaHotMarkdown.InteractionHandling
+namespace AvaloniaHotMarkdown.InteractionHandling;
+
+internal class HomeKeyHandler : IKeyInteractionHandler
 {
-    internal class HomeKeyHandler : IKeyInteractionHandler
+    public Key MainKey => Key.Home;
+
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
     {
-        public Key MainKey => Key.Home;
+        editor.CaretPositionData.X = 0;
 
-        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
-        {
-            caretPositionData.X = 0;
-
-            if (keyModifiers.HasFlag(KeyModifiers.Control))
-                caretPositionData.Y = 0;
-        }
+        if (keyModifiers.HasFlag(KeyModifiers.Control))
+            editor.CaretPositionData.Y = 0;
     }
 }
