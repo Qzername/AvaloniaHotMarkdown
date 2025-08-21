@@ -143,7 +143,9 @@ namespace AvaloniaHotMarkdown
                     BaseBlock = block,
                 };
 
-                lineHandler.OnPointerReleased += (sender, e) => HandleClickedBlock(avaloniaBlock, e);
+                lineHandler.OnPointerMoved += (sender, e) => HandleMovedOnBlock(avaloniaBlock, e);
+                lineHandler.OnPointerPressed += (sender, e) => HandlePressedBlock(avaloniaBlock, e);
+                lineHandler.OnPointerReleased += (sender, e) => HandleReleasedBlock(avaloniaBlock, e);
 
                 presenters.Add(avaloniaBlock);
 
@@ -154,16 +156,49 @@ namespace AvaloniaHotMarkdown
             HandleSelection();
         }
 
-        void HandleClickedBlock(AvaloniaBlock block, PointerReleasedEventArgs args)
+        bool inSelection = false;
+
+        void HandlePressedBlock(AvaloniaBlock block, PointerPressedEventArgs args)
+        {
+            MoveCaretToPoint(block, args);
+
+            if (!inSelection)
+            {
+                inSelection = true;
+                SelectionPositionData.IsVisible = true;
+                SelectionPositionData.X = CaretPositionData.X;
+                SelectionPositionData.Y = CaretPositionData.Y;
+            }
+        }
+
+        void HandleMovedOnBlock(AvaloniaBlock block, PointerEventArgs args)
+        {
+            Debug.WriteLine(presenters.IndexOf(block) + " " +args.GetPosition(this));
+
+            if (inSelection)
+            {
+                MoveCaretToPoint(block, args);
+                HandleSelection();
+            }
+        }
+
+        void HandleReleasedBlock(AvaloniaBlock block, PointerEventArgs args)
+        {
+            inSelection = false;
+
+            MoveCaretToPoint(block, args);
+
+            HandleCursor();
+            HandleSelection();
+        }
+
+        void MoveCaretToPoint(AvaloniaBlock block, PointerEventArgs args)
         {
             var lineHandler = block.LineHandler;
             lineHandler.MoveCaretToPoint(args);
 
             CaretPositionData.X = lineHandler.CaretIndex;
             CaretPositionData.Y = presenters.IndexOf(block);
-
-            HandleCursor();
-            HandleSelection();
         }
 
         void HandleCursor()
@@ -185,12 +220,14 @@ namespace AvaloniaHotMarkdown
             if (presenters.Count == 0)
                 return;
 
-            if(!SelectionPositionData.IsVisible)
+            foreach (var presenter in presenters)
             {
-                foreach (var presenter in presenters)
-                    presenter.LineHandler.HideSelection();
-                return;
+                presenter.LineHandler.HideSelection();
+                presenter.LineHandler.InvalidateVisuals();
             }
+
+            if (!SelectionPositionData.IsVisible)
+                return;
 
             if(SelectionPositionData.Y == CaretPositionData.Y)
             {
@@ -198,6 +235,7 @@ namespace AvaloniaHotMarkdown
                 int bigger  = SelectionPositionData.X > CaretPositionData.X ? SelectionPositionData.X : CaretPositionData.X;
 
                 selectedText = presenters[SelectionPositionData.Y].LineHandler.ShowSelection(smaller, bigger);
+                presenters[SelectionPositionData.Y].LineHandler.InvalidateVisuals();
                 return;
             }
 
@@ -210,10 +248,16 @@ namespace AvaloniaHotMarkdown
             string[] lines = new string[biggerIndex-smallerIndex+1];
 
             for (int y = smallerIndex; y < biggerIndex; y++)
+            {
                 lines[y - smallerIndex] = presenters[y].LineHandler.ShowSelection(0, _actualText[y].Length);
+                presenters[y].LineHandler.InvalidateVisuals();
+            }
 
             lines[0] = presenters[smallerIndex].LineHandler.ShowSelection(smallerValue, _actualText[smallerIndex].Length);
+            presenters[smallerIndex].LineHandler.InvalidateVisuals();
+
             lines[^1] = presenters[biggerIndex].LineHandler.ShowSelection(0, biggerValue);
+            presenters[biggerIndex].LineHandler.InvalidateVisuals();
 
             selectedText = string.Join("\n", lines);
         }

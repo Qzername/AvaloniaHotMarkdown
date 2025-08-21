@@ -4,11 +4,14 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace AvaloniaHotMarkdown
 {
     public class LineHandler
     {
+        public event Action<object, PointerEventArgs> OnPointerMoved;
+        public event Action<object, PointerPressedEventArgs> OnPointerPressed;
         public event Action<object, PointerReleasedEventArgs> OnPointerReleased;
         List<RichTextPresenter> presenters;
 
@@ -34,14 +37,13 @@ namespace AvaloniaHotMarkdown
             RenderLine(showLongText: false);
         }
 
-        void TextPresenter_PointerReleased(object? sender, PointerReleasedEventArgs e)
-        {
-            OnPointerReleased?.Invoke(sender, e);
-        }
-
+        void TextPresenter_PointerMoved(object? sender, PointerEventArgs e) => OnPointerMoved?.Invoke(sender, e);
+        void TextPresenter_PointerPressed(object? sender, PointerPressedEventArgs e) => OnPointerPressed?.Invoke(sender, e);
+        void TextPresenter_PointerReleased(object? sender, PointerReleasedEventArgs e) => OnPointerReleased?.Invoke(sender, e);
+       
         public void ShowCaret()
         {
-            RenderLine(showLongText: true);
+            HideCaret();
 
             int indexText = 0;
 
@@ -64,8 +66,6 @@ namespace AvaloniaHotMarkdown
 
         public void HideCaret()
         {
-            RenderLine(showLongText: false);
-
             foreach (var presenter in presenters)
                 presenter.HideCaret();
         }
@@ -87,6 +87,7 @@ namespace AvaloniaHotMarkdown
                 {
                     int selectionStart = startSelection - (currentOffset - presenter.Text.Length);
                     presenter.SelectionStart = selectionStart;
+                    presenter.InvalidateVisual();
 
                     if (currentOffset >= endSelection)
                     {
@@ -119,7 +120,7 @@ namespace AvaloniaHotMarkdown
             }
         }
 
-        public void MoveCaretToPoint(PointerReleasedEventArgs e)
+        public void MoveCaretToPoint(PointerEventArgs e)
         {
             int allTextLength = 0;
 
@@ -133,6 +134,7 @@ namespace AvaloniaHotMarkdown
                 {
                     CaretIndex = allTextLength + presenter.CaretIndex;
                     presenter.ShowCaret();
+                    presenter.InvalidateVisual();
                     return;
                 }
 
@@ -140,6 +142,7 @@ namespace AvaloniaHotMarkdown
             }
 
             presenters[^1].ShowCaret();
+            presenters[^1].InvalidateVisual();
             CaretIndex = allTextLength;
         }
 
@@ -171,6 +174,12 @@ namespace AvaloniaHotMarkdown
 
                 ConfirmChild(finalText);
             }
+        }
+
+        public void InvalidateVisuals()
+        {
+            foreach (var presenter in presenters)
+                presenter.InvalidateVisual();
         }
 
         void ConfirmChild(string text)
@@ -223,6 +232,8 @@ namespace AvaloniaHotMarkdown
                 SelectionBrush = Brushes.LightBlue,
             };
 
+            textPresenter.PointerMoved += TextPresenter_PointerMoved;
+            textPresenter.PointerPressed += TextPresenter_PointerPressed;
             textPresenter.PointerReleased += TextPresenter_PointerReleased;
 
             return textPresenter;
