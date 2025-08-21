@@ -11,9 +11,12 @@ namespace AvaloniaHotMarkdown.InteractionHandling
     {
         public Key MainKey => Key.Home;
 
-        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
+        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
         {
             caretPositionData.X = 0;
+
+            if (keyModifiers.HasFlag(KeyModifiers.Control))
+                caretPositionData.Y = 0;
         }
     }
 }

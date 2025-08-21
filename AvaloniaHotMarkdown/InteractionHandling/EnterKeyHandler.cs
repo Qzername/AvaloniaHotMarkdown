@@ -11,7 +11,7 @@ namespace AvaloniaHotMarkdown.InteractionHandling
     {
         public Key MainKey => Key.Enter;
 
-        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
+        public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
         {
             //previ|[ous line] <- substring
             var substring = actualText[caretPositionData.Y].Substring(caretPositionData.X);

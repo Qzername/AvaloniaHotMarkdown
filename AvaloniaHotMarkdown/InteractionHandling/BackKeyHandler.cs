@@ -6,7 +6,7 @@ internal class BackKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Back;
 
-    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
+    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
     {
         //do nothing if caret is at the beginning of the text
         if (caretPositionData.X == 0 && caretPositionData.Y == 0)

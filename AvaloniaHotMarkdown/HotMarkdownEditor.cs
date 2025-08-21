@@ -75,6 +75,7 @@ namespace AvaloniaHotMarkdown
                 new HomeKeyHandler(),
                 new EndKeyHandler(),
                 new TabKeyHandler(),
+                new SelectAllHandler(),
             ];
 
             foreach (var interaction in interactionList)
@@ -113,7 +114,7 @@ namespace AvaloniaHotMarkdown
             var oldText = Text;
 
             if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData);
+                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData, ref SelectionPositionData);
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

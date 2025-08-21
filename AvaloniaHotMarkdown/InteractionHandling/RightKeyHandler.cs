@@ -6,7 +6,7 @@ internal class RightKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Right;
 
-    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
+    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
     {
         if (caretPositionData.X == actualText[caretPositionData.Y].Length && caretPositionData.Y != actualText.Count - 1)
         {

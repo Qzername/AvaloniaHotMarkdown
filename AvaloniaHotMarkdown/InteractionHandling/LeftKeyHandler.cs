@@ -6,7 +6,7 @@ internal class LeftKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Left;
 
-    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
+    public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData, ref TextCursor selectionPositionData)
     {
         if (caretPositionData.X == 0 && caretPositionData.Y != 0)
         {
