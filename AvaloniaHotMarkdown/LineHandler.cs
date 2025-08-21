@@ -3,6 +3,7 @@ using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown
 {
@@ -67,6 +68,55 @@ namespace AvaloniaHotMarkdown
 
             foreach (var presenter in presenters)
                 presenter.HideCaret();
+        }
+
+        /// <returns>selected text</returns>
+        public string ShowSelection(int startSelection, int endSelection)
+        {
+            HideSelection();
+
+            int currentOffset = 0;
+
+            string selectedText = string.Empty;
+
+            foreach (var presenter in presenters)
+            {
+                currentOffset += presenter.Text.Length;
+
+                if (currentOffset >= startSelection)
+                {
+                    int selectionStart = startSelection - (currentOffset - presenter.Text.Length);
+                    presenter.SelectionStart = selectionStart;
+
+                    if (currentOffset >= endSelection)
+                    {
+                        int selectionEnd = endSelection - (currentOffset - presenter.Text.Length);
+                        presenter.SelectionEnd = selectionEnd;
+
+                        selectedText += presenter.Text.Substring(selectionStart, selectionEnd - selectionStart);
+                        break;
+                    }
+                    else
+                    {
+                        selectedText += presenter.Text.Substring(selectionStart);
+                    }
+                }
+                else if (currentOffset > startSelection && currentOffset < endSelection)
+                {
+                    selectedText += presenter.Text;
+                }
+            }
+
+            return selectedText;
+        }
+
+        public void HideSelection()
+        {
+            foreach (var presenter in presenters)
+            {
+                presenter.SelectionStart = 0;
+                presenter.SelectionEnd = 0;
+            }
         }
 
         public void MoveCaretToPoint(PointerReleasedEventArgs e)
@@ -170,6 +220,7 @@ namespace AvaloniaHotMarkdown
             {
                 Text = string.Empty,
                 FontSize = _currentBlock.FontSize,
+                SelectionBrush = Brushes.LightBlue,
             };
 
             textPresenter.PointerReleased += TextPresenter_PointerReleased;

@@ -8,6 +8,10 @@ internal class BackKeyHandler : IKeyInteractionHandler
 
     public void HandleCombination(KeyModifiers keyModifiers, ref List<string> actualText, ref TextCursor caretPositionData)
     {
+        //do nothing if caret is at the beginning of the text
+        if (caretPositionData.X == 0 && caretPositionData.Y == 0)
+            return;
+
         //previous line
         //|current line
         if (caretPositionData.X == 0)

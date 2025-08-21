@@ -54,6 +54,24 @@ public class RichTextPresenter : Control
         set => _textPresenter.FontStyle = value;
     }
 
+    public IBrush? SelectionBrush
+    {
+        get => _textPresenter.SelectionBrush;
+        set => _textPresenter.SelectionBrush = value;
+    }
+
+    public int SelectionStart
+    {
+        get => _textPresenter.SelectionStart;
+        set => _textPresenter.SelectionStart = value;
+    } 
+
+    public int SelectionEnd
+    {
+        get => _textPresenter.SelectionEnd;
+        set => _textPresenter.SelectionEnd = value;
+    }
+
     public bool ShowUnderline;
     public bool ShowStrikethrough;
 

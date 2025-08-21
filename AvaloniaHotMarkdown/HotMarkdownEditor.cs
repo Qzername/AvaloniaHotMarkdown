@@ -4,6 +4,7 @@ using Avalonia.Input;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia;
 using AvaloniaHotMarkdown.InteractionHandling;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown
 {
@@ -29,7 +30,10 @@ namespace AvaloniaHotMarkdown
                 GenerateText();
             }
         }
+        string selectedText = string.Empty;
+
         public TextCursor CaretPositionData;
+        public TextCursor SelectionPositionData;
 
         List<AvaloniaBlock> presenters = null!;
         StackPanel mainPanel;
@@ -44,6 +48,7 @@ namespace AvaloniaHotMarkdown
         public HotMarkdownEditor()
         {
             CaretPositionData = new TextCursor(0, true);
+            SelectionPositionData = new TextCursor(0, true);
 
             mainPanel = new StackPanel();  
             Content = mainPanel;
@@ -53,19 +58,6 @@ namespace AvaloniaHotMarkdown
             GenerateInteractions();
 
             TextInput += OnTextInput;
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            var oldText = Text;
-
-            if(interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData);
-            
-            RaisePropertyChanged(TextProperty, oldText, Text);
-            GenerateText();
         }
 
         void GenerateInteractions()
@@ -101,6 +93,32 @@ namespace AvaloniaHotMarkdown
             GenerateText();
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if(e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            {
+                if(SelectionPositionData.IsVisible == false)
+                {
+                    SelectionPositionData.X = CaretPositionData.X;
+                    SelectionPositionData.Y = CaretPositionData.Y;
+                }
+
+                SelectionPositionData.IsVisible = true;
+            }
+            else
+                SelectionPositionData.IsVisible = false;    
+
+            var oldText = Text;
+
+            if (interactions.ContainsKey(e.Key))
+                interactions[e.Key].HandleCombination(e.KeyModifiers, ref _actualText, ref CaretPositionData);
+
+            RaisePropertyChanged(TextProperty, oldText, Text);
+            GenerateText();
+        }
+
         /// <summary>
         /// Generates or regenerates text objects that are used to render the markdown text.
         /// </summary>
@@ -132,6 +150,7 @@ namespace AvaloniaHotMarkdown
             }
 
             HandleCursor();
+            HandleSelection();
         }
 
         void HandleClickedBlock(AvaloniaBlock block, PointerReleasedEventArgs args)
@@ -143,6 +162,7 @@ namespace AvaloniaHotMarkdown
             CaretPositionData.Y = presenters.IndexOf(block);
 
             HandleCursor();
+            HandleSelection();
         }
 
         void HandleCursor()
@@ -157,6 +177,44 @@ namespace AvaloniaHotMarkdown
             lineHandler.CaretBrush = Brushes.White;
             lineHandler.CaretIndex = CaretPositionData.X;
             lineHandler.ShowCaret();
+        }
+
+        void HandleSelection()
+        {
+            if (presenters.Count == 0)
+                return;
+
+            if(!SelectionPositionData.IsVisible)
+            {
+                foreach (var presenter in presenters)
+                    presenter.LineHandler.HideSelection();
+                return;
+            }
+
+            if(SelectionPositionData.Y == CaretPositionData.Y)
+            {
+                int smaller = SelectionPositionData.X > CaretPositionData.X ? CaretPositionData.X : SelectionPositionData.X;
+                int bigger  = SelectionPositionData.X > CaretPositionData.X ? SelectionPositionData.X : CaretPositionData.X;
+
+                selectedText = presenters[SelectionPositionData.Y].LineHandler.ShowSelection(smaller, bigger);
+                return;
+            }
+
+            int smallerIndex = SelectionPositionData.Y < CaretPositionData.Y ? SelectionPositionData.Y : CaretPositionData.Y;
+            int biggerIndex = SelectionPositionData.Y < CaretPositionData.Y ? CaretPositionData.Y : SelectionPositionData.Y;
+
+            int smallerValue = SelectionPositionData.Y < CaretPositionData.Y ? SelectionPositionData.X : CaretPositionData.X;
+            int biggerValue = SelectionPositionData.Y < CaretPositionData.Y ? CaretPositionData.X : SelectionPositionData.X;
+
+            string[] lines = new string[biggerIndex-smallerIndex+1];
+
+            for (int y = smallerIndex; y < biggerIndex; y++)
+                lines[y - smallerIndex] = presenters[y].LineHandler.ShowSelection(0, _actualText[y].Length);
+
+            lines[0] = presenters[smallerIndex].LineHandler.ShowSelection(smallerValue, _actualText[smallerIndex].Length);
+            lines[^1] = presenters[biggerIndex].LineHandler.ShowSelection(0, biggerValue);
+
+            selectedText = string.Join("\n", lines);
         }
 
         public override void Render(DrawingContext context)
