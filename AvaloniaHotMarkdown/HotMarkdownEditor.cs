@@ -5,6 +5,7 @@ using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia;
 using AvaloniaHotMarkdown.InteractionHandling;
 using System.Diagnostics;
+using Avalonia.Controls.Presenters;
 
 namespace AvaloniaHotMarkdown
 {
@@ -173,23 +174,31 @@ namespace AvaloniaHotMarkdown
 
         void HandleMovedOnBlock(AvaloniaBlock block, PointerEventArgs args)
         {
-            Debug.WriteLine(presenters.IndexOf(block) + " " +args.GetPosition(this));
-
             if (inSelection)
             {
-                MoveCaretToPoint(block, args);
+                /*
+                 * avalonia when you press and move the mouse, 
+                 * the object who will call this method is the one that was pressed.
+                 * not the one that is currently under the pointer.
+                 * this is a workaround to fix that.
+                 */
+
+                var actualBlock = presenters.First(x => x.LineHandler.LineContainer.Bounds.Y + x.LineHandler.LineContainer.Bounds.Height > args.GetPosition(this).Y - Padding.Top);
+
+                MoveCaretToPoint(actualBlock, args);
                 HandleSelection();
             }
         }
 
         void HandleReleasedBlock(AvaloniaBlock block, PointerEventArgs args)
         {
+            if(!inSelection)
+            {
+                MoveCaretToPoint(block, args);
+                HandleCursor();
+            }
+
             inSelection = false;
-
-            MoveCaretToPoint(block, args);
-
-            HandleCursor();
-            HandleSelection();
         }
 
         void MoveCaretToPoint(AvaloniaBlock block, PointerEventArgs args)
@@ -207,12 +216,16 @@ namespace AvaloniaHotMarkdown
                 return;
            
             foreach (var avaloniaBlock in presenters)
+            {
                 avaloniaBlock.LineHandler.HideCaret();
+                avaloniaBlock.LineHandler.InvalidateVisuals();
+            }
 
             var lineHandler = presenters[CaretPositionData.Y].LineHandler;
             lineHandler.CaretBrush = Brushes.White;
             lineHandler.CaretIndex = CaretPositionData.X;
             lineHandler.ShowCaret();
+            lineHandler.InvalidateVisuals();
         }
 
         void HandleSelection()
