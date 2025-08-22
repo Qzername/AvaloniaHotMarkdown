@@ -13,13 +13,20 @@ internal class DeleteKeyHandler : IKeyInteractionHandler
         if (caretPositionData.X == actualText[caretPositionData.Y].Length && caretPositionData.Y == actualText.Count - 1)
             return;
 
+
         if (caretPositionData.X == actualText[caretPositionData.Y].Length)
         {
+            memoryBank.Shorten(editor.CaretPositionData, '\n'.ToString());
+
             actualText[caretPositionData.Y] += actualText[caretPositionData.Y + 1];
             actualText.RemoveAt(caretPositionData.Y + 1);
         }
         else //in other case remove just next character
+        {
+            memoryBank.Shorten(editor.CaretPositionData, actualText[editor.CaretPositionData.Y][editor.CaretPositionData.X+1].ToString());
+
             actualText[caretPositionData.Y] = actualText[caretPositionData.Y].Remove(caretPositionData.X, 1);
+        }
     
         editor.CaretPositionData = caretPositionData;
     }

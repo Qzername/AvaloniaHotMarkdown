@@ -26,6 +26,8 @@ internal class CutHandler : IKeyInteractionHandler
         int selectionStartY = Math.Min(editor.CaretPositionData.Y, editor.SelectionPositionData.Y);
         int selectionEndY = Math.Max(editor.CaretPositionData.Y, editor.SelectionPositionData.Y);
 
+        memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), editor.SelectedText);
+
         actualText[selectionStartY] = actualText[selectionStartY].Remove(selectionStartX);
         actualText[selectionEndY] = actualText[selectionEndY].Remove(0, selectionEndX);
 

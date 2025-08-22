@@ -16,14 +16,17 @@ public class MemoryBank
     {
         memoryBank.Add(new Memory
         {
-            StartingPosition = position,
+            Position = position,
             Text = text,
             OperationType = operationType
         });
     }
 
-    public Memory Undo()
+    public Memory? Undo()
     {
+        if(memoryBank.Count == 0)
+            return null;
+
         var last = memoryBank[^1];
         memoryBank.RemoveAt(memoryBank.Count - 1);
         return last;
@@ -32,7 +35,7 @@ public class MemoryBank
 
 public struct Memory
 {
-    public TextCursor StartingPosition;
+    public TextCursor Position;
     public string Text;
     public MemoryOperationType OperationType;
 }

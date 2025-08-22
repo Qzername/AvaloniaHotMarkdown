@@ -13,6 +13,8 @@ namespace AvaloniaHotMarkdown.InteractionHandling
 
         public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
         {
+            memoryBank.Append(editor.CaretPositionData, '\n'.ToString());
+
             //previ|[ous line] <- substring
             var substring = actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X);
             //previ|

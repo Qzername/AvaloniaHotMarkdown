@@ -30,6 +30,7 @@ namespace AvaloniaHotMarkdown
                 
                 RaisePropertyChanged(TextProperty, string.Join("\n", old), value);
                 GenerateText();
+                InvalidateVisual();
             }
         }
         string selectedText = string.Empty;
@@ -52,8 +53,8 @@ namespace AvaloniaHotMarkdown
 
         public HotMarkdownEditor()
         {
-            CaretPositionData = new TextCursor(0, true);
-            SelectionPositionData = new TextCursor(0, false);
+            CaretPositionData = new TextCursor(0,0, true);
+            SelectionPositionData = new TextCursor(0,0, false);
 
             mainPanel = new StackPanel();  
             Content = mainPanel;
@@ -86,6 +87,7 @@ namespace AvaloniaHotMarkdown
                 new CopyHandler(),
                 new PasteHandler(),
                 new CutHandler(),
+                new UndoHandler(),
             ];
 
             foreach (var interaction in interactionList)
@@ -95,6 +97,8 @@ namespace AvaloniaHotMarkdown
         private void OnTextInput(object? sender, TextInputEventArgs e)
         {
             var oldText = Text;
+
+            memoryBank.Append(CaretPositionData, e.Text!);
 
             _actualText[CaretPositionData.Y] = _actualText[CaretPositionData.Y].Insert(CaretPositionData.X, e.Text!);
             CaretPositionData.X+=e.Text!.Length;
@@ -124,7 +128,7 @@ namespace AvaloniaHotMarkdown
             var oldText = Text;
 
             if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText);
+                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

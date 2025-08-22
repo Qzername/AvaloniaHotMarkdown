@@ -19,7 +19,11 @@ internal class PasteHandler : IKeyInteractionHandler
             var text = clipboard.GetTextAsync();
 
             if (!string.IsNullOrEmpty(text.Result))
+            {
+                memoryBank.Append(editor.CaretPositionData, text.Result);
+
                 editor.Text = editor.Text.Insert(editor.CaretPositionData.X, text.Result);
+            }
         }
     }
 }
