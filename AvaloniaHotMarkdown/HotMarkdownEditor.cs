@@ -51,7 +51,7 @@ namespace AvaloniaHotMarkdown
         public HotMarkdownEditor()
         {
             CaretPositionData = new TextCursor(0, true);
-            SelectionPositionData = new TextCursor(0, true);
+            SelectionPositionData = new TextCursor(0, false);
 
             mainPanel = new StackPanel();  
             Content = mainPanel;

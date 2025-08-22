@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown.Demo", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown", "AvaloniaHotMarkdown\AvaloniaHotMarkdown.csproj", "{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4A461026-8C99-4F01-A6D8-3D0CD977707A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A461026-8C99-4F01-A6D8-3D0CD977707A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A461026-8C99-4F01-A6D8-3D0CD977707A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A461026-8C99-4F01-A6D8-3D0CD977707A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A461026-8C99-4F01-A6D8-3D0CD977707A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
