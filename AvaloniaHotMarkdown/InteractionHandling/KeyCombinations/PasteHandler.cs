@@ -7,7 +7,7 @@ internal class PasteHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.V;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         if (!keyModifiers.HasFlag(KeyModifiers.Control))
             return;

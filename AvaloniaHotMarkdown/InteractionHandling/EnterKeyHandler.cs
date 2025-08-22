@@ -11,7 +11,7 @@ namespace AvaloniaHotMarkdown.InteractionHandling
     {
         public Key MainKey => Key.Enter;
 
-        public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+        public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
         {
             //previ|[ous line] <- substring
             var substring = actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X);

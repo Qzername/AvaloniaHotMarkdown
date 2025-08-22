@@ -41,6 +41,8 @@ namespace AvaloniaHotMarkdown
         List<AvaloniaBlock> presenters = null!;
         StackPanel mainPanel;
         IMarkdownParser markdownParser;
+
+        MemoryBank memoryBank;
         
         static HotMarkdownEditor()
         {
@@ -57,6 +59,7 @@ namespace AvaloniaHotMarkdown
             Content = mainPanel;
 
             markdownParser = new StandardMarkdownParser();
+            memoryBank = new MemoryBank();
 
             GenerateInteractions();
 

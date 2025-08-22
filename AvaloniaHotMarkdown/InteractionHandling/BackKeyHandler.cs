@@ -6,7 +6,7 @@ internal class BackKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Back;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         //do nothing if caret is at the beginning of the text
         if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0)

@@ -6,7 +6,7 @@ internal class EndKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.End;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         editor.CaretPositionData.X = actualText[editor.CaretPositionData.Y].Length;
 

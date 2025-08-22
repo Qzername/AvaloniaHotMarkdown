@@ -6,7 +6,7 @@ internal class RightKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Right;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         var caretPositionData = editor.CaretPositionData;
 

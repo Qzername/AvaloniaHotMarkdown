@@ -6,7 +6,7 @@ internal class DownKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Down;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         if (editor.CaretPositionData.Y != actualText.Count-1)
             editor.CaretPositionData.Y++;

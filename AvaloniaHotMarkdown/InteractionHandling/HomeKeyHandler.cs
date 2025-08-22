@@ -6,7 +6,7 @@ internal class HomeKeyHandler : IKeyInteractionHandler
 {
     public Key MainKey => Key.Home;
 
-    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText)
+    public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         editor.CaretPositionData.X = 0;
 
