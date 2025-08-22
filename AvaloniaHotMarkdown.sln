@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown.Demo", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown", "AvaloniaHotMarkdown\AvaloniaHotMarkdown.csproj", "{AAECCEC6-7481-4C8A-B4F9-7C75B6194164}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4A461026-8C99-4F01-A6D8-3D0CD977707A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaHotMarkdown.Tests", "AvaloniaHotMarkdown.Tests\AvaloniaHotMarkdown.Tests.csproj", "{4A461026-8C99-4F01-A6D8-3D0CD977707A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
