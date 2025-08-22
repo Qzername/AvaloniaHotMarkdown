@@ -80,6 +80,9 @@ namespace AvaloniaHotMarkdown
                 new TabKeyHandler(),
 
                 new SelectAllHandler(),
+                new CopyHandler(),
+                new PasteHandler(),
+                new CutHandler(),
             ];
 
             foreach (var interaction in interactionList)
@@ -102,9 +105,9 @@ namespace AvaloniaHotMarkdown
         {
             base.OnKeyDown(e);
 
-            if(e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
             {
-                if(SelectionPositionData.IsVisible == false)
+                if (SelectionPositionData.IsVisible == false)
                 {
                     SelectionPositionData.X = CaretPositionData.X;
                     SelectionPositionData.Y = CaretPositionData.Y;
@@ -112,12 +115,13 @@ namespace AvaloniaHotMarkdown
 
                 SelectionPositionData.IsVisible = true;
             }
+            else
+                SelectionPositionData.IsVisible = false;
 
             var oldText = Text;
 
             if (interactions.ContainsKey(e.Key))
                 interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText);
-
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();
