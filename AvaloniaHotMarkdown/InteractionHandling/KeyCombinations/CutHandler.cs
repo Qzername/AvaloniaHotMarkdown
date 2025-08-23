@@ -15,6 +15,9 @@ internal class CutHandler : IKeyInteractionHandler
         if (string.IsNullOrEmpty(editor.SelectedText))
             return;
 
+        if (!editor.SelectionPositionData.IsVisible)
+            return;
+
         var clipboard = TopLevel.GetTopLevel(editor)?.Clipboard;
 
         if (clipboard != null)
@@ -29,10 +32,8 @@ internal class CutHandler : IKeyInteractionHandler
         memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), editor.SelectedText);
 
         actualText[selectionStartY] = actualText[selectionStartY].Remove(selectionStartX);
-        actualText[selectionEndY] = actualText[selectionEndY].Remove(0, selectionEndX);
 
         for (int i = selectionEndY - 1; i >= selectionStartY + 1; i--)
             actualText.RemoveAt(i);
-
     }
 }
