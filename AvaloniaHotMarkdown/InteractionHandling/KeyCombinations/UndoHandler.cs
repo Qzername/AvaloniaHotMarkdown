@@ -22,8 +22,8 @@ internal class UndoHandler : IKeyInteractionHandler
 
         if (memory.OperationType == MemoryOperationType.Append)
         {
-            editor.Text = editor.Text.Remove(globalIndex, memory.Text.Length);
             editor.CaretPositionData = memory.Position;
+            editor.Text = editor.Text.Remove(globalIndex, memory.Text.Length);
         }
         else
         {

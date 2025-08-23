@@ -195,8 +195,7 @@ namespace AvaloniaHotMarkdown
                  * not the one that is currently under the pointer.
                  * this is a workaround to fix that.
                  */
-
-                var actualBlock = presenters.First(x => x.LineHandler.LineContainer.Bounds.Y + x.LineHandler.LineContainer.Bounds.Height > args.GetPosition(this).Y - Padding.Top);
+                var actualBlock = presenters.FirstOrDefault(x => x.LineHandler.LineContainer.Bounds.Y + x.LineHandler.LineContainer.Bounds.Height > args.GetPosition(this).Y - Padding.Top);
 
                 MoveCaretToPoint(actualBlock, args);
                 HandleSelection();
@@ -216,6 +215,9 @@ namespace AvaloniaHotMarkdown
 
         void MoveCaretToPoint(AvaloniaBlock block, PointerEventArgs args)
         {
+            if (block.LineHandler is null)
+                return;
+
             var lineHandler = block.LineHandler;
             lineHandler.MoveCaretToPoint(args);
 

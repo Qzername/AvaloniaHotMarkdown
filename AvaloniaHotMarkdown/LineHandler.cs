@@ -81,6 +81,9 @@ namespace AvaloniaHotMarkdown
 
             foreach (var presenter in presenters)
             {
+                if (string.IsNullOrWhiteSpace(presenter.Text))
+                    continue;
+
                 currentOffset += presenter.Text.Length;
 
                 if (currentOffset >= startSelection)
@@ -98,14 +101,10 @@ namespace AvaloniaHotMarkdown
                         break;
                     }
                     else
-                    {
                         selectedText += presenter.Text.Substring(selectionStart);
-                    }
                 }
                 else if (currentOffset > startSelection && currentOffset < endSelection)
-                {
                     selectedText += presenter.Text;
-                }
             }
 
             return selectedText;
