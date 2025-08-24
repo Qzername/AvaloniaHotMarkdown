@@ -148,8 +148,8 @@ namespace AvaloniaHotMarkdown
 
             var oldText = Text;
 
-            if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
+            if (e.Key == Key.LeftShift)
+                return;
 
             //handle selection
             if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
@@ -164,6 +164,10 @@ namespace AvaloniaHotMarkdown
             }
             else
                 SelectionPositionData.IsVisible = false;
+
+
+            if (interactions.ContainsKey(e.Key))
+                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

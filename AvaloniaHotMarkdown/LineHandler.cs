@@ -112,6 +112,7 @@ namespace AvaloniaHotMarkdown
         /// <returns>selected text</returns>
         public string ShowSelection(int startSelectionIndex, int endSelectionIndex)
         {
+            HideSelection();
             ShowLongText();
 
             int currentOffset = 0;
@@ -121,36 +122,28 @@ namespace AvaloniaHotMarkdown
             foreach (var presenterInfo in presentersInfos)
             {
                 var presenter = presenterInfo.Presenter;
+                var presenterText = presenterInfo.LongText;
 
-                if (string.IsNullOrWhiteSpace(presenter.Text))
+                if (string.IsNullOrWhiteSpace(presenterText))
                     continue;
 
-                currentOffset += presenter.Text.Length;
-
-                // Check if the current offset has reached or exceeded the start of the selection range
-                if (currentOffset >= startSelectionIndex)
+                //Fir[stSecondTh]ird
+                if(currentOffset + presenterText.Length > startSelectionIndex)
                 {
-                    // Calculate the starting index of the selection within the current presenter's text
-                    int selectionStart = startSelectionIndex - (currentOffset - presenter.Text.Length);
-                    presenter.SelectionStart = selectionStart; 
-                    presenter.InvalidateVisual();
+                    presenter.SelectionStart = startSelectionIndex - currentOffset;
 
-                    // Check if the current offset has also reached or exceeded the end of the selection range
-                    if (currentOffset >= endSelectionIndex)
-                    {
-                        // Calculate the ending index of the selection within the current presenter's text
-                        int selectionEnd = endSelectionIndex - (currentOffset - presenter.Text.Length);
-                        presenter.SelectionEnd = selectionEnd; // Set the selection end for the presenter
+                    if (currentOffset + presenterText.Length > endSelectionIndex)
+                        presenterInfo.Presenter.SelectionEnd = endSelectionIndex - currentOffset;
+                    else
+                        presenter.SelectionEnd = presenterText.Length;
 
-                        selectedText += presenter.Text.Substring(selectionStart, selectionEnd - selectionStart);
-                        break;
-                    }
-                    else // If the selection range extends beyond the current presenter, append the remaining text
-                        selectedText += presenter.Text.Substring(selectionStart);
+                    selectedText += presenterText.Substring(presenter.SelectionStart, presenter.SelectionEnd-presenter.SelectionStart);
                 }
-                // If the current offset is within the selection range but not at the boundaries
-                else if (currentOffset > startSelectionIndex && currentOffset < endSelectionIndex)
-                    selectedText += presenter.Text;
+
+                currentOffset += presenterText.Length;
+
+                if (currentOffset > endSelectionIndex)
+                    break;
             }
 
             return selectedText;
