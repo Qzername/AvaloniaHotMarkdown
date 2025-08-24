@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
-using AvaloniaHotMarkdown;
 
-namespace Tests;
+namespace AvaloniaHotMarkdown.Tests;
 
 public static class BasicWindowBuilder
 {

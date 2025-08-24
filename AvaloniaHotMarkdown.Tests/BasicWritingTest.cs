@@ -2,21 +2,18 @@
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
-using AvaloniaHotMarkdown;
 
-namespace Tests;
+namespace AvaloniaHotMarkdown.Tests;
 
-public class BasicWritingTest
+public class BasicWritingTest : BaseTest
 {
     [AvaloniaTest]
     public void Basic_Input()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
 
-        window.Show();
-
-        editor.Focus();
-        window.KeyTextInput("Hello World");
+        HandleTextInput("Hello World");
 
         Assert.That("Hello World", Is.EqualTo(editor.Text));
     }
@@ -25,20 +22,18 @@ public class BasicWritingTest
     public void Basic_Arrow_Movement()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
 
-        window.Show();
-        editor.Focus();
-
-        window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
-        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.None);
-        window.KeyPressQwerty(PhysicalKey.ArrowRight, RawInputModifiers.None);
-        window.KeyPressQwerty(PhysicalKey.ArrowDown, RawInputModifiers.None);
+        HandleKey(PhysicalKey.ArrowLeft);
+        HandleKey(PhysicalKey.ArrowUp);
+        HandleKey(PhysicalKey.ArrowRight);
+        HandleKey(PhysicalKey.ArrowDown);
 
         string inputText = "Hello World";
-        window.KeyTextInput(inputText);
+        HandleTextInput(inputText);
 
         for (int i = 0; i < 5; i++)
-            window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+            HandleKey(PhysicalKey.ArrowLeft);
 
         Assert.That(editor.CaretPositionData.X, Is.EqualTo(inputText.Length - 5));
     }
@@ -47,14 +42,13 @@ public class BasicWritingTest
     public void Multiline_Input()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
-        window.Show();
-        editor.Focus();
+        ActivateTarget(window, editor);
 
-        window.KeyTextInput("Hello World");
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyTextInput("This is a test");
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyTextInput("This is a third line");
+        HandleTextInput("Hello World");
+        Enter();
+        HandleTextInput("This is a test");
+        Enter();
+        HandleTextInput("This is a third line");
 
         string expectedText = "Hello World\nThis is a test\nThis is a third line";
 

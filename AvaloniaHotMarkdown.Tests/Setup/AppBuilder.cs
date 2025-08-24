@@ -1,11 +1,10 @@
 ﻿using Avalonia.Headless;
 using Avalonia;
-using Tests.Setup;
-using Avalonia.Controls;
+using AvaloniaHotMarkdown.Tests.Setup;
 
 [assembly: AvaloniaTestApplication(typeof(TestAppBuilder))]
 
-namespace Tests.Setup;
+namespace AvaloniaHotMarkdown.Tests.Setup;
 
 public class TestAppBuilder
 {

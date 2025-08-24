@@ -2,26 +2,23 @@
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
-using AvaloniaHotMarkdown;
 
-namespace Tests;
+namespace AvaloniaHotMarkdown.Tests;
 
-internal class SelectionTest
+internal class SelectionTest : BaseTest
 {
     [AvaloniaTest]
     public void Selection_OneLine()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
-        window.Show();
-        editor.Focus();
+        ActivateTarget(window, editor);
 
         string inputText = "Hello World";
-        window.KeyTextInput(inputText);
+        HandleTextInput(inputText);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(false));
         
-        window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
+        HandleKeySelection(PhysicalKey.ArrowLeft);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
         Assert.That(editor.SelectedText, Is.EqualTo("d"));
@@ -31,43 +28,36 @@ internal class SelectionTest
     public void Selection_MultiLine()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
 
-        window.Show();
-        editor.Focus();
-
-        window.KeyTextInput("Hello");
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyTextInput("World");
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyTextInput("Word");
+        HandleTextInput("Hello");
+        Enter();
+        HandleTextInput("World");
+        Enter();
+        HandleTextInput("Word");
 
         //Hello
         //World
         //Word|
-
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(false));
 
         //Hello
         //World
         //Wor|d
-        window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+
+        HandleKey(PhysicalKey.ArrowLeft);
 
         //Hello
         //Wor|[ld
         //Wor]d
-        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+        HandleKeySelection(PhysicalKey.ArrowUp);
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
         Assert.That(editor.SelectedText, Is.EqualTo("ld\nWor"));
 
         //Hel|[lo
         //World
         //Wor]d
-        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+        HandleKeySelection(PhysicalKey.ArrowUp);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
         Assert.That(editor.SelectedText, Is.EqualTo("lo\nWorld\nWor"));
@@ -77,30 +67,44 @@ internal class SelectionTest
     public void Selection_Empty()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
-        
-        window.Show();
-        editor.Focus();
+        ActivateTarget(window, editor);
 
-        window.KeyTextInput("Hello");
+        HandleTextInput("Hello");
 
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        Enter();
+        Enter();
 
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
-        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        HandleTextInput("World");
 
-        window.KeyTextInput("World");
-
-        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-
-        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
-
-        window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
-        window.KeyReleaseQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
+        HandleKeySelection(PhysicalKey.ArrowUp);
+        HandleKeySelection(PhysicalKey.ArrowUp);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
-        Assert.That(editor.SelectedText, Is.EqualTo("o\n\nWorld"));
+        Assert.That(editor.SelectedText, Is.EqualTo("Hello\n\nWorld"));
+    }
+
+    [AvaloniaTest]
+    public void Selection_List()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
+
+        HandleTextInput("- Item 1");
+        Enter();
+
+        // - Item 1
+        // - Item 2|
+        HandleTextInput("- Item 2");
+
+        // - Item 1|
+        // - Item 2
+        HandleKey(PhysicalKey.ArrowUp);
+
+        // - Item 1[\n
+        // - Item 2]|
+        HandleKeySelection(PhysicalKey.ArrowDown);
+
+        Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
+        Assert.That(editor.SelectedText, Is.EqualTo("\n- Item 2"));
     }
 }

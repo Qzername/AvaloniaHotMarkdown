@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Markup.Xaml;
 
-namespace Tests.Setup;
+namespace AvaloniaHotMarkdown.Tests.Setup;
 
 public partial class App : Application
 {
