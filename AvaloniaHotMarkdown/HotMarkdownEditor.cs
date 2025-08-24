@@ -201,8 +201,8 @@ namespace AvaloniaHotMarkdown
                 mainPanel.Children.Add(lineHandler.LineContainer);
             }
 
-            HandleCursor();
             HandleSelection();
+            HandleCursor();
         }
 
         bool inSelection = false;

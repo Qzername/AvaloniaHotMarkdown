@@ -72,4 +72,35 @@ internal class SelectionTest
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
         Assert.That(editor.SelectedText, Is.EqualTo("lo\nWorld\nWor"));
     }
+
+    [AvaloniaTest]
+    public void Selection_Empty()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        
+        window.Show();
+        editor.Focus();
+
+        window.KeyTextInput("Hello");
+
+        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+
+        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+
+        window.KeyTextInput("World");
+
+        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+
+        window.KeyPressQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+        window.KeyReleaseQwerty(PhysicalKey.ArrowUp, RawInputModifiers.Shift);
+
+        window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
+        window.KeyReleaseQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.Shift);
+
+        Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
+        Assert.That(editor.SelectedText, Is.EqualTo("o\n\nWorld"));
+    }
 }
