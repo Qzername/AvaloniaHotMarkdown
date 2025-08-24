@@ -18,7 +18,7 @@ internal class UndoHandler : IKeyInteractionHandler
         
         var memory = memoryNullable.Value;
 
-        int globalIndex = GetGlobalIndexFromLines(memory.Position, actualText);
+        int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(memory.Position, actualText);
 
         if (memory.OperationType == MemoryOperationType.Append)
         {
@@ -39,17 +39,5 @@ internal class UndoHandler : IKeyInteractionHandler
             else
                 editor.CaretPositionData.X += memory.Text.Length;
         }
-    }
-
-    int GetGlobalIndexFromLines(TextCursor cursor, List<string> actualText)
-    {
-        int index = 0;
-
-        for (int i = 0; i < cursor.Y; i++)
-            index += actualText[i].Length + 1; // +1 for newline character
-
-        index += cursor.X;
-
-        return index;
     }
 }

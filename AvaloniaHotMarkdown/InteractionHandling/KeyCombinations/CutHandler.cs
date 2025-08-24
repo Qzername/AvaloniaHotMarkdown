@@ -15,25 +15,11 @@ internal class CutHandler : IKeyInteractionHandler
         if (string.IsNullOrEmpty(editor.SelectedText))
             return;
 
-        if (!editor.SelectionPositionData.IsVisible)
-            return;
-
         var clipboard = TopLevel.GetTopLevel(editor)?.Clipboard;
 
         if (clipboard != null)
             clipboard.SetTextAsync(editor.SelectedText);
 
-        int selectionStartX = Math.Min(editor.CaretPositionData.X, editor.SelectionPositionData.X);
-        int selectionEndX = Math.Max(editor.CaretPositionData.X, editor.SelectionPositionData.X);
-
-        int selectionStartY = Math.Min(editor.CaretPositionData.Y, editor.SelectionPositionData.Y);
-        int selectionEndY = Math.Max(editor.CaretPositionData.Y, editor.SelectionPositionData.Y);
-
-        memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), editor.SelectedText);
-
-        actualText[selectionStartY] = actualText[selectionStartY].Remove(selectionStartX);
-
-        for (int i = selectionEndY - 1; i >= selectionStartY + 1; i--)
-            actualText.RemoveAt(i);
+        editor.ReplaceSelectionWith(string.Empty);
     }
 }

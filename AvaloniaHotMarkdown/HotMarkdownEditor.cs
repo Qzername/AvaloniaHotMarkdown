@@ -4,9 +4,8 @@ using Avalonia.Input;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia;
 using AvaloniaHotMarkdown.InteractionHandling;
-using System.Diagnostics;
-using Avalonia.Controls.Presenters;
 using AvaloniaHotMarkdown.InteractionHandling.KeyCombinations;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown
 {
@@ -67,6 +66,38 @@ namespace AvaloniaHotMarkdown
             TextInput += OnTextInput;
         }
 
+        public void ReplaceSelectionWith(string text)
+        {
+            int selectionStartX = Math.Min(CaretPositionData.X, SelectionPositionData.X);
+            int selectionEndX = Math.Max(CaretPositionData.X, SelectionPositionData.X);
+
+            int selectionStartY = Math.Min(CaretPositionData.Y, SelectionPositionData.Y);
+            int selectionEndY = Math.Max(CaretPositionData.Y, SelectionPositionData.Y);
+
+            memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), SelectedText);
+
+            CaretPositionData = new TextCursor(selectionStartX, selectionStartY);
+
+            if (selectionStartY == selectionEndY)
+                _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX, selectionEndX - selectionStartX);
+            else
+            {
+                _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
+                _actualText[selectionEndY] = _actualText[selectionEndY].Remove(0, selectionEndX);
+
+                for (int i = selectionEndY - 1; i >= selectionStartY + 1; i--)
+                    _actualText.RemoveAt(i);
+            }
+
+            SelectionPositionData.IsVisible = false;
+
+            //insert text
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            Text = Text.Insert(IKeyInteractionHandler.GetGlobalIndexFromLines(CaretPositionData, _actualText), text);
+        }
+
         void GenerateInteractions()
         {
             interactions = new Dictionary<Key, IKeyInteractionHandler>();
@@ -98,6 +129,9 @@ namespace AvaloniaHotMarkdown
         {
             var oldText = Text;
 
+            if (SelectionPositionData.IsVisible)
+                ReplaceSelectionWith(string.Empty);
+
             memoryBank.Append(CaretPositionData, e.Text!);
 
             _actualText[CaretPositionData.Y] = _actualText[CaretPositionData.Y].Insert(CaretPositionData.X, e.Text!);
@@ -112,6 +146,12 @@ namespace AvaloniaHotMarkdown
         {
             base.OnKeyDown(e);
 
+            var oldText = Text;
+
+            if (interactions.ContainsKey(e.Key))
+                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
+
+            //handle selection
             if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
             {
                 if (SelectionPositionData.IsVisible == false)
@@ -124,11 +164,6 @@ namespace AvaloniaHotMarkdown
             }
             else
                 SelectionPositionData.IsVisible = false;
-
-            var oldText = Text;
-
-            if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

@@ -22,7 +22,13 @@ internal class PasteHandler : IKeyInteractionHandler
             {
                 memoryBank.Append(editor.CaretPositionData, text.Result);
 
-                editor.Text = editor.Text.Insert(editor.CaretPositionData.X, text.Result);
+                if (editor.SelectionPositionData.IsVisible)
+                    editor.ReplaceSelectionWith(text.Result);
+                else
+                {
+                    int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
+                    editor.Text = editor.Text.Insert(globalIndex, text.Result);
+                }
             }
         }
     }

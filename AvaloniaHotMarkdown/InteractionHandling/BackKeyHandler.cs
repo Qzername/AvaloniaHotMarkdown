@@ -12,7 +12,9 @@ internal class BackKeyHandler : IKeyInteractionHandler
         if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0)
             return;
 
-        if (editor.CaretPositionData.X == 0)
+        if (editor.SelectionPositionData.IsVisible)
+            editor.ReplaceSelectionWith(string.Empty);
+        else if (editor.CaretPositionData.X == 0)
         {
             memoryBank.Shorten(new TextCursor(editor.CaretPositionData.X - 1, editor.CaretPositionData.Y), '\n'.ToString());
 
