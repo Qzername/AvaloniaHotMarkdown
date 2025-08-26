@@ -1,13 +1,10 @@
 # AvaloniaHotMarkdown
 
-A work-in-progress project of an Obsidian-inspired live-preview Markdown editor for Avalonia.
+AvaloniaHotMarkdown is an Obsidian-inspired live-preview Markdown editor for Avalonia.
 
-This was made for my private project that maybe I will release later on. For this reason this project is heavily incomplete as I don't need anything special.
+See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 [![Nuget.AvaloniaHotMarkdown](https://img.shields.io/nuget/v/AvaloniaHotMarkdown?label=Nuget&style=flat-square)](https://www.nuget.org/packages/AvaloniaHotMarkdown/)
-
-> [!WARNING]
-> This project is still a work in progress. Expect frequent changes between versions, bugs, and missing features.
 
 ![FIANL](https://github.com/user-attachments/assets/7732a4f6-86f7-48f6-8eb2-a4b88a04fdf2)
 
@@ -17,13 +14,9 @@ This was made for my private project that maybe I will release later on. For thi
 - Striketrough, bold, underline and italic texts
 
 ## Missing features that will be added in future:
-- Styling
+- More styling options
 - Adding custom objects
 
-### Text editing:
-- Cut, copy, paste, and other shortcuts
-- Context panel for shortcuts mentioned earlier
-- Selections
 ### Markdown objects:
 - Ordered list
 - Blockquotes
