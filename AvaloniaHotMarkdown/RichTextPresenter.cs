@@ -36,6 +36,18 @@ public class RichTextPresenter : Control
         set => _textPresenter.CaretBrush = value;
     }
 
+    public IBrush? SelectionBrush
+    {
+        get => _textPresenter.SelectionBrush;
+        set => _textPresenter.SelectionBrush = value;
+    }
+
+    public IBrush? Foreground
+    {
+        get => _textPresenter.Foreground;
+        set => _textPresenter.Foreground = value;
+    }
+
     public int CaretIndex
     {
         get => _textPresenter.CaretIndex;
@@ -52,12 +64,6 @@ public class RichTextPresenter : Control
     {
         get => _textPresenter.FontStyle;
         set => _textPresenter.FontStyle = value;
-    }
-
-    public IBrush? SelectionBrush
-    {
-        get => _textPresenter.SelectionBrush;
-        set => _textPresenter.SelectionBrush = value;
     }
 
     public int SelectionStart
@@ -79,7 +85,6 @@ public class RichTextPresenter : Control
     {
         _textPresenter = new()
         {
-            Foreground = Brushes.White,
             Background = Brushes.Transparent,
         };
     }
@@ -93,7 +98,7 @@ public class RichTextPresenter : Control
         _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
         
-        var pen = new Pen(Brushes.Red, 2);
+        var pen = new Pen(CaretBrush, 2);
 
         if(ShowUnderline)
             context.DrawLine(pen, new Point(0, rightDownCorner.Y), rightDownCorner);

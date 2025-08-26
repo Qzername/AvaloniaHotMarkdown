@@ -11,11 +11,22 @@ namespace AvaloniaHotMarkdown
 {
     public class HotMarkdownEditor : ContentControl
     {
+        public static readonly DirectProperty<HotMarkdownEditor, IBrush> CaretBrushProperty =
+            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(CaretBrush), (hme) => hme.CaretBrush, (hme, b) => hme.CaretBrush = b);
+        public IBrush CaretBrush { get; set; } = Brushes.White;
+        
+        public static readonly DirectProperty<HotMarkdownEditor, IBrush> TextForegroundProperty =
+            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(Foreground), (hme) => hme.Foreground, (hme, b) => hme.Foreground = b);
+        public IBrush TextForeground { get; set; } = Brushes.White;
+        
+        public static readonly DirectProperty<HotMarkdownEditor, IBrush> SelectionBrushProperty =
+            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(SelectionBrush), (hme) => hme.SelectionBrush, (hme, b) => hme.SelectionBrush = b);
+        public IBrush SelectionBrush { get; set; } = Brushes.LightBlue;
+
         public static readonly DirectProperty<HotMarkdownEditor, string> TextProperty =
            AvaloniaProperty.RegisterDirect<HotMarkdownEditor, string>(nameof(Text), (hme) => hme.Text, (hme, s) => hme.Text = s, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
         List<string> _actualText = [string.Empty];
-        Dictionary<Key, IKeyInteractionHandler> interactions;
 
         public string Text
         {
@@ -32,6 +43,7 @@ namespace AvaloniaHotMarkdown
                 InvalidateVisual();
             }
         }
+        
         string selectedText = string.Empty;
         public string SelectedText => selectedText;
 
@@ -39,6 +51,7 @@ namespace AvaloniaHotMarkdown
         public TextCursor SelectionPositionData;
 
         List<AvaloniaBlock> presenters = null!;
+        Dictionary<Key, IKeyInteractionHandler> interactions;
         StackPanel mainPanel;
         IMarkdownParser markdownParser;
 
@@ -188,7 +201,12 @@ namespace AvaloniaHotMarkdown
                 if (block.StartIndex == 0 && block.EndIndex == 0)
                     continue;
 
-                var lineHandler = new LineHandler(block);
+                var lineHandler = new LineHandler(block)
+                {
+                    CaretBrush = CaretBrush,
+                    Foreground = TextForeground,
+                    SelectionBrush = SelectionBrush,
+                };
 
                 var avaloniaBlock = new AvaloniaBlock()
                 {
@@ -276,7 +294,7 @@ namespace AvaloniaHotMarkdown
             }
 
             var lineHandler = presenters[CaretPositionData.Y].LineHandler;
-            lineHandler.CaretBrush = Brushes.White;
+            lineHandler.CaretBrush = CaretBrush;
             lineHandler.CaretIndex = CaretPositionData.X;
             lineHandler.ShowCaret();
             lineHandler.InvalidateVisuals();

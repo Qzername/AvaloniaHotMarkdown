@@ -3,9 +3,6 @@ using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AvaloniaHotMarkdown
 {
@@ -20,6 +17,8 @@ namespace AvaloniaHotMarkdown
 
         public DockPanel LineContainer { get; private set; }
         public IBrush? CaretBrush { get; set; } = Brushes.White;
+        public IBrush? Foreground { get; set; } = Brushes.LightBlue;
+        public IBrush? SelectionBrush { get; set; } = Brushes.White;
         public int CaretIndex { get; set; } = 0;
 
         readonly Block _currentBlock;
@@ -90,8 +89,6 @@ namespace AvaloniaHotMarkdown
 
                 if (CaretIndex <= indexText + currentLength)
                 {
-                    presenter.CaretBrush = Brushes.Red;
-
                     presenter.CaretIndex = CaretIndex - indexText;
                     presenter.ShowCaret();
                     break;
@@ -250,7 +247,9 @@ namespace AvaloniaHotMarkdown
             {
                 Text = string.Empty,
                 FontSize = _currentBlock.FontSize,
-                SelectionBrush = Brushes.LightBlue,
+                SelectionBrush = SelectionBrush,
+                CaretBrush = CaretBrush,
+                Foreground = Foreground,
             };
 
             textPresenter.PointerMoved += TextPresenter_PointerMoved;
