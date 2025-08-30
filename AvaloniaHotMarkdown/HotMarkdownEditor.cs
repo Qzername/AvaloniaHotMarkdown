@@ -306,12 +306,12 @@ namespace AvaloniaHotMarkdown
         void HandleReleasedBlock(AvaloniaBlock block, PointerEventArgs args)
         {
             if(!inSelection)
-            {
                 MoveCaretToPoint(block, args);
-                HandleCursor();
-            }
 
             inSelection = false;
+
+            HandleSelection();
+            HandleCursor();
         }
 
         void MoveCaretToPoint(AvaloniaBlock block, PointerEventArgs args)
@@ -330,7 +330,7 @@ namespace AvaloniaHotMarkdown
         {
             if(presenters.Count == 0)
                 return;
-           
+
             foreach (var avaloniaBlock in presenters)
             {
                 avaloniaBlock.LineHandler.HideCaret();
