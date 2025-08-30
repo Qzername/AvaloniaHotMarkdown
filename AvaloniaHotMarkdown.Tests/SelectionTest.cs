@@ -107,4 +107,22 @@ internal class SelectionTest : BaseTest
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
         Assert.That(editor.SelectedText, Is.EqualTo("\n- Item 2"));
     }
+
+    [AvaloniaTest]
+    public void Selection_Remove()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
+
+        HandleTextInput("Hello World");
+
+        for(int i = 0; i < 5; i++) 
+            HandleKeySelection(PhysicalKey.ArrowLeft);
+
+        Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
+
+        HandleKey(PhysicalKey.Backspace);
+
+        Assert.That(editor.Text, Is.EqualTo("Hello "));
+    }
 }

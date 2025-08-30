@@ -164,13 +164,17 @@ namespace AvaloniaHotMarkdown
             if (e.Key == Key.LeftShift)
                 return;
 
-            //handle selection
+            TextCursor oldPosition = CaretPositionData;
+
+            if (interactions.ContainsKey(e.Key))
+                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
+
             if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
             {
                 if (SelectionPositionData.IsVisible == false)
                 {
-                    SelectionPositionData.X = CaretPositionData.X;
-                    SelectionPositionData.Y = CaretPositionData.Y;
+                    SelectionPositionData.X = oldPosition.X;
+                    SelectionPositionData.Y = oldPosition.Y;
                 }
 
                 SelectionPositionData.IsVisible = true;
@@ -178,9 +182,6 @@ namespace AvaloniaHotMarkdown
             else
                 SelectionPositionData.IsVisible = false;
 
-
-            if (interactions.ContainsKey(e.Key))
-                interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();
@@ -308,6 +309,7 @@ namespace AvaloniaHotMarkdown
             foreach (var presenter in presenters)
             {
                 presenter.LineHandler.HideSelection();
+                presenter.LineHandler.HideCaret();
                 presenter.LineHandler.InvalidateVisuals();
             }
 
