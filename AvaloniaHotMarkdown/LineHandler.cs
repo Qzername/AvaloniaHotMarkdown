@@ -17,8 +17,8 @@ namespace AvaloniaHotMarkdown
 
         public DockPanel LineContainer { get; private set; }
         public IBrush? CaretBrush { get; set; } = Brushes.White;
-        public IBrush? Foreground { get; set; } = Brushes.LightBlue;
-        public IBrush? SelectionBrush { get; set; } = Brushes.White;
+        public IBrush? Foreground { get; set; } = Brushes.White;
+        public IBrush? SelectionBrush { get; set; } = Brushes.LightBlue;
         public int CaretIndex { get; set; } = 0;
 
         readonly Block _currentBlock;
