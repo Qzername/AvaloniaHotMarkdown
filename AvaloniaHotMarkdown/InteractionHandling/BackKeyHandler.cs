@@ -10,10 +10,12 @@ internal class BackKeyHandler : IKeyInteractionHandler
     public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
         //do nothing if caret is at the beginning of the text
-        if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0)
+        //be sure though that the we are not selecting something
+        if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0 
+            && !editor.SelectionPositionData.IsVisible)
             return;
 
-        if (editor.SelectionPositionData.IsVisible)
+        if (editor.SelectionPositionData.IsVisible || editor.SelectionPositionData.PreviousIsVisible)
             editor.ReplaceSelectionWith(string.Empty);
         else if (editor.CaretPositionData.X == 0)
         {

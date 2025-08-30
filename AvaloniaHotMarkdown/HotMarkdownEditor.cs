@@ -81,11 +81,36 @@ namespace AvaloniaHotMarkdown
 
         public void ReplaceSelectionWith(string text)
         {
-            int selectionStartX = Math.Min(CaretPositionData.X, SelectionPositionData.X);
-            int selectionEndX = Math.Max(CaretPositionData.X, SelectionPositionData.X);
+            int selectionStartX = 0, selectionEndX = 0;
+            int selectionStartY = 0, selectionEndY = 0;
 
-            int selectionStartY = Math.Min(CaretPositionData.Y, SelectionPositionData.Y);
-            int selectionEndY = Math.Max(CaretPositionData.Y, SelectionPositionData.Y);
+            //selection is to the left
+            if (CaretPositionData.Y < SelectionPositionData.Y)
+            {
+                selectionStartX = CaretPositionData.X;
+                selectionStartY = CaretPositionData.Y;
+                
+                selectionEndX = SelectionPositionData.X;
+                selectionEndY = SelectionPositionData.Y;
+            }
+            //selection is to the right
+            else if(CaretPositionData.Y > SelectionPositionData.Y)
+            {
+                selectionStartX = SelectionPositionData.X;
+                selectionStartY = SelectionPositionData.Y;
+
+                selectionEndX = CaretPositionData.X;
+                selectionEndY = CaretPositionData.Y;
+            }
+            //we are on the same line
+            else
+            {
+                selectionStartY = CaretPositionData.Y;
+                selectionEndY = CaretPositionData.Y;
+
+                selectionStartX = Math.Min(CaretPositionData.X, SelectionPositionData.X);
+                selectionEndX = Math.Max(CaretPositionData.X, SelectionPositionData.X);
+            }
 
             memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), SelectedText);
 
@@ -98,6 +123,10 @@ namespace AvaloniaHotMarkdown
                 _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
                 _actualText[selectionEndY] = _actualText[selectionEndY].Remove(0, selectionEndX);
 
+                //add remaning contents of last selected line to the first selected line and remove it
+                _actualText[selectionStartY] += _actualText[selectionEndY];
+                _actualText.RemoveAt(selectionEndY);
+
                 for (int i = selectionEndY - 1; i >= selectionStartY + 1; i--)
                     _actualText.RemoveAt(i);
             }
@@ -109,6 +138,16 @@ namespace AvaloniaHotMarkdown
                 return;
 
             Text = Text.Insert(IKeyInteractionHandler.GetGlobalIndexFromLines(CaretPositionData, _actualText), text);
+
+            var lines = text.Split('\n');
+
+            if (lines.Length == 1)
+                CaretPositionData.X += lines[0].Length;
+            else
+            {
+                CaretPositionData.Y += lines.Length - 1;
+                CaretPositionData.X = lines[^1].Length;
+            }
         }
 
         void GenerateInteractions()
@@ -142,8 +181,11 @@ namespace AvaloniaHotMarkdown
         {
             var oldText = Text;
 
-            if (SelectionPositionData.IsVisible)
+            //OnKeyDown will be called first and change SelectionPositionData.IsVisible to false
+            if (SelectionPositionData.PreviousIsVisible || SelectionPositionData.IsVisible)
                 ReplaceSelectionWith(string.Empty);
+
+            SelectionPositionData.IsVisible = false;
 
             memoryBank.Append(CaretPositionData, e.Text!);
 
@@ -161,7 +203,7 @@ namespace AvaloniaHotMarkdown
 
             var oldText = Text;
 
-            if (e.Key == Key.LeftShift)
+            if (e.Key == Key.LeftShift || e.Key == Key.LeftCtrl)
                 return;
 
             TextCursor oldPosition = CaretPositionData;
@@ -177,11 +219,12 @@ namespace AvaloniaHotMarkdown
                     SelectionPositionData.Y = oldPosition.Y;
                 }
 
-                SelectionPositionData.IsVisible = true;
+                //check if beginning of the selected text wasnt removed
+                if(_actualText.Count > oldPosition.Y && _actualText[oldPosition.Y].Length >= oldPosition.X)
+                    SelectionPositionData.IsVisible = true;
             }
             else
                 SelectionPositionData.IsVisible = false;
-
 
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();

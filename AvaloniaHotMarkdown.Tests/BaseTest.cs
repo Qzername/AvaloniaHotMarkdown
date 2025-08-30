@@ -19,10 +19,10 @@ public abstract class BaseTest
     /// <summary>
     /// press the key and release it
     /// </summary>
-    protected void HandleKey(PhysicalKey key)
+    protected void HandleKey(PhysicalKey key, RawInputModifiers modifiers = RawInputModifiers.None)
     {
-        _currentTarget.KeyPressQwerty(key, RawInputModifiers.None);
-        _currentTarget.KeyReleaseQwerty(key, RawInputModifiers.None);
+        _currentTarget.KeyPressQwerty(key, modifiers);
+        _currentTarget.KeyReleaseQwerty(key, modifiers);
     }
 
     /// <summary>
@@ -47,4 +47,30 @@ public abstract class BaseTest
     /// Handle text input by sending a string to the current target.
     /// </summary>
     protected void HandleTextInput(string text) => _currentTarget.KeyTextInput(text);
+
+    /// <summary>
+    /// Insert text into the clipboard of the current target.
+    /// </summary>
+    protected void InsertIntoClipboard(string text)
+    {
+        _currentTarget.Clipboard!.SetTextAsync(text);
+    }
+
+    protected void Copy()
+    {
+        _currentTarget.KeyPressQwerty(PhysicalKey.C, RawInputModifiers.Control);
+        _currentTarget.KeyReleaseQwerty(PhysicalKey.C, RawInputModifiers.Control);
+    }
+
+    protected void Cut()
+    {
+        _currentTarget.KeyPressQwerty(PhysicalKey.X, RawInputModifiers.Control);
+        _currentTarget.KeyReleaseQwerty(PhysicalKey.X, RawInputModifiers.Control);
+    }
+
+    protected void Paste()
+    {
+        _currentTarget.KeyPressQwerty(PhysicalKey.V, RawInputModifiers.Control);
+        _currentTarget.KeyReleaseQwerty(PhysicalKey.V, RawInputModifiers.Control);
+    }
 }

@@ -14,21 +14,31 @@ internal class PasteHandler : IKeyInteractionHandler
 
         var clipboard = TopLevel.GetTopLevel(editor)?.Clipboard;
 
-        if (clipboard != null)
+        if (clipboard is null)
+            return;
+
+        var text = clipboard.GetTextAsync().Result!.Replace("\r\n", "\n");
+
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        memoryBank.Append(editor.CaretPositionData, text);
+
+        if (editor.SelectionPositionData.IsVisible)
+            editor.ReplaceSelectionWith(text);
+        else
         {
-            var text = clipboard.GetTextAsync();
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
+            editor.Text = editor.Text.Insert(globalIndex, text);
 
-            if (!string.IsNullOrEmpty(text.Result))
+            var lines = text.Split('\n');
+
+            if (lines.Length == 1)
+                editor.CaretPositionData.X += lines[0].Length;
+            else
             {
-                memoryBank.Append(editor.CaretPositionData, text.Result);
-
-                if (editor.SelectionPositionData.IsVisible)
-                    editor.ReplaceSelectionWith(text.Result);
-                else
-                {
-                    int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
-                    editor.Text = editor.Text.Insert(globalIndex, text.Result);
-                }
+                editor.CaretPositionData.Y += lines.Length - 1;
+                editor.CaretPositionData.X = lines[^1].Length;
             }
         }
     }

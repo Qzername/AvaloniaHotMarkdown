@@ -8,11 +8,13 @@ internal class DeleteKeyHandler : IKeyInteractionHandler
 
     public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
+        if (keyModifiers.HasFlag(KeyModifiers.Shift))
+            return;
+
         var caretPositionData = editor.CaretPositionData;
 
         if (caretPositionData.X == actualText[caretPositionData.Y].Length && caretPositionData.Y == actualText.Count - 1)
             return;
-
 
         if (caretPositionData.X == actualText[caretPositionData.Y].Length)
         {
@@ -22,11 +24,7 @@ internal class DeleteKeyHandler : IKeyInteractionHandler
             actualText.RemoveAt(caretPositionData.Y + 1);
         }
         else //in other case remove just next character
-        {
-            memoryBank.Shorten(editor.CaretPositionData, actualText[editor.CaretPositionData.Y][editor.CaretPositionData.X+1].ToString());
-
             actualText[caretPositionData.Y] = actualText[caretPositionData.Y].Remove(caretPositionData.X, 1);
-        }
     
         editor.CaretPositionData = caretPositionData;
     }

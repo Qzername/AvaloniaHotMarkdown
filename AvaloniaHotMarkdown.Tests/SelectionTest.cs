@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 
@@ -17,7 +16,7 @@ internal class SelectionTest : BaseTest
         HandleTextInput(inputText);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(false));
-        
+
         HandleKeySelection(PhysicalKey.ArrowLeft);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
@@ -109,14 +108,14 @@ internal class SelectionTest : BaseTest
     }
 
     [AvaloniaTest]
-    public void Selection_Remove()
+    public void Selection_Remove_SingleLine()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
         ActivateTarget(window, editor);
 
         HandleTextInput("Hello World");
 
-        for(int i = 0; i < 5; i++) 
+        for (int i = 0; i < 5; i++)
             HandleKeySelection(PhysicalKey.ArrowLeft);
 
         Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
@@ -124,5 +123,47 @@ internal class SelectionTest : BaseTest
         HandleKey(PhysicalKey.Backspace);
 
         Assert.That(editor.Text, Is.EqualTo("Hello "));
+    }
+
+    [AvaloniaTest]
+    public void Selection_Remove_Multiline()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
+
+        Enter();
+        HandleTextInput(" - Item 1");
+        Enter();
+        HandleTextInput(" - Item 2");
+        Enter();
+
+        HandleKeySelection(PhysicalKey.ArrowUp);
+        HandleKeySelection(PhysicalKey.ArrowUp);
+        HandleKeySelection(PhysicalKey.ArrowUp);
+
+        //we are at the start of the text
+        Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
+
+        HandleKey(PhysicalKey.Backspace);
+
+        Assert.That(editor.Text, Is.EqualTo(string.Empty));
+    }
+
+    [AvaloniaTest]
+    public void Selection_Replace()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
+
+        HandleTextInput("Hello World");
+
+        for (int i = 0; i < 5; i++)
+            HandleKeySelection(PhysicalKey.ArrowLeft);
+
+        Assert.That(editor.SelectionPositionData.IsVisible, Is.EqualTo(true));
+
+        HandleTextInput("a");
+
+        Assert.That(editor.Text, Is.EqualTo("Hello a"));
     }
 }
