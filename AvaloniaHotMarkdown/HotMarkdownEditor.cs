@@ -81,6 +81,10 @@ namespace AvaloniaHotMarkdown
 
         public void ReplaceSelectionWith(string text)
         {
+            if (string.IsNullOrEmpty(selectedText) || 
+                (CaretPositionData.X == SelectionPositionData.X && CaretPositionData.Y == SelectionPositionData.Y))
+                return;
+
             int selectionStartX = 0, selectionEndX = 0;
             int selectionStartY = 0, selectionEndY = 0;
 
@@ -188,6 +192,10 @@ namespace AvaloniaHotMarkdown
             SelectionPositionData.IsVisible = false;
 
             memoryBank.Append(CaretPositionData, e.Text!);
+
+
+            if (_actualText[CaretPositionData.Y].Length < CaretPositionData.X)
+                CaretPositionData.X = _actualText[CaretPositionData.Y].Length;
 
             _actualText[CaretPositionData.Y] = _actualText[CaretPositionData.Y].Insert(CaretPositionData.X, e.Text!);
             CaretPositionData.X+=e.Text!.Length;
