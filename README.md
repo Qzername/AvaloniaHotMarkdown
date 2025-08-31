@@ -15,7 +15,9 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 ## Missing features that will be added in future:
 - More styling options
-- Adding custom objects
+- Custom objects support
+- Custom key combination support
+- Android support
 
 ### Markdown objects:
 - Ordered list
@@ -28,3 +30,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Highlight
 - Subscript
 - Superscript
+
+## Todo:
+- Better guide on installing the library
+- Website where anyone could check out this library
