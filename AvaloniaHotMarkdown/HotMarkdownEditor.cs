@@ -135,8 +135,11 @@ namespace AvaloniaHotMarkdown
                 _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX, selectionEndX - selectionStartX);
             else
             {
-                _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
-                _actualText[selectionEndY] = _actualText[selectionEndY].Remove(0, selectionEndX);
+                if(_actualText[selectionStartY].Length> 0 )
+                   _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
+    
+                if(_actualText[selectionEndY].Length>0)
+                    _actualText[selectionEndY] = _actualText[selectionEndY].Remove(0, selectionEndX);
 
                 //add remaning contents of last selected line to the first selected line and remove it
                 _actualText[selectionStartY] += _actualText[selectionEndY];
@@ -147,6 +150,8 @@ namespace AvaloniaHotMarkdown
             }
 
             _selectionPositionData.IsVisible = false;
+
+            SelectionPositionData = new TextCursor(CaretPositionData.X, CaretPositionData.Y, false);
 
             //insert text
             if (string.IsNullOrEmpty(text))

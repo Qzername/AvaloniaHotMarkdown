@@ -27,6 +27,10 @@ internal class UndoHandler : IKeyInteractionHandler
         }
         else
         {
+            //bugfix - first line empty
+            if (editor.Text.Length == 0)
+                globalIndex = 0;
+
             editor.Text = editor.Text.Insert(globalIndex, memory.Text);
 
             var splited = memory.Text.Split('\n');
