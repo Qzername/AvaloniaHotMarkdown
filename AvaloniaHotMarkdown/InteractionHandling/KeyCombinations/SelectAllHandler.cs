@@ -11,9 +11,13 @@ internal class SelectAllHandler : IKeyInteractionHandler
         if (!keyModifiers.HasFlag(KeyModifiers.Control))
             return;
 
-        editor.SelectionPositionData.X = 0;
-        editor.SelectionPositionData.Y = 0;
-        editor.SelectionPositionData.IsVisible = true;
+        var selectionPositionData = editor.SelectionPositionData;
+
+        selectionPositionData.X = 0;
+        selectionPositionData.Y = 0;
+        selectionPositionData.IsVisible = true;
+
+        editor.SelectionPositionData = selectionPositionData;
 
         editor.CaretPositionData.X = actualText[^1].Length;
         editor.CaretPositionData.Y = actualText.Count - 1;

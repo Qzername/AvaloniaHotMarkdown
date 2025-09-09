@@ -48,7 +48,18 @@ namespace AvaloniaHotMarkdown
         public string SelectedText => selectedText;
 
         public TextCursor CaretPositionData;
-        public TextCursor SelectionPositionData;
+        
+        bool isSelectionPositionDataDirty = false;
+        TextCursor _selectionPositionData;
+        public TextCursor SelectionPositionData
+        {
+            get => _selectionPositionData;
+            set 
+            {
+                isSelectionPositionDataDirty = true;
+                _selectionPositionData = value; 
+            }
+        }
 
         List<AvaloniaBlock> presenters = null!;
         Dictionary<Key, IKeyInteractionHandler> interactions;
@@ -135,7 +146,7 @@ namespace AvaloniaHotMarkdown
                     _actualText.RemoveAt(i);
             }
 
-            SelectionPositionData.IsVisible = false;
+            _selectionPositionData.IsVisible = false;
 
             //insert text
             if (string.IsNullOrEmpty(text))
@@ -189,7 +200,7 @@ namespace AvaloniaHotMarkdown
             if (SelectionPositionData.PreviousIsVisible || SelectionPositionData.IsVisible)
                 ReplaceSelectionWith(string.Empty);
 
-            SelectionPositionData.IsVisible = false;
+            _selectionPositionData.IsVisible = false;
 
             memoryBank.Append(CaretPositionData, e.Text!);
 
@@ -214,26 +225,34 @@ namespace AvaloniaHotMarkdown
             if (e.Key == Key.LeftShift || e.Key == Key.LeftCtrl)
                 return;
 
-            TextCursor oldPosition = CaretPositionData;
+            isSelectionPositionDataDirty = false;
+
+            TextCursor oldCaretCursor = CaretPositionData;
+            TextCursor copy = SelectionPositionData;
 
             if (interactions.ContainsKey(e.Key))
                 interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
-            if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            if(!isSelectionPositionDataDirty)
             {
-                if (SelectionPositionData.IsVisible == false)
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                 {
-                    SelectionPositionData.X = oldPosition.X;
-                    SelectionPositionData.Y = oldPosition.Y;
+                    if (!SelectionPositionData.IsVisible)
+                    {
+                        copy.X = oldCaretCursor.X;
+                        copy.Y = oldCaretCursor.Y;
+                    }
+
+                    //check if beginning of the selected text wasnt removed
+                    if (_actualText.Count > oldCaretCursor.Y && _actualText[oldCaretCursor.Y].Length >= oldCaretCursor.X)
+                        copy.IsVisible = true;
                 }
+                else
+                    copy.IsVisible = false;
 
-                //check if beginning of the selected text wasnt removed
-                if(_actualText.Count > oldPosition.Y && _actualText[oldPosition.Y].Length >= oldPosition.X)
-                    SelectionPositionData.IsVisible = true;
+                SelectionPositionData = copy;
             }
-            else
-                SelectionPositionData.IsVisible = false;
-
+           
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();
         }
@@ -288,9 +307,13 @@ namespace AvaloniaHotMarkdown
             if (!inSelection)
             {
                 inSelection = true;
-                SelectionPositionData.IsVisible = true;
-                SelectionPositionData.X = CaretPositionData.X;
-                SelectionPositionData.Y = CaretPositionData.Y;
+                var copy = SelectionPositionData;
+
+                copy.IsVisible = true;
+                copy.X = CaretPositionData.X;
+                copy.Y = CaretPositionData.Y;
+
+                SelectionPositionData = copy;
             }
         }
 
@@ -350,6 +373,14 @@ namespace AvaloniaHotMarkdown
             lineHandler.CaretIndex = CaretPositionData.X;
             lineHandler.ShowCaret();
             lineHandler.InvalidateVisuals();
+
+            if (CaretPositionData.X == SelectionPositionData.X &&
+                CaretPositionData.Y == SelectionPositionData.Y)
+            {
+                var copy = SelectionPositionData;
+                copy.IsVisible = false;
+                SelectionPositionData = copy;
+            }
         }
 
         void HandleSelection()
