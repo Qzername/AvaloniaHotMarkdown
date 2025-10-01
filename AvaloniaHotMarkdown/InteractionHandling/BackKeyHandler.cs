@@ -9,7 +9,6 @@ internal class BackKeyHandler : IKeyInteractionHandler
 
     public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
-        Debug.WriteLine("test2");
         //do nothing if caret is at the beginning of the text
         //be sure though that the we are not selecting something
         if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0 
@@ -21,8 +20,6 @@ internal class BackKeyHandler : IKeyInteractionHandler
             editor.ReplaceSelectionWith(string.Empty);
         else
         {
-            Debug.WriteLine("test "+ keyModifiers.HasFlag(KeyModifiers.Control));
-
             if (keyModifiers.HasFlag(KeyModifiers.Control))
                 HandleWordRemoval(editor, ref actualText);
             else
@@ -34,36 +31,23 @@ internal class BackKeyHandler : IKeyInteractionHandler
     {
         var selectionPositionData = editor.CaretPositionData;
 
-        if (selectionPositionData.X > 0)
-        {
-            //move through current whitespaces where cursor is to word
-            while (selectionPositionData.X > 0 && char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
-                selectionPositionData.X--;
-
-            //move through current word to the start of it
-            while (selectionPositionData.X > 0 && !char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
-                selectionPositionData.X--;
-        }
-        else if (selectionPositionData.Y > 0)
+        if(selectionPositionData.X == 0 && selectionPositionData.Y > 0)
         {
             // Move to the end of the previous line and then to the start of the last word  
             selectionPositionData.Y--;
             selectionPositionData.X = actualText[selectionPositionData.Y].Length;
-
-            //move through current whitespaces where cursor is to word
-            while (selectionPositionData.X > 0 && char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
-                selectionPositionData.X--;
-
-            //move through current word to the start of it
-            while (selectionPositionData.X > 0 && !char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
-                selectionPositionData.X--;
         }
 
-        Debug.WriteLine(selectionPositionData.X + " y " + selectionPositionData.Y);
+        //move through current whitespaces where cursor is to word
+        while (selectionPositionData.X > 0 && char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
+            selectionPositionData.X--;
+
+        //move through current word to the start of it
+        while (selectionPositionData.X > 0 && !char.IsWhiteSpace(actualText[selectionPositionData.Y][selectionPositionData.X - 1]))
+            selectionPositionData.X--;
+
 
         editor.SelectionPositionData = selectionPositionData;
-
-        Debug.WriteLine($"{editor.SelectionPositionData.X} {editor.CaretPositionData.X}");
 
         editor.ReplaceSelectionWith(string.Empty);
     }

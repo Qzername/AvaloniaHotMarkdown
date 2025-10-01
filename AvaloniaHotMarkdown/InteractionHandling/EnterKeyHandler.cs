@@ -15,6 +15,12 @@ namespace AvaloniaHotMarkdown.InteractionHandling
         {
             memoryBank.Append(editor.CaretPositionData, '\n'.ToString());
 
+            if(editor.CaretPositionData.X > actualText[editor.CaretPositionData.Y].Length)
+                editor.CaretPositionData.X = actualText[editor.CaretPositionData.Y].Length;
+
+            if(editor.SelectionPositionData.IsVisible) 
+                editor.ReplaceSelectionWith(string.Empty);
+
             //previ|[ous line] <- substring
             var substring = actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X);
             //previ|

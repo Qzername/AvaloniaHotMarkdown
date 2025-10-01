@@ -26,6 +26,22 @@ internal class TextRemovingTest : BaseTest
     }
 
     [AvaloniaTest]
+    public void TextRemovingTest_Enter()
+    {
+        (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
+        ActivateTarget(window, editor);
+
+        HandleTextInput("Hello");
+
+        for(int i = 0; i < 5; i++) 
+            HandleKeySelection(PhysicalKey.ArrowLeft);
+    
+        Enter();
+
+        Assert.That(editor.Text, Is.EqualTo("\n"));
+    }
+
+    [AvaloniaTest]
     public void TextRemovingTest_Cut_DoubleCutBugCheck()
     {
         (Window window, HotMarkdownEditor editor) = BasicWindowBuilder.CreateBasicWindow();
