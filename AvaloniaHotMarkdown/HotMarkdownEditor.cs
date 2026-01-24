@@ -126,7 +126,8 @@ namespace AvaloniaHotMarkdown
                 selectionEndX = Math.Max(CaretPositionData.X, SelectionPositionData.X);
             }
 
-            memoryBank.Shorten(new TextCursor(selectionStartX, selectionStartY), SelectedText);
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(new TextCursor(selectionStartX, selectionStartY), _actualText);
+            memoryBank.Shorten(globalIndex, SelectedText);
 
             CaretPositionData = new TextCursor(selectionStartX, selectionStartY);
 
@@ -210,7 +211,8 @@ namespace AvaloniaHotMarkdown
             if (e.Text! == "\u007f")
                 return;
 
-            memoryBank.Append(CaretPositionData, e.Text!);
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(CaretPositionData, _actualText);
+            memoryBank.Append(globalIndex, e.Text!);
 
             if (_actualText[CaretPositionData.Y].Length < CaretPositionData.X)
                 CaretPositionData.X = _actualText[CaretPositionData.Y].Length;

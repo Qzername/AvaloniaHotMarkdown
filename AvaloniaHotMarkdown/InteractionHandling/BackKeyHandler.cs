@@ -57,7 +57,8 @@ internal class BackKeyHandler : IKeyInteractionHandler
         //we are at the start of the line
         if (editor.CaretPositionData.X == 0)
         {
-            memoryBank.Shorten(new TextCursor(editor.CaretPositionData.X - 1, editor.CaretPositionData.Y), '\n'.ToString());
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(new TextCursor(editor.CaretPositionData.X - 1, editor.CaretPositionData.Y), actualText);
+            memoryBank.Shorten(globalIndex, '\n'.ToString());
 
             //previous line
             //|current line
@@ -76,7 +77,8 @@ internal class BackKeyHandler : IKeyInteractionHandler
         }
         else //in other case remove just last character
         {
-            memoryBank.Shorten(new TextCursor(editor.CaretPositionData.X - 1, editor.CaretPositionData.Y), actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X - 1, 1));
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(new TextCursor(editor.CaretPositionData.X - 1, editor.CaretPositionData.Y), actualText);
+            memoryBank.Shorten(globalIndex, actualText[editor.CaretPositionData.Y].Substring(editor.CaretPositionData.X - 1, 1));
 
             actualText[editor.CaretPositionData.Y] = actualText[editor.CaretPositionData.Y].Remove(editor.CaretPositionData.X - 1, 1);
             editor.CaretPositionData.X--;

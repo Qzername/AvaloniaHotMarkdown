@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using System.Diagnostics.Contracts;
 
 namespace AvaloniaHotMarkdown.InteractionHandling;
 
@@ -18,5 +19,30 @@ public interface IKeyInteractionHandler
         index += cursor.X;
 
         return index;
+    }
+
+    public static TextCursor GetTextPositionFromGlobalIndex(int globalIndex, List<string> actualText)
+    {
+        int runningIndex = 0;
+        int lineIndex = 0;
+        while (lineIndex < actualText.Count)
+        {
+            int lineLengthWithNewline = actualText[lineIndex].Length + 1; // +1 for newline character
+            if (runningIndex + lineLengthWithNewline > globalIndex)
+            {
+                int columnIndex = globalIndex - runningIndex;
+                return new TextCursor(columnIndex, lineIndex);
+            }
+            runningIndex += lineLengthWithNewline;
+            lineIndex++;
+        }
+
+        if (actualText.Count > 0)
+        {
+            int lastLineIndex = actualText.Count - 1;
+            return new TextCursor(actualText[lastLineIndex].Length, lastLineIndex);
+        }
+        else
+            return new TextCursor(0, 0);
     }
 }

@@ -9,14 +9,14 @@ public class MemoryBank
         memoryBank = new List<Memory>();
     }
 
-    public void Append(TextCursor startingPosition, string text) => AddToMemory(startingPosition, text, MemoryOperationType.Append);
-    public void Shorten(TextCursor startingPosition, string text) => AddToMemory(startingPosition, text, MemoryOperationType.Shorten);
+    public void Append(int indexPosition, string text) => AddToMemory(indexPosition, text, MemoryOperationType.Append);
+    public void Shorten(int indexPosition, string text) => AddToMemory(indexPosition, text, MemoryOperationType.Shorten);
 
-    void AddToMemory(TextCursor position, string text, MemoryOperationType operationType)
+    void AddToMemory(int indexPositon, string text, MemoryOperationType operationType)
     {
         memoryBank.Add(new Memory
         {
-            Position = position,
+            IndexPosition = indexPositon,
             Text = text,
             OperationType = operationType
         });
@@ -35,7 +35,7 @@ public class MemoryBank
 
 public struct Memory
 {
-    public TextCursor Position;
+    public int IndexPosition;
     public string Text;
     public MemoryOperationType OperationType;
 }

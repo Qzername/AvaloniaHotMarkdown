@@ -18,7 +18,8 @@ internal class DeleteKeyHandler : IKeyInteractionHandler
 
         if (caretPositionData.X == actualText[caretPositionData.Y].Length)
         {
-            memoryBank.Shorten(editor.CaretPositionData, '\n'.ToString());
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
+            memoryBank.Shorten(globalIndex, '\n'.ToString());
 
             actualText[caretPositionData.Y] += actualText[caretPositionData.Y + 1];
             actualText.RemoveAt(caretPositionData.Y + 1);

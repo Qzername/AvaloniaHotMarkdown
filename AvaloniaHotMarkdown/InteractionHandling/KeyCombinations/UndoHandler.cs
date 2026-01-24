@@ -18,11 +18,11 @@ internal class UndoHandler : IKeyInteractionHandler
         
         var memory = memoryNullable.Value;
 
-        int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(memory.Position, actualText);
+        int globalIndex = memory.IndexPosition;
 
         if (memory.OperationType == MemoryOperationType.Append)
         {
-            editor.CaretPositionData = memory.Position;
+            editor.CaretPositionData = IKeyInteractionHandler.GetTextPositionFromGlobalIndex(globalIndex, actualText);
             editor.Text = editor.Text.Remove(globalIndex, memory.Text.Length);
         }
         else

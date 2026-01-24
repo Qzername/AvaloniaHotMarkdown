@@ -22,13 +22,13 @@ internal class PasteHandler : IKeyInteractionHandler
         if (string.IsNullOrEmpty(text))
             return;
 
-        memoryBank.Append(editor.CaretPositionData, text);
+        int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
+        memoryBank.Append(globalIndex, text);
 
         if (editor.SelectionPositionData.IsVisible)
             editor.ReplaceSelectionWith(text);
         else
         {
-            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
             editor.Text = editor.Text.Insert(globalIndex, text);
 
             var lines = text.Split('\n');

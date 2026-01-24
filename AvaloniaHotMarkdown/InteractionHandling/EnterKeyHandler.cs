@@ -13,7 +13,8 @@ namespace AvaloniaHotMarkdown.InteractionHandling
 
         public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
         {
-            memoryBank.Append(editor.CaretPositionData, '\n'.ToString());
+            int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
+            memoryBank.Append(globalIndex, '\n'.ToString());
 
             if(editor.CaretPositionData.X > actualText[editor.CaretPositionData.Y].Length)
                 editor.CaretPositionData.X = actualText[editor.CaretPositionData.Y].Length;
