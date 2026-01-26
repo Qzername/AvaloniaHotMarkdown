@@ -68,6 +68,9 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
 
                     if(node is EmphasisInline emphasisInline)
                     {
+                        for(int i =0; i < emphasisInline.DelimiterCount;i++)
+                            currentTextInfo.DelimiterText += emphasisInline.DelimiterChar;
+
                         if(emphasisInline.DelimiterChar =='*')
                         {
                             if (emphasisInline.DelimiterCount == 1)
@@ -77,8 +80,14 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                         }
                         else if(emphasisInline.DelimiterChar == '~')
                             currentTextInfo.IsStrikethrough = true;
-                        else if(emphasisInline.DelimiterChar == '+')
-                            currentTextInfo.IsUnderline = true;
+                        else if(emphasisInline.DelimiterChar == '_')
+                        {
+
+                            if (emphasisInline.DelimiterCount == 1)
+                                currentTextInfo.IsItalic = true;
+                            else if (emphasisInline.DelimiterCount == 2)
+                                currentTextInfo.IsUnderline = true;
+                        }
                     }
 
                     if (node is LiteralInline literalInline)

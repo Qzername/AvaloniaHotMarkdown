@@ -8,6 +8,8 @@
         public bool IsStrikethrough;
         public bool IsUnderline;
 
+        public string DelimiterText;
+
         public TextInfo(string text, bool isBold = false, bool isItalic = false, bool isStrikethrough = false, bool isUnderline = false)
         {
             Text = text;
@@ -15,6 +17,8 @@
             IsItalic = isItalic;
             IsStrikethrough = isStrikethrough;
             IsUnderline = isUnderline;
+
+            DelimiterText = string.Empty;
         }
 
         public TextInfo()

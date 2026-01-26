@@ -3,6 +3,7 @@ using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown
 {
@@ -51,7 +52,11 @@ namespace AvaloniaHotMarkdown
                 string endings = HandleCurrentChildEmphasis(currentChild, textInfo);
 
                 string shortText = textInfo.Text;
-                string longText = $"{endings}{textInfo.Text}{endings}";
+
+                string longText = textInfo.Text;
+                
+                if(!string.IsNullOrWhiteSpace(endings))
+                    longText = $"{endings}{textInfo.Text}{new string(endings.Reverse().ToArray())}";
 
                 currentChild.Text = shortText;
 
@@ -186,31 +191,16 @@ namespace AvaloniaHotMarkdown
 
         string HandleCurrentChildEmphasis(RichTextPresenter currentChild, TextInfo textInfo)
         {
-            string ending = string.Empty;
+            string ending = textInfo.DelimiterText;
 
             if (textInfo.IsBold)
-            {
-                ending += "**";
                 currentChild.FontWeight = FontWeight.Bold;
-            }
 
             if (textInfo.IsItalic)
-            {
-                ending += "*";
                 currentChild.FontStyle = FontStyle.Italic;
-            }
 
-            if (textInfo.IsStrikethrough)
-            {
-                ending += "~~";
-                currentChild.ShowStrikethrough = true;
-            }
-
-            if (textInfo.IsUnderline)
-            {
-                ending += "++";
-                currentChild.ShowUnderline = true;
-            }
+            currentChild.ShowStrikethrough = textInfo.IsStrikethrough;
+            currentChild.ShowUnderline = textInfo.IsUnderline;
 
             return ending;
         }
