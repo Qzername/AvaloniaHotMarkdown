@@ -77,7 +77,11 @@ namespace AvaloniaHotMarkdown
         public void InvalidateVisuals()
         {
             foreach (var presenterInfo in presentersInfos)
+            {
                 presenterInfo.Presenter.InvalidateVisual();
+                presenterInfo.Presenter.InvalidateMeasure();
+                presenterInfo.Presenter.InvalidateArrange();
+            }
         }
 
         public void ShowCaret()
