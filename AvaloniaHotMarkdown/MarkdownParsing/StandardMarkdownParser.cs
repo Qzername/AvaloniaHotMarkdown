@@ -68,10 +68,10 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
 
                     if(node is EmphasisInline emphasisInline)
                     {
-                        for(int i =0; i < emphasisInline.DelimiterCount;i++)
+                        for (int i =0; i < emphasisInline.DelimiterCount;i++)
                             currentTextInfo.DelimiterText += emphasisInline.DelimiterChar;
 
-                        if(emphasisInline.DelimiterChar =='*')
+                        if (emphasisInline.DelimiterChar =='*')
                         {
                             if (emphasisInline.DelimiterCount == 1)
                                 currentTextInfo.IsItalic = true;
@@ -88,16 +88,30 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                             else if (emphasisInline.DelimiterCount == 2)
                                 currentTextInfo.IsUnderline = true;
                         }
+
+                        continue;
                     }
 
                     if (node is LiteralInline literalInline)
                     {
+                        //sometimes markdig creates literal inlines next to each other, even if they are directly connected, we need to merge them (_test)
+                        if(literalInline.NextSibling is LiteralInline nextLiteral)
+                        {
+                            literalInline.Content = new Markdig.Helpers.StringSlice(
+                                literalInline.Content.ToString() + nextLiteral.Content.ToString()
+                            );
+
+                            nextLiteral.Content = new Markdig.Helpers.StringSlice(string.Empty);
+                            nextLiteral.Remove();
+                        }
+
                         var slice = literalInline.Content;
 
                         if (slice.Start > newBlock.StartIndex)
                             newBlock.ActualStartIndex = slice.Start;
 
                         currentTextInfo.Text = slice.Text.Substring(slice.Start, slice.Length);
+
                         textInfos.Add(currentTextInfo);
 
                         currentTextInfo = new TextInfo();
