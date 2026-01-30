@@ -109,8 +109,6 @@ namespace AvaloniaHotMarkdown
 
         public void HideCaret()
         {
-            ShowShortText();
-
             foreach (var presenterInfo in presentersInfos)
                 presenterInfo.Presenter.HideCaret();
         }
@@ -118,7 +116,6 @@ namespace AvaloniaHotMarkdown
         /// <returns>selected text</returns>
         public string ShowSelection(int startSelectionIndex, int endSelectionIndex)
         {
-            HideSelection();
             ShowLongText();
 
             int currentOffset = 0;
@@ -211,7 +208,7 @@ namespace AvaloniaHotMarkdown
 
         void ShowLongText()
         {
-            foreach(var presenterInfo in presentersInfos)
+            foreach (var presenterInfo in presentersInfos)
                 presenterInfo.Presenter.Text = presenterInfo.LongText;
 
             if (_currentBlock.ReplacementPrefix is not null)

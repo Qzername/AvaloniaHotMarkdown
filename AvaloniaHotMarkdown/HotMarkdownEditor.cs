@@ -413,7 +413,6 @@ namespace AvaloniaHotMarkdown
                 int bigger  = SelectionPositionData.X > CaretPositionData.X ? SelectionPositionData.X : CaretPositionData.X;
 
                 selectedText = presenters[SelectionPositionData.Y].LineHandler.ShowSelection(smaller, bigger);
-                presenters[SelectionPositionData.Y].LineHandler.InvalidateVisuals();
                 return;
             }
 
