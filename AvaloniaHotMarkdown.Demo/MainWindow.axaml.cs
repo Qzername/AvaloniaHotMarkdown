@@ -8,6 +8,7 @@ namespace AvaloniaHotMarkdown.Demo
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
         }
     }
 }
