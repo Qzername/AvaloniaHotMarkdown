@@ -88,7 +88,9 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                             else if (emphasisInline.DelimiterCount == 2)
                                 currentTextInfo.IsUnderline = true;
                         }
-
+                        else if (emphasisInline.DelimiterChar == '=')
+                            currentTextInfo.IsHighlighted = true;
+                        
                         continue;
                     }
 

@@ -48,6 +48,12 @@ public class RichTextPresenter : Control
         set => _textPresenter.Foreground = value;
     }
 
+    public IBrush? HighlightBrush
+    {
+        get => _textPresenter.Background;
+        set => _textPresenter.Background = value;
+    }
+
     public int CaretIndex
     {
         get => _textPresenter.CaretIndex;
@@ -80,6 +86,7 @@ public class RichTextPresenter : Control
 
     public bool ShowUnderline;
     public bool ShowStrikethrough;
+    public bool ShowHighlight;
 
     public RichTextPresenter()
     {
@@ -93,7 +100,10 @@ public class RichTextPresenter : Control
     {
         base.Render(context);
 
-        context.DrawRectangle(Brushes.Transparent, null, new Rect(0,0, Bounds.Width, Bounds.Height));
+        context.DrawRectangle(Brushes.Transparent , null, new Rect(0,0, Bounds.Width, Bounds.Height));
+        
+        if(ShowHighlight)
+            context.DrawRectangle(HighlightBrush, null, new Rect(0,0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
 
         _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);

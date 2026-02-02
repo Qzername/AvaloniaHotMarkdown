@@ -20,6 +20,7 @@ namespace AvaloniaHotMarkdown
         public IBrush? CaretBrush { get; set; } = Brushes.White;
         public IBrush? Foreground { get; set; } = Brushes.White;
         public IBrush? SelectionBrush { get; set; } = Brushes.LightBlue;
+        public IBrush? HighlightBrush { get; set; } = Brushes.Wheat;
         public int CaretIndex { get; set; } = 0;
 
         readonly Block _currentBlock;
@@ -202,6 +203,7 @@ namespace AvaloniaHotMarkdown
 
             currentChild.ShowStrikethrough = textInfo.IsStrikethrough;
             currentChild.ShowUnderline = textInfo.IsUnderline;
+            currentChild.ShowHighlight = textInfo.IsHighlighted;
 
             return ending;
         }
@@ -241,6 +243,7 @@ namespace AvaloniaHotMarkdown
                 SelectionBrush = SelectionBrush,
                 CaretBrush = CaretBrush,
                 Foreground = Foreground,
+                HighlightBrush = HighlightBrush,
             };
 
             textPresenter.PointerMoved += TextPresenter_PointerMoved;

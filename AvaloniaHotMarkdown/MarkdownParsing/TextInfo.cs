@@ -7,10 +7,11 @@
         public bool IsItalic;
         public bool IsStrikethrough;
         public bool IsUnderline;
+        public bool IsHighlighted;
 
         public string DelimiterText;
 
-        public TextInfo(string text, bool isBold = false, bool isItalic = false, bool isStrikethrough = false, bool isUnderline = false)
+        public TextInfo(string text, bool isBold = false, bool isItalic = false, bool isStrikethrough = false, bool isUnderline = false, bool isHighlighted = false)
         {
             Text = text;
             IsBold = isBold;

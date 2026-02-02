@@ -10,7 +10,7 @@ namespace AvaloniaHotMarkdown.Demo
             ## Header 2
             ### Header 3
 
-            This is a **bold** text and this is an *italic* text. ~~Strikethrough~~ text is also supported. __Underline__ text is here.
+            This is a **bold** text and this is an *italic* text. ~~Strikethrough~~ text is also supported. __Underline__ text is here. ==Hightlighted== text too.
 
             - Item 1
             - Item 2
