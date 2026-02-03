@@ -112,7 +112,8 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                         if (slice.Start > newBlock.StartIndex)
                             newBlock.ActualStartIndex = slice.Start;
 
-                        currentTextInfo.Text = slice.Text.Substring(slice.Start, slice.Length);
+                        //remove that zero width character that was used only for parsing empty lines
+                        currentTextInfo.Text = slice.Text.Substring(slice.Start, slice.Length).Replace("­", string.Empty);
 
                         textInfos.Add(currentTextInfo);
 

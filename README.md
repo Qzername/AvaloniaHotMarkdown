@@ -12,6 +12,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Headings
 - Unordered list
 - Striketrough, bold, underline and italic texts
+- Highlight
 
 ## Missing features that will be added in future:
 - More styling options
@@ -27,7 +28,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Grid
 - Task list
 - Fenced Code Block
-- Highlight
 - Subscript
 - Superscript
 
