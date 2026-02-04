@@ -424,7 +424,7 @@ namespace AvaloniaHotMarkdown
 
             string[] lines = new string[biggerIndex-smallerIndex+1];
 
-            for (int y = smallerIndex; y < biggerIndex; y++)
+            for (int y = smallerIndex+1; y < biggerIndex; y++)
             {
                 lines[y - smallerIndex] = presenters[y].LineHandler.ShowSelection(0, _actualText[y].Length);
                 presenters[y].LineHandler.InvalidateVisuals();
