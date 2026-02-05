@@ -1,6 +1,4 @@
-﻿using Avalonia;
-
-namespace AvaloniaHotMarkdown;
+﻿namespace AvaloniaHotMarkdown;
 
 public struct TextCursor(int x, int y, bool isVisibile = false)
 {
@@ -11,14 +9,14 @@ public struct TextCursor(int x, int y, bool isVisibile = false)
     public bool PreviousIsVisible { get => _previousIsVisible; }
 
     bool _isVisible = isVisibile;
-    public bool IsVisible 
+    public bool IsVisible
     {
         get => _isVisible;
         set
         {
             _previousIsVisible = _isVisible;
             _isVisible = value;
-        } 
+        }
     }
 
     public override string ToString()

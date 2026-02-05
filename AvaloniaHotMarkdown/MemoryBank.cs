@@ -24,7 +24,7 @@ public class MemoryBank
 
     public Memory? Undo()
     {
-        if(memoryBank.Count == 0)
+        if (memoryBank.Count == 0)
             return null;
 
         var last = memoryBank[^1];

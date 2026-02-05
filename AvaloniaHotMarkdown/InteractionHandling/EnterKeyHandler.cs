@@ -1,9 +1,4 @@
 ﻿using Avalonia.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvaloniaHotMarkdown.InteractionHandling
 {
@@ -16,10 +11,10 @@ namespace AvaloniaHotMarkdown.InteractionHandling
             int globalIndex = IKeyInteractionHandler.GetGlobalIndexFromLines(editor.CaretPositionData, actualText);
             memoryBank.Append(globalIndex, '\n'.ToString());
 
-            if(editor.CaretPositionData.X > actualText[editor.CaretPositionData.Y].Length)
+            if (editor.CaretPositionData.X > actualText[editor.CaretPositionData.Y].Length)
                 editor.CaretPositionData.X = actualText[editor.CaretPositionData.Y].Length;
 
-            if(editor.SelectionPositionData.IsVisible) 
+            if (editor.SelectionPositionData.IsVisible)
                 editor.ReplaceSelectionWith(string.Empty);
 
             //previ|[ous line] <- substring

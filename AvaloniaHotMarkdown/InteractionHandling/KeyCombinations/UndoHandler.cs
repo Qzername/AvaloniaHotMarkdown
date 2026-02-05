@@ -1,5 +1,4 @@
 ﻿using Avalonia.Input;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.InteractionHandling.KeyCombinations;
 
@@ -15,7 +14,7 @@ internal class UndoHandler : IKeyInteractionHandler
 
         if (memoryNullable is null)
             return;
-        
+
         var memory = memoryNullable.Value;
 
         int globalIndex = memory.IndexPosition;
@@ -35,7 +34,7 @@ internal class UndoHandler : IKeyInteractionHandler
 
             var splited = memory.Text.Split('\n');
 
-            if(splited.Length> 1)
+            if (splited.Length > 1)
             {
                 editor.CaretPositionData.Y += splited.Length - 1;
                 editor.CaretPositionData.X = splited[^1].Length;

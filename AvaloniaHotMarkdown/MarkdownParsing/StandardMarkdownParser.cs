@@ -1,7 +1,6 @@
 ﻿using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing
 {
@@ -25,7 +24,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
 
             int textIndex = 0;
 
-            for(int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
                 // Replace empty lines with a zero-width space to make them actually render
                 if (string.IsNullOrEmpty(lines[i]))
@@ -60,27 +59,27 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                 {
                     if (node is LeafBlock leafBlock || node is ListBlock)
                     {
-                        if(!prefixGenerated)
+                        if (!prefixGenerated)
                             ModifyBlockBasedOnLeafBlock(ref newBlock, node);
 
                         prefixGenerated = true;
                     }
 
-                    if(node is EmphasisInline emphasisInline)
+                    if (node is EmphasisInline emphasisInline)
                     {
-                        for (int i =0; i < emphasisInline.DelimiterCount;i++)
+                        for (int i = 0; i < emphasisInline.DelimiterCount; i++)
                             currentTextInfo.DelimiterText += emphasisInline.DelimiterChar;
 
-                        if (emphasisInline.DelimiterChar =='*')
+                        if (emphasisInline.DelimiterChar == '*')
                         {
                             if (emphasisInline.DelimiterCount == 1)
                                 currentTextInfo.IsItalic = true;
                             else if (emphasisInline.DelimiterCount == 2)
                                 currentTextInfo.IsBold = true;
                         }
-                        else if(emphasisInline.DelimiterChar == '~')
+                        else if (emphasisInline.DelimiterChar == '~')
                             currentTextInfo.IsStrikethrough = true;
-                        else if(emphasisInline.DelimiterChar == '_')
+                        else if (emphasisInline.DelimiterChar == '_')
                         {
 
                             if (emphasisInline.DelimiterCount == 1)
@@ -90,14 +89,14 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                         }
                         else if (emphasisInline.DelimiterChar == '=')
                             currentTextInfo.IsHighlighted = true;
-                        
+
                         continue;
                     }
 
                     if (node is LiteralInline literalInline)
                     {
                         //sometimes markdig creates literal inlines next to each other, even if they are directly connected, we need to merge them (_test)
-                        if(literalInline.NextSibling is LiteralInline nextLiteral)
+                        if (literalInline.NextSibling is LiteralInline nextLiteral)
                         {
                             literalInline.Content = new Markdig.Helpers.StringSlice(
                                 literalInline.Content.ToString() + nextLiteral.Content.ToString()
@@ -121,7 +120,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
                     }
                 }
 
-                newBlock.Content = [..newBlock.Content, ..textInfos.ToArray()];
+                newBlock.Content = [.. newBlock.Content, .. textInfos.ToArray()];
 
                 textIndex += line.Length + 1;
 
@@ -133,17 +132,17 @@ namespace AvaloniaHotMarkdown.MarkdownParsing
 
         void ModifyBlockBasedOnLeafBlock(ref Block block, MarkdownObject markdownObject)
         {
-            block.Content = [new(GetPrefixFromObject(markdownObject)), ..block.Content];
-                
+            block.Content = [new(GetPrefixFromObject(markdownObject)), .. block.Content];
+
             block.ActualStartIndex += block.Content.Length;
 
             if (markdownObject is HeadingBlock headingBlock)
                 block.FontSize = 60 / headingBlock.Level;
 
-            if(markdownObject is ListBlock)
+            if (markdownObject is ListBlock)
                 block.ReplacementPrefix = new TextInfo()
                 {
-                    Text= "   ⭘ ",
+                    Text = "   ⭘ ",
                     IsBold = true,
                 };
         }

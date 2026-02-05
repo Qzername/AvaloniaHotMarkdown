@@ -1,5 +1,4 @@
 ﻿using Avalonia.Input;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.InteractionHandling;
 
@@ -11,7 +10,7 @@ internal class BackKeyHandler : IKeyInteractionHandler
     {
         //do nothing if caret is at the beginning of the text
         //be sure though that the we are not selecting something
-        if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0 
+        if (editor.CaretPositionData.X == 0 && editor.CaretPositionData.Y == 0
             && !editor.SelectionPositionData.IsVisible)
             return;
 
@@ -31,7 +30,7 @@ internal class BackKeyHandler : IKeyInteractionHandler
     {
         var selectionPositionData = editor.CaretPositionData;
 
-        if(selectionPositionData.X == 0 && selectionPositionData.Y > 0)
+        if (selectionPositionData.X == 0 && selectionPositionData.Y > 0)
         {
             // Move to the end of the previous line and then to the start of the last word  
             selectionPositionData.Y--;

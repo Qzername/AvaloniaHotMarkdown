@@ -1,5 +1,5 @@
-﻿using Avalonia.Headless;
-using Avalonia;
+﻿using Avalonia;
+using Avalonia.Headless;
 using AvaloniaHotMarkdown.Tests.Setup;
 
 [assembly: AvaloniaTestApplication(typeof(TestAppBuilder))]

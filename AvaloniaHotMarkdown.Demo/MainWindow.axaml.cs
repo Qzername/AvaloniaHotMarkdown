@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using AvaloniaHotMarkdown.Demo;
 
 namespace AvaloniaHotMarkdown.Demo
 {

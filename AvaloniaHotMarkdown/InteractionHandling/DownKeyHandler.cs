@@ -8,7 +8,7 @@ internal class DownKeyHandler : IKeyInteractionHandler
 
     public void HandleCombination(KeyModifiers keyModifiers, HotMarkdownEditor editor, ref List<string> actualText, ref MemoryBank memoryBank)
     {
-        if (editor.CaretPositionData.Y != actualText.Count-1)
+        if (editor.CaretPositionData.Y != actualText.Count - 1)
             editor.CaretPositionData.Y++;
 
         if (editor.CaretPositionData.X > actualText[editor.CaretPositionData.Y].Length)

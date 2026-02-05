@@ -76,7 +76,7 @@ public class RichTextPresenter : Control
     {
         get => _textPresenter.SelectionStart;
         set => _textPresenter.SelectionStart = value;
-    } 
+    }
 
     public int SelectionEnd
     {
@@ -100,17 +100,17 @@ public class RichTextPresenter : Control
     {
         base.Render(context);
 
-        context.DrawRectangle(Brushes.Transparent , null, new Rect(0,0, Bounds.Width, Bounds.Height));
-        
-        if(ShowHighlight)
-            context.DrawRectangle(HighlightBrush, null, new Rect(0,0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
+        context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+
+        if (ShowHighlight)
+            context.DrawRectangle(HighlightBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
 
         _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
-        
+
         var pen = new Pen(CaretBrush, 2);
 
-        if(ShowUnderline)
+        if (ShowUnderline)
             context.DrawLine(pen, new Point(0, rightDownCorner.Y), rightDownCorner);
 
         if (ShowStrikethrough)

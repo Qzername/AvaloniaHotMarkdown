@@ -33,9 +33,9 @@ internal class TextRemovingTest : BaseTest
 
         HandleTextInput("Hello");
 
-        for(int i = 0; i < 5; i++) 
+        for (int i = 0; i < 5; i++)
             HandleKeySelection(PhysicalKey.ArrowLeft);
-    
+
         Enter();
 
         Assert.That(editor.Text, Is.EqualTo("\n"));

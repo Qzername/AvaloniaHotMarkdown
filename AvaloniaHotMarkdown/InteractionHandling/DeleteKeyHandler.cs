@@ -26,7 +26,7 @@ internal class DeleteKeyHandler : IKeyInteractionHandler
         }
         else //in other case remove just next character
             actualText[caretPositionData.Y] = actualText[caretPositionData.Y].Remove(caretPositionData.X, 1);
-    
+
         editor.CaretPositionData = caretPositionData;
     }
 }

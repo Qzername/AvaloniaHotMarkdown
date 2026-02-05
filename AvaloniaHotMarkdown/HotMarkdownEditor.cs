@@ -1,11 +1,10 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
-using AvaloniaHotMarkdown.MarkdownParsing;
-using Avalonia;
+using Avalonia.Media;
 using AvaloniaHotMarkdown.InteractionHandling;
 using AvaloniaHotMarkdown.InteractionHandling.KeyCombinations;
-using System.Diagnostics;
+using AvaloniaHotMarkdown.MarkdownParsing;
 
 namespace AvaloniaHotMarkdown
 {
@@ -14,11 +13,11 @@ namespace AvaloniaHotMarkdown
         public static readonly DirectProperty<HotMarkdownEditor, IBrush> CaretBrushProperty =
             AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(CaretBrush), (hme) => hme.CaretBrush, (hme, b) => hme.CaretBrush = b);
         public IBrush CaretBrush { get; set; } = Brushes.White;
-        
+
         public static readonly DirectProperty<HotMarkdownEditor, IBrush> TextForegroundProperty =
             AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(Foreground), (hme) => hme.Foreground, (hme, b) => hme.Foreground = b);
         public IBrush TextForeground { get; set; } = Brushes.White;
-        
+
         public static readonly DirectProperty<HotMarkdownEditor, IBrush> SelectionBrushProperty =
             AvaloniaProperty.RegisterDirect<HotMarkdownEditor, IBrush>(nameof(SelectionBrush), (hme) => hme.SelectionBrush, (hme, b) => hme.SelectionBrush = b);
         public IBrush SelectionBrush { get; set; } = Brushes.LightBlue;
@@ -37,27 +36,27 @@ namespace AvaloniaHotMarkdown
 
                 _actualText.Clear();
                 _actualText.AddRange(value.Split(["\r\n", "\n"], StringSplitOptions.None));
-                
+
                 RaisePropertyChanged(TextProperty, string.Join("\n", old), value);
                 GenerateText();
                 InvalidateVisual();
             }
         }
-        
+
         string selectedText = string.Empty;
         public string SelectedText => selectedText;
 
         public TextCursor CaretPositionData;
-        
+
         bool isSelectionPositionDataDirty = false;
         TextCursor _selectionPositionData;
         public TextCursor SelectionPositionData
         {
             get => _selectionPositionData;
-            set 
+            set
             {
                 isSelectionPositionDataDirty = true;
-                _selectionPositionData = value; 
+                _selectionPositionData = value;
             }
         }
 
@@ -67,7 +66,7 @@ namespace AvaloniaHotMarkdown
         IMarkdownParser markdownParser;
 
         MemoryBank memoryBank;
-        
+
         static HotMarkdownEditor()
         {
             //this line allows the control to receive focus
@@ -76,10 +75,10 @@ namespace AvaloniaHotMarkdown
 
         public HotMarkdownEditor()
         {
-            CaretPositionData = new TextCursor(0,0, true);
-            SelectionPositionData = new TextCursor(0,0, false);
+            CaretPositionData = new TextCursor(0, 0, true);
+            SelectionPositionData = new TextCursor(0, 0, false);
 
-            mainPanel = new StackPanel();  
+            mainPanel = new StackPanel();
             Content = mainPanel;
 
             markdownParser = new StandardMarkdownParser();
@@ -103,12 +102,12 @@ namespace AvaloniaHotMarkdown
             {
                 selectionStartX = CaretPositionData.X;
                 selectionStartY = CaretPositionData.Y;
-                
+
                 selectionEndX = SelectionPositionData.X;
                 selectionEndY = SelectionPositionData.Y;
             }
             //selection is to the right
-            else if(CaretPositionData.Y > SelectionPositionData.Y)
+            else if (CaretPositionData.Y > SelectionPositionData.Y)
             {
                 selectionStartX = SelectionPositionData.X;
                 selectionStartY = SelectionPositionData.Y;
@@ -135,10 +134,10 @@ namespace AvaloniaHotMarkdown
                 _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX, selectionEndX - selectionStartX);
             else
             {
-                if(_actualText[selectionStartY].Length> 0 )
-                   _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
-    
-                if(_actualText[selectionEndY].Length>0)
+                if (_actualText[selectionStartY].Length > 0)
+                    _actualText[selectionStartY] = _actualText[selectionStartY].Remove(selectionStartX);
+
+                if (_actualText[selectionEndY].Length > 0)
                     _actualText[selectionEndY] = _actualText[selectionEndY].Remove(0, selectionEndX);
 
                 //add remaning contents of last selected line to the first selected line and remove it
@@ -218,7 +217,7 @@ namespace AvaloniaHotMarkdown
                 CaretPositionData.X = _actualText[CaretPositionData.Y].Length;
 
             _actualText[CaretPositionData.Y] = _actualText[CaretPositionData.Y].Insert(CaretPositionData.X, e.Text!);
-            CaretPositionData.X+=e.Text!.Length;
+            CaretPositionData.X += e.Text!.Length;
 
             RaisePropertyChanged(TextProperty, oldText, Text);
 
@@ -242,7 +241,7 @@ namespace AvaloniaHotMarkdown
             if (interactions.ContainsKey(e.Key))
                 interactions[e.Key].HandleCombination(e.KeyModifiers, this, ref _actualText, ref memoryBank);
 
-            if(!isSelectionPositionDataDirty)
+            if (!isSelectionPositionDataDirty)
             {
                 if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                 {
@@ -261,7 +260,7 @@ namespace AvaloniaHotMarkdown
 
                 SelectionPositionData = copy;
             }
-           
+
             RaisePropertyChanged(TextProperty, oldText, Text);
             GenerateText();
         }
@@ -345,7 +344,7 @@ namespace AvaloniaHotMarkdown
 
         void HandleReleasedBlock(AvaloniaBlock block, PointerEventArgs args)
         {
-            if(!inSelection)
+            if (!inSelection)
                 MoveCaretToPoint(block, args);
 
             inSelection = false;
@@ -368,7 +367,7 @@ namespace AvaloniaHotMarkdown
 
         void HandleCursor()
         {
-            if(presenters.Count == 0)
+            if (presenters.Count == 0)
                 return;
 
             foreach (var avaloniaBlock in presenters)
@@ -407,10 +406,10 @@ namespace AvaloniaHotMarkdown
             if (!SelectionPositionData.IsVisible)
                 return;
 
-            if(SelectionPositionData.Y == CaretPositionData.Y)
+            if (SelectionPositionData.Y == CaretPositionData.Y)
             {
                 int smaller = SelectionPositionData.X > CaretPositionData.X ? CaretPositionData.X : SelectionPositionData.X;
-                int bigger  = SelectionPositionData.X > CaretPositionData.X ? SelectionPositionData.X : CaretPositionData.X;
+                int bigger = SelectionPositionData.X > CaretPositionData.X ? SelectionPositionData.X : CaretPositionData.X;
 
                 selectedText = presenters[SelectionPositionData.Y].LineHandler.ShowSelection(smaller, bigger);
                 return;
@@ -422,9 +421,9 @@ namespace AvaloniaHotMarkdown
             int smallerValue = SelectionPositionData.Y < CaretPositionData.Y ? SelectionPositionData.X : CaretPositionData.X;
             int biggerValue = SelectionPositionData.Y < CaretPositionData.Y ? CaretPositionData.X : SelectionPositionData.X;
 
-            string[] lines = new string[biggerIndex-smallerIndex+1];
+            string[] lines = new string[biggerIndex - smallerIndex + 1];
 
-            for (int y = smallerIndex+1; y < biggerIndex; y++)
+            for (int y = smallerIndex + 1; y < biggerIndex; y++)
             {
                 lines[y - smallerIndex] = presenters[y].LineHandler.ShowSelection(0, _actualText[y].Length);
                 presenters[y].LineHandler.InvalidateVisuals();

@@ -1,9 +1,8 @@
 ﻿using Avalonia.Controls;
-using AvaloniaHotMarkdown.MarkdownParsing;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using System.Diagnostics;
+using AvaloniaHotMarkdown.MarkdownParsing;
 
 namespace AvaloniaHotMarkdown
 {
@@ -12,7 +11,7 @@ namespace AvaloniaHotMarkdown
         public event Action<object, PointerEventArgs> OnPointerMoved;
         public event Action<object, PointerPressedEventArgs> OnPointerPressed;
         public event Action<object, PointerReleasedEventArgs> OnPointerReleased;
-        
+
         List<PresenterInfo> presentersInfos;
         PresenterInfo Prefix => presentersInfos[0];
 
@@ -55,8 +54,8 @@ namespace AvaloniaHotMarkdown
                 string shortText = textInfo.Text;
 
                 string longText = textInfo.Text;
-                
-                if(!string.IsNullOrWhiteSpace(endings))
+
+                if (!string.IsNullOrWhiteSpace(endings))
                     longText = $"{endings}{textInfo.Text}{new string(endings.Reverse().ToArray())}";
 
                 currentChild.Text = shortText;
@@ -132,7 +131,7 @@ namespace AvaloniaHotMarkdown
                     continue;
 
                 //Fir[stSecondTh]ird
-                if(currentOffset + presenterText.Length > startSelectionIndex)
+                if (currentOffset + presenterText.Length > startSelectionIndex)
                 {
                     presenter.SelectionStart = startSelectionIndex - currentOffset;
 
@@ -141,7 +140,7 @@ namespace AvaloniaHotMarkdown
                     else
                         presenter.SelectionEnd = presenterText.Length;
 
-                    selectedText += presenterText.Substring(presenter.SelectionStart, presenter.SelectionEnd-presenter.SelectionStart);
+                    selectedText += presenterText.Substring(presenter.SelectionStart, presenter.SelectionEnd - presenter.SelectionStart);
                 }
 
                 currentOffset += presenterText.Length;

@@ -49,13 +49,13 @@ internal class SelectAllTest : BaseTest
         //Hello
         //H[ell]o
         //Hello
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
             HandleKeySelection(PhysicalKey.ArrowLeft);
 
         Assert.That(editor.SelectedText, Is.EqualTo("ell"));
 
         HandleKey(PhysicalKey.A, RawInputModifiers.Control);
-        
+
         Assert.That(editor.SelectedText, Is.EqualTo("Hello\nHello\nHello\n"));
     }
 }

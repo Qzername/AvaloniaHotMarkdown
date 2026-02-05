@@ -1,5 +1,4 @@
 ﻿using Avalonia.Input;
-using System.Diagnostics.Contracts;
 
 namespace AvaloniaHotMarkdown.InteractionHandling;
 

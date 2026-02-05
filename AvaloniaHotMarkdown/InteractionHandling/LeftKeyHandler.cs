@@ -18,7 +18,7 @@ internal class LeftKeyHandler : IKeyInteractionHandler
                 caretPositionData.Y--;
                 caretPositionData.X = actualText[caretPositionData.Y].Length;
             }
-            
+
             //move through current whitespaces where cursor is to word
             while (caretPositionData.X > 0 && char.IsWhiteSpace(actualText[caretPositionData.Y][caretPositionData.X - 1]))
                 caretPositionData.X--;
