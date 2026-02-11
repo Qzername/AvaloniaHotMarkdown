@@ -81,7 +81,7 @@ namespace AvaloniaHotMarkdown
             mainPanel = new StackPanel();
             Content = mainPanel;
 
-            markdownParser = new StandardMarkdownParser();
+            markdownParser = new StandardMarkdownParserV2();
             memoryBank = new MemoryBank();
 
             GenerateInteractions();
