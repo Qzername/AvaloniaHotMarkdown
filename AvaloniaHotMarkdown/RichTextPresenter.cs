@@ -1,0 +1,130 @@
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Media;
+
+namespace AvaloniaHotMarkdown;
+
+/*
+ * i hate the fact that this control has to exist
+ * because TextPresenter dosen't support text decorations
+ * and its Render method is sealed
+ */
+public class RichTextPresenter : Control
+{
+    TextPresenter _textPresenter;
+
+    public string Text
+    {
+        get => _textPresenter.Text;
+        set
+        {
+            _textPresenter.Text = value;
+            InvalidateVisual();
+        }
+    }
+
+    public double FontSize
+    {
+        get => _textPresenter.FontSize;
+        set => _textPresenter.FontSize = value;
+    }
+
+    public IBrush? CaretBrush
+    {
+        get => _textPresenter.CaretBrush;
+        set => _textPresenter.CaretBrush = value;
+    }
+
+    public IBrush? SelectionBrush
+    {
+        get => _textPresenter.SelectionBrush;
+        set => _textPresenter.SelectionBrush = value;
+    }
+
+    public IBrush? Foreground
+    {
+        get => _textPresenter.Foreground;
+        set => _textPresenter.Foreground = value;
+    }
+
+    public IBrush? HighlightBrush
+    {
+        get => _textPresenter.Background;
+        set => _textPresenter.Background = value;
+    }
+
+    public int CaretIndex
+    {
+        get => _textPresenter.CaretIndex;
+        set => _textPresenter.CaretIndex = value;
+    }
+
+    public FontWeight FontWeight
+    {
+        get => _textPresenter.FontWeight;
+        set => _textPresenter.FontWeight = value;
+    }
+
+    public FontStyle FontStyle
+    {
+        get => _textPresenter.FontStyle;
+        set => _textPresenter.FontStyle = value;
+    }
+
+    public int SelectionStart
+    {
+        get => _textPresenter.SelectionStart;
+        set => _textPresenter.SelectionStart = value;
+    }
+
+    public int SelectionEnd
+    {
+        get => _textPresenter.SelectionEnd;
+        set => _textPresenter.SelectionEnd = value;
+    }
+
+    public bool ShowUnderline;
+    public bool ShowStrikethrough;
+    public bool ShowHighlight;
+
+    public RichTextPresenter()
+    {
+        _textPresenter = new()
+        {
+            Background = Brushes.Transparent,
+        };
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        base.Render(context);
+
+        context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+
+        if (ShowHighlight)
+            context.DrawRectangle(HighlightBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
+
+        _textPresenter.Render(context);
+        var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
+
+        var pen = new Pen(CaretBrush, 2);
+
+        if (ShowUnderline)
+            context.DrawLine(pen, new Point(0, rightDownCorner.Y), rightDownCorner);
+
+        if (ShowStrikethrough)
+            context.DrawLine(pen, new Point(0, rightDownCorner.Y / 2), new Point(rightDownCorner.X, rightDownCorner.Y / 2));
+    }
+
+    public void ShowCaret() => _textPresenter.ShowCaret();
+    public void HideCaret() => _textPresenter.HideCaret();
+    public void MoveCaretToPoint(Point point) => _textPresenter.MoveCaretToPoint(point);
+
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        _textPresenter.Measure(availableSize);
+
+        return _textPresenter.DesiredSize;
+    }
+}
