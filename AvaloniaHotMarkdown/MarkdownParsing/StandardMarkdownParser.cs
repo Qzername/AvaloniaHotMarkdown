@@ -10,7 +10,7 @@ public class StandardMarkdownParser : IMarkdownParser
 {
     readonly MarkdownPipeline markdownPipeline;
 
-    readonly Dictionary<Type, IBlockHandler> handlers = new()
+    readonly Dictionary<Type, BlockHandler> handlers = new()
     {
         { typeof(HeadingBlock), new HeadingBlockHandler() },
         { typeof(ParagraphBlock), new ParagraphBlockHandler() },

@@ -3,12 +3,19 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
-internal class HeadingBlockHandler : IBlockHandler
+internal class HeadingBlockHandler : BlockHandler
 {
-    public Control Handle(Block block)
+    readonly int[] Sizes = [60, 45, 30];
+
+    public override Control Handle(Block block)
     {
-        return new RichTextPresenter() {
-            Text = "test"
-        };
+        HeadingBlock headingBlock = (HeadingBlock)block;
+
+        var container = ParseInline(headingBlock.Inline.Descendants()) as StackPanel;
+
+        foreach(RichTextPresenter item in container.Children)
+            item.FontSize = Sizes[headingBlock.Level - 1];
+
+        return container;
     }
 }
