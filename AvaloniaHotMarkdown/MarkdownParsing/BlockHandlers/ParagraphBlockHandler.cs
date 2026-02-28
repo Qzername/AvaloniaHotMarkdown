@@ -15,13 +15,14 @@ internal class ParagraphBlockHandler : IBlockHandler
 
         StackPanel container = new StackPanel();
         container.Orientation = Orientation.Horizontal;
+        container.Children.Clear();
 
         RichTextPresenter currentPresenter = CreateNewPresenter();
         
-        foreach (var markdownObject in paragraphBlock.Inline!)
+        foreach (var markdownObject in paragraphBlock.Inline.Descendants())
         {
             Type type = markdownObject.GetType();
-            
+
             if (markdownObject is EmphasisInline emphasisInline)
             {
                 if (emphasisInline.DelimiterChar == '*')
@@ -29,7 +30,7 @@ internal class ParagraphBlockHandler : IBlockHandler
                     if (emphasisInline.DelimiterCount == 1)
                         currentPresenter.FontStyle = FontStyle.Italic;
                     else if (emphasisInline.DelimiterCount == 2)
-                        currentPresenter.FontStyle = FontStyle.Oblique;
+                        currentPresenter.FontWeight = FontWeight.Bold;
                 }
                 else if (emphasisInline.DelimiterChar == '~')
                     currentPresenter.ShowStrikethrough = true;
@@ -54,6 +55,8 @@ internal class ParagraphBlockHandler : IBlockHandler
             currentPresenter = CreateNewPresenter();
         }
 
+        container.ApplyTemplate();
+
         return container;
     }
 
@@ -62,6 +65,9 @@ internal class ParagraphBlockHandler : IBlockHandler
         RichTextPresenter currentPresenter = new();
         //TODO: replace this with a style
         currentPresenter.Foreground = Brushes.White;
+        currentPresenter.FontSize = 14;
+        currentPresenter.HighlightBrush = Brushes.Wheat;
+        currentPresenter.CaretBrush = Brushes.White;
 
         return currentPresenter;
     }

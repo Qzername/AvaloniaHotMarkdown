@@ -1,9 +1,8 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using Markdig;
+using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -19,7 +18,9 @@ public class StandardMarkdownParser : IMarkdownParser
 
     public StandardMarkdownParser()
     {
-        markdownPipeline = new MarkdownPipelineBuilder().Build();
+        markdownPipeline = new MarkdownPipelineBuilder()
+            .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
+            .Build();
     }
 
     public Control[] Parse(string markdown)
