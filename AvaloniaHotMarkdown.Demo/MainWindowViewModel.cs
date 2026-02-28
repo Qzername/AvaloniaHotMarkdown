@@ -12,10 +12,15 @@ namespace AvaloniaHotMarkdown.Demo
 
             This is a **bold** text and this is an *italic* text. ~~Strikethrough~~ text is also supported. __Underline__ text is here. ==Hightlighted== text too.
 
-            - Item 1
-            - Item 2
-            - Item 3
+            - Unordered Item 1
+            - Unordered Item 2
+            - Unordered Item 3
+
+            1. Ordered Item 1
+            2. Ordered Item 2
+            3. Ordered Item 3
             """;
+
         public string TextSource
         {
             get => _textSource;

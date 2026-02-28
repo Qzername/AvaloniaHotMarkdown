@@ -1,14 +1,14 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Layout;
-using Avalonia.Media;
 using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 internal class ParagraphBlockHandler : BlockHandler
 {
+    public ParagraphBlockHandler(StandardMarkdownParser parser) : base(parser)
+    {
+    }
+
     public override Control Handle(Block block)
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;

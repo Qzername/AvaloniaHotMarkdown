@@ -11,6 +11,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 ## Current features:
 - Headings
 - Unordered list
+- Ordered list
 - Striketrough, bold, underline and italic texts
 - Highlight
 
@@ -21,7 +22,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Android support
 
 ### Markdown objects:
-- Ordered list
 - Blockquotes
 - Horizontal line
 - Links

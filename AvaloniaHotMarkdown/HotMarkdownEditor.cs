@@ -40,12 +40,4 @@ public class HotMarkdownEditor : ContentControl
         foreach (var control in markdownParser.Parse(Text))
             contentPanel.Children.Add(control);
     }
-
-    public override void Render(DrawingContext context)
-    {
-        //TODO: this is for debug reasons remove it
-        context.FillRectangle(Brushes.Gray, new Rect(Bounds.Size));
-
-        base.Render(context);
-    }
 }

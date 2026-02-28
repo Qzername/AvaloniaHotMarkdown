@@ -8,7 +8,21 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 internal abstract class BlockHandler
 {
+    StandardMarkdownParser _parser;
+
+    public BlockHandler(StandardMarkdownParser parser)
+    {
+        _parser = parser;
+    }
+
     public abstract Control Handle(Block block);
+
+    /// <summary>
+    /// Parses the specified block and returns a corresponding control representation.
+    /// 
+    /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
+    /// </summary>
+    protected Control ParseBlock(Block block) => _parser.ParseBlock(block);
 
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects)
     {

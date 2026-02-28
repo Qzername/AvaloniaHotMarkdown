@@ -5,7 +5,12 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 internal class HeadingBlockHandler : BlockHandler
 {
+    //TODO: make this customizable
     readonly int[] Sizes = [60, 45, 30];
+
+    public HeadingBlockHandler(StandardMarkdownParser parser) : base(parser)
+    {
+    }
 
     public override Control Handle(Block block)
     {
