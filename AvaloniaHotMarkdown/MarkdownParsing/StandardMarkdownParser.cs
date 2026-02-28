@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
-using AvaloniaHotMarkdown.MarkdownParsing.EmptyLineParsing;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
@@ -31,10 +30,22 @@ public class StandardMarkdownParser : IMarkdownParser
     {
         List<Control> controls = new();
 
+        var lines = markdown.Split('\n'); //for empty line parsing
+
         var document = Markdown.Parse(markdown, markdownPipeline);
 
-        foreach(var block in document)
+        for(int i =0; i< document.Count; i++)
+        {
+            var block = document[i];
+
+            //check for empty lines between blocks, if there are any, add an empty textblock for each of them
+            if (i>0 && document[i-1].Line != block.Line -1 )
+                for(int j = document[i-1].Line; j < block.Line;j++)
+                    if (string.IsNullOrWhiteSpace(lines[j]))
+                        controls.Add(new TextBlock());
+                    
             controls.Add(ParseBlock(block));
+        }
 
         return controls.ToArray();
     }
