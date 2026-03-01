@@ -12,11 +12,16 @@ internal class HeadingBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block)
+    public override Control Handle(Block block, bool parseAsFullText)
     {
         HeadingBlock headingBlock = (HeadingBlock)block;
 
-        var container = ParseInline(headingBlock.Inline.Descendants()) as StackPanel;
+        var container = ParseInline(headingBlock.Inline.Descendants(), parseAsFullText) as StackPanel;
+
+        if (parseAsFullText)
+            container.Children.Insert(0, new RichTextPresenter() {
+                Text = new string('#', headingBlock.Level) + " " 
+            });
 
         foreach(RichTextPresenter item in container.Children)
             item.FontSize = Sizes[headingBlock.Level - 1];

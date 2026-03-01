@@ -4,6 +4,7 @@ using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -26,7 +27,7 @@ public class StandardMarkdownParser : IMarkdownParser
             .Build();
     }
 
-    public Control[] Parse(string markdown)
+    public Control[] Parse(string markdown, CaretInformation caretInformation)
     {
         List<Control> controls = new();
 
@@ -34,7 +35,10 @@ public class StandardMarkdownParser : IMarkdownParser
 
         var document = Markdown.Parse(markdown, markdownPipeline);
 
-        for(int i =0; i< document.Count; i++)
+        int[] fullTextLinesIndexes = GetFullTextLines(caretInformation, lines);
+        Point caretPosition = GetCaretPosition(caretInformation, lines);
+
+        for (int i =0; i< document.Count; i++)
         {
             var block = document[i];
 
@@ -44,19 +48,60 @@ public class StandardMarkdownParser : IMarkdownParser
                     if (string.IsNullOrWhiteSpace(lines[j]))
                         controls.Add(new TextBlock());
                     
-            controls.Add(ParseBlock(block));
+            controls.Add(ParseBlock(block, fullTextLinesIndexes.Contains(i)));
         }
 
         return controls.ToArray();
     }
 
-    public Control ParseBlock(Block block)
+    int[] GetFullTextLines(CaretInformation caretInformation, string[] lines)
+    {
+        int min = int.Min(caretInformation.Index, caretInformation.SelectionStart ?? caretInformation.Index);
+        int max = int.Max(caretInformation.Index, caretInformation.SelectionStart ?? caretInformation.Index);
+
+        //get indexes of lines that are between min and max
+
+        List<int> result = new();
+
+        int currentIndex = 0;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            int lineLength = lines[i].Length + 1; //+1 for the newline character
+            
+            if (currentIndex + lineLength > min && currentIndex < max)
+                result.Add(i);
+
+            currentIndex += lineLength;
+        }
+
+        return result.ToArray();
+    }
+
+    Point GetCaretPosition(CaretInformation caretInformation, string[] lines)
+    {
+        int currentIndex = 0;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            int lineLength = lines[i].Length + 1; //+1 for the newline character
+            
+            if (currentIndex + lineLength > caretInformation.Index)
+                return new Point(caretInformation.Index - currentIndex, i);
+
+            currentIndex += lineLength;
+        }
+
+        return new Point(0, lines.Length - 1);
+    }
+
+    public Control ParseBlock(Block block, bool parseAsFullText)
     {
         Type type = block.GetType();
 
         if (!handlers.ContainsKey(type))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
-        return handlers[type].Handle(block);
+        return handlers[type].Handle(block, parseAsFullText);
     }
 }

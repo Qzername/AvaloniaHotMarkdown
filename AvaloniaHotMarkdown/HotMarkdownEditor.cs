@@ -79,7 +79,13 @@ public class HotMarkdownEditor : ContentControl
 
         var currentText = Text ?? string.Empty;
 
-        foreach (var control in markdownParser.Parse(currentText))
+        var caretInformation = new CaretInformation
+        {
+            Index = textProcessor.CaretIndex,
+            SelectionStart = textProcessor.SelectionStart
+        };
+
+        foreach (var control in markdownParser.Parse(currentText, caretInformation))
             markdownContainer.Children.Add(control);
     }
 }

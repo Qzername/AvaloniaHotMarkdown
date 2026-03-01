@@ -9,10 +9,10 @@ internal class ParagraphBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block)
+    public override Control Handle(Block block, bool parseAsFullText)
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;
 
-        return ParseInline(paragraphBlock.Inline.Descendants());
+        return ParseInline(paragraphBlock.Inline.Descendants(), parseAsFullText);
     }
 }

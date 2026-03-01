@@ -15,22 +15,23 @@ internal abstract class BlockHandler
         _parser = parser;
     }
 
-    public abstract Control Handle(Block block);
+    public abstract Control Handle(Block block, bool parseAsFullText);
 
     /// <summary>
     /// Parses the specified block and returns a corresponding control representation.
     /// 
     /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
     /// </summary>
-    protected Control ParseBlock(Block block) => _parser.ParseBlock(block);
+    protected Control ParseBlock(Block block, bool parseAsFullText) => _parser.ParseBlock(block, parseAsFullText);
 
-    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects)
+    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText)
     {
         StackPanel container = new StackPanel();
         container.Orientation = Orientation.Horizontal;
         container.Children.Clear();
 
         RichTextPresenter currentPresenter = CreateNewPresenter();
+        string endings = string.Empty;
 
         foreach (var markdownObject in inlineObjects)
         {
@@ -57,15 +58,21 @@ internal abstract class BlockHandler
                 else if (emphasisInline.DelimiterChar == '=')
                     currentPresenter.ShowHighlight = true;
 
+                endings = new string(emphasisInline.DelimiterChar, emphasisInline.DelimiterCount);
+
                 continue;
             }
 
             if (markdownObject is LiteralInline literal)
-                currentPresenter.Text = literal.Content.ToString();
+                if(parseAsFullText)
+                    currentPresenter.Text = $"{endings}{literal.Content.ToString()}{endings.Reverse()}";
+                else
+                    currentPresenter.Text = literal.Content.ToString();
 
             container.Children.Add(currentPresenter);
 
             currentPresenter = CreateNewPresenter();
+            endings = string.Empty;
         }
 
         container.ApplyTemplate();

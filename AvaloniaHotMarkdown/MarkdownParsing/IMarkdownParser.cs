@@ -7,5 +7,5 @@ namespace AvaloniaHotMarkdown.MarkdownParsing;
 /// </summary>
 public interface IMarkdownParser
 {
-    public Control[] Parse(string markdown);
+    public Control[] Parse(string markdown, CaretInformation caretInformation);
 }

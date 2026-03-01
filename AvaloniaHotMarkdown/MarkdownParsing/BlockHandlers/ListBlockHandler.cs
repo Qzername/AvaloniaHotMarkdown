@@ -10,7 +10,7 @@ internal class ListBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block)
+    public override Control Handle(Block block, bool parseAsFullText)
     {
         var listBlock = (ListBlock)block;
         var mainContainer = new StackPanel();
@@ -23,10 +23,17 @@ internal class ListBlockHandler : BlockHandler
             StackPanel itemContainer = new();
             itemContainer.Orientation = Orientation.Horizontal;
 
-            itemContainer.Children.Add(new TextBlock { Text = listBlock.IsOrdered ? $"{i+1}. " : "• " });
+            string prefix = string.Empty;
+
+            if (parseAsFullText)
+                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "- ";
+            else
+                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "•";
+
+            itemContainer.Children.Add(new TextBlock { Text = prefix });
 
             foreach(var segment in listItem)
-                itemContainer.Children.Add(ParseBlock(segment));
+                itemContainer.Children.Add(ParseBlock(segment, parseAsFullText));
 
             mainContainer.Children.Add(itemContainer);
         }
