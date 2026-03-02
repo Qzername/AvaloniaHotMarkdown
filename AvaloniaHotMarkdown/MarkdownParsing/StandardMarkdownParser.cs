@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
@@ -37,18 +38,42 @@ public class StandardMarkdownParser : IMarkdownParser
 
         int[] fullTextLinesIndexes = GetFullTextLines(caretInformation, lines);
         Point caretPosition = GetCaretPosition(caretInformation, lines);
+        bool caretSet = false;
 
         for (int i =0; i< document.Count; i++)
         {
             var block = document[i];
 
             //check for empty lines between blocks, if there are any, add an empty textblock for each of them
-            if (i>0 && document[i-1].Line != block.Line -1 )
-                for(int j = document[i-1].Line; j < block.Line;j++)
+            if (i > 0 && document[i - 1].Line != block.Line - 1)
+                for (int j = document[i - 1].Line; j < block.Line; j++)
                     if (string.IsNullOrWhiteSpace(lines[j]))
-                        controls.Add(new TextBlock());
-                    
-            controls.Add(ParseBlock(block, fullTextLinesIndexes.Contains(i)));
+                    {
+                        var emptyBlock = new RichTextPresenter();
+
+                        //check for caret as well
+                        if (!caretSet && caretPosition.Y == j)
+                        {
+                            //TODO: change this...
+                            emptyBlock.CaretBrush = Brushes.White;
+                            emptyBlock.CaretIndex = 0;
+                            emptyBlock.ShowCaret();
+                            caretSet = true;
+
+                        }
+
+                        controls.Add(emptyBlock);
+                    }
+
+            var control = ParseBlock(block, true);
+
+            if (!caretSet && caretPosition.Y <= block.Line)
+            {
+                handlers[block.GetType()].SetCaretPosition(control, caretPosition.X);
+                caretSet = true;
+            }
+
+            controls.Add(control);
         }
 
         return controls.ToArray();

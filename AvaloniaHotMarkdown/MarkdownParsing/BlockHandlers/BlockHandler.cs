@@ -16,6 +16,7 @@ internal abstract class BlockHandler
     }
 
     public abstract Control Handle(Block block, bool parseAsFullText);
+    public abstract void SetCaretPosition(Control control, int index);
 
     /// <summary>
     /// Parses the specified block and returns a corresponding control representation.
@@ -65,7 +66,7 @@ internal abstract class BlockHandler
 
             if (markdownObject is LiteralInline literal)
                 if(parseAsFullText)
-                    currentPresenter.Text = $"{endings}{literal.Content.ToString()}{endings.Reverse()}";
+                    currentPresenter.Text = $"{endings}{literal.Content.ToString()}{new string(endings.Reverse().ToArray())}";
                 else
                     currentPresenter.Text = literal.Content.ToString();
 
@@ -80,7 +81,7 @@ internal abstract class BlockHandler
         return container;
     }
 
-    RichTextPresenter CreateNewPresenter()
+    protected RichTextPresenter CreateNewPresenter()
     {
         RichTextPresenter currentPresenter = new();
         //TODO: replace this with a style

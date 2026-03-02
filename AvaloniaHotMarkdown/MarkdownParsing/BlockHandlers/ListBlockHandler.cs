@@ -40,4 +40,9 @@ internal class ListBlockHandler : BlockHandler
 
         return mainContainer;
     }
+
+    public override void SetCaretPosition(Control control, int index)
+    {
+
+    }
 }

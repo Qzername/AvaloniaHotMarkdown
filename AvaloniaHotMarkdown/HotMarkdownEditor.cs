@@ -50,7 +50,10 @@ public class HotMarkdownEditor : ContentControl
             IsHitTestVisible = false,
             AcceptsReturn = true
         };
+
+        //TODO: make it so it wont rerender every event
         textProcessor.TextChanged += (s, e) => ConstructChildren();
+        textProcessor.KeyUp += (s, e) => ConstructChildren();
 
         var rootPanel = new Panel();
         rootPanel.Children.Add(textProcessor);
