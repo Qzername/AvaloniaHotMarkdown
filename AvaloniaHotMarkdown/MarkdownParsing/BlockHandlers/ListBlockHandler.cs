@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Markdig.Syntax;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -10,7 +11,7 @@ internal class ListBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block, bool parseAsFullText)
+    public override Control Handle(Block block, LineInformation[] lineInformations)
     {
         var listBlock = (ListBlock)block;
         var mainContainer = new StackPanel();
@@ -25,15 +26,17 @@ internal class ListBlockHandler : BlockHandler
 
             string prefix = string.Empty;
 
-            if (parseAsFullText)
+            if (lineInformations[i].ShowFullText)
                 prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "- ";
             else
-                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "•";
+                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "• ";
 
-            itemContainer.Children.Add(new TextBlock { Text = prefix });
+            var richTextPresenter = CreateNewPresenter();
+            richTextPresenter.Text = prefix;
+            itemContainer.Children.Add(richTextPresenter);
 
             foreach(var segment in listItem)
-                itemContainer.Children.Add(ParseBlock(segment, parseAsFullText));
+                itemContainer.Children.Add(ParseBlock(segment, lineInformations));
 
             mainContainer.Children.Add(itemContainer);
         }
@@ -41,8 +44,48 @@ internal class ListBlockHandler : BlockHandler
         return mainContainer;
     }
 
-    public override void SetCaretPosition(Control control, int index)
+    public override void SetCaretPosition(Control control, LineInformation[] lineInformations)
     {
+        var mainTree = (control as StackPanel).Children;
 
+        Debug.WriteLine("test: "+ lineInformations.Length);
+        for (int i = 0; i<lineInformations.Length;i++)
+        {
+            if (lineInformations[i].CaretIndex is null)
+                continue;
+
+            if(i >= mainTree.Count)
+                return;
+
+            var itemTree = (mainTree[i] as StackPanel).Children;
+
+            var caretIndex = lineInformations[i].CaretIndex!.Value;
+
+            if (caretIndex <= 2)
+            {
+                var richTextPresenter = (itemTree[0] as RichTextPresenter);
+                richTextPresenter.CaretIndex = caretIndex;
+                richTextPresenter.ShowCaret();
+            }
+            else
+            {
+                var paragraphTree = (itemTree[1] as StackPanel).Children;
+
+                int temp = 1;
+
+                foreach (RichTextPresenter presenter in paragraphTree)
+                {
+                    if (temp + presenter.Text.Length >= caretIndex)
+                    {
+                        presenter.CaretIndex = caretIndex - temp-2;
+                        presenter.ShowCaret();
+                        return;
+                    }
+
+                    temp += presenter.Text.Length;
+                }
+            }
+
+        }
     }
 }

@@ -10,24 +10,29 @@ internal class ParagraphBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block, bool parseAsFullText)
+    public override Control Handle(Block block, LineInformation[] lineInformations)
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;
 
-        return ParseInline(paragraphBlock.Inline.Descendants(), parseAsFullText);
+        return ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
     }
 
-    public override void SetCaretPosition(Control control, int index)
+    public override void SetCaretPosition(Control control, LineInformation[] lineInformations)
     {
+        if (lineInformations[0].CaretIndex is null)
+            return;
+
+        int caretIndex = lineInformations[0].CaretIndex.Value;
+
         var mainTree = (control as StackPanel).Children;
 
         int temp = 0;
 
         foreach (RichTextPresenter presenter in mainTree)
         {
-            if (temp + presenter.Text.Length >= index)
+            if (temp + presenter.Text.Length >= caretIndex)
             {
-                presenter.CaretIndex = index - temp;
+                presenter.CaretIndex = caretIndex - temp;
                 presenter.ShowCaret();
                 return;
             }

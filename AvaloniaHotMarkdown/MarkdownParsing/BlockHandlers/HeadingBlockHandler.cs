@@ -13,13 +13,13 @@ internal class HeadingBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block, bool parseAsFullText)
+    public override Control Handle(Block block, LineInformation[] lineInformations)
     {
         HeadingBlock headingBlock = (HeadingBlock)block;
 
-        var container = ParseInline(headingBlock.Inline.Descendants(), parseAsFullText) as StackPanel;
+        var container = ParseInline(headingBlock.Inline.Descendants(), lineInformations[0].ShowFullText) as StackPanel;
 
-        if (parseAsFullText)
+        if (lineInformations[0].ShowFullText)
         {
             var richTextPresenter = CreateNewPresenter();
             richTextPresenter.Text = new string('#', headingBlock.Level) + " ";
@@ -32,17 +32,22 @@ internal class HeadingBlockHandler : BlockHandler
         return container;
     }
 
-    public override void SetCaretPosition(Control control, int index)
+    public override void SetCaretPosition(Control control, LineInformation[] lineInformations)
     {
+        if (lineInformations[0].CaretIndex is null)
+            return;
+
+        int caretIndex = lineInformations[0].CaretIndex.Value;
+
         var mainTree = (control as StackPanel).Children;
 
         int temp = 0;
 
-        foreach(RichTextPresenter presenter in mainTree)
+        foreach (RichTextPresenter presenter in mainTree)
         {
-            if(temp + presenter.Text.Length >= index)
+            if (temp + presenter.Text.Length >= caretIndex)
             {
-                presenter.CaretIndex = index - temp;
+                presenter.CaretIndex = caretIndex - temp;
                 presenter.ShowCaret();
                 return;
             }

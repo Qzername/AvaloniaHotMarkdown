@@ -15,15 +15,15 @@ internal abstract class BlockHandler
         _parser = parser;
     }
 
-    public abstract Control Handle(Block block, bool parseAsFullText);
-    public abstract void SetCaretPosition(Control control, int index);
+    public abstract Control Handle(Block block, LineInformation[] lineInformations);
+    public abstract void SetCaretPosition(Control control, LineInformation[] lineInformations);
 
     /// <summary>
     /// Parses the specified block and returns a corresponding control representation.
     /// 
     /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
     /// </summary>
-    protected Control ParseBlock(Block block, bool parseAsFullText) => _parser.ParseBlock(block, parseAsFullText);
+    protected Control ParseBlock(Block block, LineInformation[] lineInformation) => _parser.ParseBlock(block, lineInformation);
 
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText)
     {

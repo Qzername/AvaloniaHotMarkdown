@@ -38,7 +38,6 @@ public class StandardMarkdownParser : IMarkdownParser
 
         int[] fullTextLinesIndexes = GetFullTextLines(caretInformation, lines);
         Point caretPosition = GetCaretPosition(caretInformation, lines);
-        bool caretSet = false;
 
         for (int i =0; i< document.Count; i++)
         {
@@ -52,26 +51,36 @@ public class StandardMarkdownParser : IMarkdownParser
                         var emptyBlock = new RichTextPresenter();
 
                         //check for caret as well
-                        if (!caretSet && caretPosition.Y == j)
+                        if (caretPosition.Y == j)
                         {
                             //TODO: change this...
                             emptyBlock.CaretBrush = Brushes.White;
                             emptyBlock.CaretIndex = 0;
                             emptyBlock.ShowCaret();
-                            caretSet = true;
-
                         }
 
                         controls.Add(emptyBlock);
                     }
 
-            var control = ParseBlock(block, true);
+            int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
-            if (!caretSet && caretPosition.Y <= block.Line)
+            List<LineInformation> lineInformation = new();
+            for (int j = block.Line; 
+                j < blockEnd; 
+                j++)
             {
-                handlers[block.GetType()].SetCaretPosition(control, caretPosition.X);
-                caretSet = true;
+                lineInformation.Add(new LineInformation
+                {
+                    LineYIndex = j,
+                    CaretIndex = fullTextLinesIndexes.Contains(j) ? caretPosition.X : null,
+                    ShowFullText = fullTextLinesIndexes.Contains(j)
+                });
             }
+
+            var control = ParseBlock(block, lineInformation.ToArray());
+            
+            if (caretPosition.Y >= block.Line && caretPosition.Y < blockEnd)
+                handlers[block.GetType()].SetCaretPosition(control, lineInformation.ToArray());
 
             controls.Add(control);
         }
@@ -94,7 +103,7 @@ public class StandardMarkdownParser : IMarkdownParser
         {
             int lineLength = lines[i].Length + 1; //+1 for the newline character
             
-            if (currentIndex + lineLength > min && currentIndex < max)
+            if (currentIndex + lineLength > min && currentIndex <= max)
                 result.Add(i);
 
             currentIndex += lineLength;
@@ -120,13 +129,13 @@ public class StandardMarkdownParser : IMarkdownParser
         return new Point(0, lines.Length - 1);
     }
 
-    public Control ParseBlock(Block block, bool parseAsFullText)
+    public Control ParseBlock(Block block, LineInformation[] lineInformation)
     {
         Type type = block.GetType();
 
         if (!handlers.ContainsKey(type))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
-        return handlers[type].Handle(block, parseAsFullText);
+        return handlers[type].Handle(block, lineInformation);
     }
 }
