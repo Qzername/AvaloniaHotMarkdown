@@ -37,7 +37,23 @@ public class StandardMarkdownParser : IMarkdownParser
         var document = Markdown.Parse(markdown, markdownPipeline);
 
         int[] fullTextLinesIndexes = GetFullTextLines(caretInformation, lines);
-        Point caretPosition = GetCaretPosition(caretInformation, lines);
+        Point caretPosition = IndexToTextPosition(caretInformation.CaretIndex, lines);
+
+        Point selectionStart = new Point(0, 0);
+        Point selectionEnd = new Point(0,0);
+
+        if (caretInformation.SelectionInformation is not null)
+        {
+            selectionStart = IndexToTextPosition(caretInformation.SelectionInformation.Value.StartIndex, lines);
+            selectionEnd = IndexToTextPosition(caretInformation.SelectionInformation.Value.EndIndex, lines);
+        
+            if(selectionEnd.Y < selectionStart.Y)
+            {
+                var temp = selectionStart;
+                selectionStart = selectionEnd;
+                selectionEnd = temp;
+            }
+        }
 
         for (int i =0; i< document.Count; i++)
         {
@@ -65,22 +81,32 @@ public class StandardMarkdownParser : IMarkdownParser
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = new();
-            for (int j = block.Line; 
-                j < blockEnd; 
-                j++)
+            for (int j = block.Line; j < blockEnd;  j++)
             {
+                SelectionInformation? selectionInformation = null;
+
+                if(caretInformation.SelectionInformation is not null && 
+                    j >= selectionStart.Y 
+                    && j <= selectionEnd.Y)
+                {
+                    selectionInformation = new SelectionInformation
+                    {
+                        StartIndex = j == selectionStart.Y ? selectionStart.X : 0,
+                        EndIndex = j == selectionEnd.Y ? selectionEnd.X : int.MaxValue
+                    };
+               }
+
                 lineInformation.Add(new LineInformation
                 {
                     LineYIndex = j,
-                    CaretIndex = fullTextLinesIndexes.Contains(j) ? caretPosition.X : null,
-                    ShowFullText = fullTextLinesIndexes.Contains(j)
+                    CaretIndex = j==caretPosition.Y ? caretPosition.X : null,
+                    ShowFullText = fullTextLinesIndexes.Contains(j),
+                    SelectionInformation = selectionInformation
                 });
             }
 
             var control = ParseBlock(block, lineInformation.ToArray());
-            
-            if (caretPosition.Y >= block.Line && caretPosition.Y < blockEnd)
-                handlers[block.GetType()].SetCaretPosition(control, lineInformation.ToArray());
+            handlers[block.GetType()].UpdateTextEffects(control, lineInformation.ToArray());
 
             controls.Add(control);
         }
@@ -90,8 +116,17 @@ public class StandardMarkdownParser : IMarkdownParser
 
     int[] GetFullTextLines(CaretInformation caretInformation, string[] lines)
     {
-        int min = int.Min(caretInformation.Index, caretInformation.SelectionStart ?? caretInformation.Index);
-        int max = int.Max(caretInformation.Index, caretInformation.SelectionStart ?? caretInformation.Index);
+        int min = caretInformation.CaretIndex;
+        int max = caretInformation.CaretIndex;
+
+        if(caretInformation.SelectionInformation is not null)
+        {
+            int start = caretInformation.SelectionInformation.Value.StartIndex;
+            int end = caretInformation.SelectionInformation.Value.EndIndex;
+
+            min = int.Min(start, end);
+            max = int.Max(start, end);
+        }
 
         //get indexes of lines that are between min and max
 
@@ -112,7 +147,7 @@ public class StandardMarkdownParser : IMarkdownParser
         return result.ToArray();
     }
 
-    Point GetCaretPosition(CaretInformation caretInformation, string[] lines)
+    Point IndexToTextPosition(int index, string[] lines)
     {
         int currentIndex = 0;
 
@@ -120,8 +155,8 @@ public class StandardMarkdownParser : IMarkdownParser
         {
             int lineLength = lines[i].Length + 1; //+1 for the newline character
             
-            if (currentIndex + lineLength > caretInformation.Index)
-                return new Point(caretInformation.Index - currentIndex, i);
+            if (currentIndex + lineLength > index)
+                return new Point(index - currentIndex, i);
 
             currentIndex += lineLength;
         }

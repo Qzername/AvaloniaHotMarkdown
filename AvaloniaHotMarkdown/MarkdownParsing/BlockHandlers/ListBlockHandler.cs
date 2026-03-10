@@ -44,17 +44,22 @@ internal class ListBlockHandler : BlockHandler
         return mainContainer;
     }
 
-    public override void SetCaretPosition(Control control, LineInformation[] lineInformations)
+    public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)
+    {
+        UpdateCaret(control, lineInformations);
+        UpdateSelection(control, lineInformations);
+    }
+
+    void UpdateCaret(Control control, LineInformation[] lineInformations)
     {
         var mainTree = (control as StackPanel).Children;
 
-        Debug.WriteLine("test: "+ lineInformations.Length);
-        for (int i = 0; i<lineInformations.Length;i++)
+        for (int i = 0; i < lineInformations.Length; i++)
         {
             if (lineInformations[i].CaretIndex is null)
                 continue;
 
-            if(i >= mainTree.Count)
+            if (i >= mainTree.Count)
                 return;
 
             var itemTree = (mainTree[i] as StackPanel).Children;
@@ -77,7 +82,7 @@ internal class ListBlockHandler : BlockHandler
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
                     {
-                        presenter.CaretIndex = caretIndex - temp-2;
+                        presenter.CaretIndex = caretIndex - temp - 2;
                         presenter.ShowCaret();
                         return;
                     }
@@ -85,7 +90,43 @@ internal class ListBlockHandler : BlockHandler
                     temp += presenter.Text.Length;
                 }
             }
+        }
+    }
 
+    void UpdateSelection(Control control, LineInformation[] lineInformations)
+    {
+        var mainTree = (control as StackPanel).Children;
+        for (int i = 0; i < lineInformations.Length; i++)
+        {
+            if (lineInformations[i].SelectionInformation is null)
+                continue;
+            if (i >= mainTree.Count)
+                return;
+            var itemTree = (mainTree[i] as StackPanel).Children;
+            var selectionInformation = lineInformations[i].SelectionInformation!.Value;
+            if (selectionInformation.EndIndex <= 2)
+            {
+                var richTextPresenter = (itemTree[0] as RichTextPresenter);
+                richTextPresenter.SelectionStart = selectionInformation.StartIndex;
+                richTextPresenter.SelectionEnd = selectionInformation.EndIndex;
+                richTextPresenter.ShowCaret();
+            }
+            else
+            {
+                var paragraphTree = (itemTree[1] as StackPanel).Children;
+                int temp = 1;
+                foreach (RichTextPresenter presenter in paragraphTree)
+                {
+                    if (temp + presenter.Text.Length >= selectionInformation.StartIndex &&
+                        temp <= selectionInformation.EndIndex)
+                    {
+                        presenter.SelectionStart = selectionInformation.StartIndex - temp - 2;
+                        presenter.SelectionEnd = selectionInformation.EndIndex - temp - 2;
+                        presenter.ShowCaret();
+                    }
+                    temp += presenter.Text.Length;
+                }
+            }
         }
     }
 }

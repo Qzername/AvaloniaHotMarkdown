@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using AvaloniaHotMarkdown.MarkdownParsing;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -54,12 +55,28 @@ public class HotMarkdownEditor : ContentControl
         //TODO: make it so it wont rerender every event
         textProcessor.TextChanged += (s, e) => ConstructChildren();
         textProcessor.KeyUp += (s, e) => ConstructChildren();
+        textProcessor.PropertyChanged += TextProcessor_PropertyChanged;
 
         var rootPanel = new Panel();
         rootPanel.Children.Add(textProcessor);
         rootPanel.Children.Add(markdownContainer);
 
         Content = rootPanel;
+    }
+
+    readonly string[] PropertiesToWatch = [
+            nameof(TextBox.CaretIndex),
+            nameof(TextBox.SelectionStart),
+            nameof(TextBox.SelectionEnd),
+            nameof(TextBox.Text)
+        ];
+
+    private void TextProcessor_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (!PropertiesToWatch.Contains(e.Property.Name))
+            return;
+
+        ConstructChildren();
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -84,9 +101,15 @@ public class HotMarkdownEditor : ContentControl
 
         var caretInformation = new CaretInformation
         {
-            Index = textProcessor.CaretIndex,
-            SelectionStart = textProcessor.SelectionStart
+            CaretIndex = textProcessor.CaretIndex,
         };
+
+        if(!string.IsNullOrEmpty(textProcessor.SelectedText))
+            caretInformation.SelectionInformation = new SelectionInformation
+            {
+                StartIndex = textProcessor.SelectionStart,
+                EndIndex = textProcessor.SelectionEnd
+            };
 
         foreach (var control in markdownParser.Parse(currentText, caretInformation))
             markdownContainer.Children.Add(control);

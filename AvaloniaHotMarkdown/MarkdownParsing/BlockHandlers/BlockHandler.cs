@@ -16,7 +16,7 @@ internal abstract class BlockHandler
     }
 
     public abstract Control Handle(Block block, LineInformation[] lineInformations);
-    public abstract void SetCaretPosition(Control control, LineInformation[] lineInformations);
+    public abstract void UpdateTextEffects(Control control, LineInformation[] lineInformations);
 
     /// <summary>
     /// Parses the specified block and returns a corresponding control representation.
@@ -89,6 +89,7 @@ internal abstract class BlockHandler
         currentPresenter.FontSize = 14;
         currentPresenter.HighlightBrush = Brushes.Wheat;
         currentPresenter.CaretBrush = Brushes.White;
+        currentPresenter.SelectionBrush = Brushes.Cyan;
 
         return currentPresenter;
     }

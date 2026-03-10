@@ -17,27 +17,45 @@ internal class ParagraphBlockHandler : BlockHandler
         return ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
     }
 
-    public override void SetCaretPosition(Control control, LineInformation[] lineInformations)
+    public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)
     {
-        if (lineInformations[0].CaretIndex is null)
-            return;
-
-        int caretIndex = lineInformations[0].CaretIndex.Value;
-
         var mainTree = (control as StackPanel).Children;
 
         int temp = 0;
 
-        foreach (RichTextPresenter presenter in mainTree)
-        {
-            if (temp + presenter.Text.Length >= caretIndex)
+        //update caret
+        int? caretIndex = lineInformations[0].CaretIndex;
+
+        if (lineInformations[0].CaretIndex is not null)
+            foreach (RichTextPresenter presenter in mainTree)
             {
-                presenter.CaretIndex = caretIndex - temp;
-                presenter.ShowCaret();
-                return;
+                if (temp + presenter.Text.Length >= caretIndex)
+                {
+                    presenter.CaretIndex = caretIndex.Value - temp;
+                    presenter.ShowCaret();
+                    break;
+                }
+
+                temp += presenter.Text.Length;
             }
 
-            temp += presenter.Text.Length;
-        }
+        temp = 0;
+
+        //update selection
+        var selectionInformation = lineInformations[0].SelectionInformation;
+
+        if (selectionInformation is not null)
+            foreach (RichTextPresenter presenter in mainTree)
+            {
+                if (temp + presenter.Text.Length >= selectionInformation.Value.StartIndex &&
+                    temp <= selectionInformation.Value.EndIndex)
+                {
+                    presenter.SelectionStart = selectionInformation.Value.StartIndex - temp;
+                    presenter.SelectionEnd = selectionInformation.Value.EndIndex - temp;
+                    presenter.ShowCaret();
+                }
+
+                temp += presenter.Text.Length;
+            }
     }
 }

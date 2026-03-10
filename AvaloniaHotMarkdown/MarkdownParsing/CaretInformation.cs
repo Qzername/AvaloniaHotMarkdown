@@ -2,6 +2,6 @@
 
 public struct CaretInformation
 {
-    public int Index;
-    public int? SelectionStart;
+    public int CaretIndex;
+    public SelectionInformation? SelectionInformation;
 }
