@@ -20,6 +20,8 @@ internal class HeadingBlockHandler : BlockHandler
 
         var container = ParseInline(headingBlock.Inline.Descendants(), lineInformations[0].ShowFullText) as StackPanel;
 
+        container.Tag = lineInformations[0].LineYIndex;
+
         if (lineInformations[0].ShowFullText)
         {
             var richTextPresenter = CreateNewPresenter();

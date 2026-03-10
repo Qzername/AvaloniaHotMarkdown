@@ -14,7 +14,11 @@ internal class ParagraphBlockHandler : BlockHandler
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;
 
-        return ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
+        var container = ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
+
+        container.Tag = lineInformations[0].LineYIndex;
+
+        return container;
     }
 
     public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)

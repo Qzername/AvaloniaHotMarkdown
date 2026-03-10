@@ -23,6 +23,7 @@ internal class ListBlockHandler : BlockHandler
 
             StackPanel itemContainer = new();
             itemContainer.Orientation = Orientation.Horizontal;
+            itemContainer.Tag = lineInformations[i].LineYIndex;
 
             string prefix = string.Empty;
 
@@ -36,7 +37,11 @@ internal class ListBlockHandler : BlockHandler
             itemContainer.Children.Add(richTextPresenter);
 
             foreach(var segment in listItem)
-                itemContainer.Children.Add(ParseBlock(segment, lineInformations));
+            {
+                var container = ParseBlock(segment, lineInformations);
+                container.Tag = lineInformations[i].LineYIndex;
+                itemContainer.Children.Add(container);
+            }
 
             mainContainer.Children.Add(itemContainer);
         }

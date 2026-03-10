@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media.TextFormatting;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using System.Diagnostics;
+using Avalonia.VisualTree;
 
 namespace AvaloniaHotMarkdown;
 
@@ -79,10 +81,81 @@ public class HotMarkdownEditor : ContentControl
         ConstructChildren();
     }
 
+    bool _isSelecting;
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        textProcessor.Focus();
+        var point = e.GetCurrentPoint(this);
+
+        if (point.Properties.IsLeftButtonPressed)
+        {
+            _isSelecting = true;
+
+            int index = FindIndexOfClickedObject(e.Source);
+
+            textProcessor.SelectionStart = index;
+            textProcessor.SelectionEnd = index;
+
+            e.Pointer.Capture(this); // Keep tracking even if mouse leaves control
+            e.Handled = true;
+        }
+    }
+
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        base.OnPointerMoved(e);
+
+        if (_isSelecting)
+        {
+            var point = e.GetPosition(this);
+            var hit = this.InputHitTest(point) as Control;
+
+            int index = FindIndexOfClickedObject(hit);
+
+            if(index != -1)
+                textProcessor.SelectionEnd = index;
+        }
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+
+        _isSelecting = false;
+        e.Pointer.Capture(null);
+    }
+
+    int FindIndexOfClickedObject(object? sender)
+    {
+        var control = sender as Control;
+
+        while(control != this)
+        {
+            if (control is null)
+                return -1;
+
+            if(control.Tag is not null)
+                return GetIndexFromPosition(0,(int)control.Tag); 
+
+            control = control.Parent as Control;
+        }
+
+        return -1;
+    }
+
+    int GetIndexFromPosition(int caretIndexInLine, int line)
+    {
+        string[] lines = textProcessor.Text.Split('\n');
+
+        int totalIndex = 0;
+
+        for(int i = 0; i < line; i++) 
+            totalIndex += lines[i].Length+1;
+
+        totalIndex += caretIndexInLine;
+
+        return totalIndex;
     }
 
     protected override void OnGotFocus(GotFocusEventArgs e)
