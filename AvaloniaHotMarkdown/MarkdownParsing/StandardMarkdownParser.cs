@@ -4,7 +4,6 @@ using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -40,14 +39,14 @@ public class StandardMarkdownParser : IMarkdownParser
         Point caretPosition = IndexToTextPosition(caretInformation.CaretIndex, lines);
 
         Point selectionStart = new Point(0, 0);
-        Point selectionEnd = new Point(0,0);
+        Point selectionEnd = new Point(0, 0);
 
         if (caretInformation.SelectionInformation is not null)
         {
             selectionStart = IndexToTextPosition(caretInformation.SelectionInformation.Value.StartIndex, lines);
             selectionEnd = IndexToTextPosition(caretInformation.SelectionInformation.Value.EndIndex, lines);
-        
-            if(selectionEnd.Y < selectionStart.Y)
+
+            if (selectionEnd.Y < selectionStart.Y)
             {
                 var temp = selectionStart;
                 selectionStart = selectionEnd;
@@ -55,7 +54,7 @@ public class StandardMarkdownParser : IMarkdownParser
             }
         }
 
-        for (int i =0; i< document.Count; i++)
+        for (int i = 0; i < document.Count; i++)
         {
             var block = document[i];
 
@@ -81,12 +80,12 @@ public class StandardMarkdownParser : IMarkdownParser
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = new();
-            for (int j = block.Line; j < blockEnd;  j++)
+            for (int j = block.Line; j < blockEnd; j++)
             {
                 SelectionInformation? selectionInformation = null;
 
-                if(caretInformation.SelectionInformation is not null && 
-                    j >= selectionStart.Y 
+                if (caretInformation.SelectionInformation is not null &&
+                    j >= selectionStart.Y
                     && j <= selectionEnd.Y)
                 {
                     selectionInformation = new SelectionInformation
@@ -94,12 +93,12 @@ public class StandardMarkdownParser : IMarkdownParser
                         StartIndex = j == selectionStart.Y ? selectionStart.X : 0,
                         EndIndex = j == selectionEnd.Y ? selectionEnd.X : int.MaxValue
                     };
-               }
+                }
 
                 lineInformation.Add(new LineInformation
                 {
                     LineYIndex = j,
-                    CaretIndex = j==caretPosition.Y ? caretPosition.X : null,
+                    CaretIndex = j == caretPosition.Y ? caretPosition.X : null,
                     ShowFullText = fullTextLinesIndexes.Contains(j),
                     SelectionInformation = selectionInformation
                 });
@@ -119,7 +118,7 @@ public class StandardMarkdownParser : IMarkdownParser
         int min = caretInformation.CaretIndex;
         int max = caretInformation.CaretIndex;
 
-        if(caretInformation.SelectionInformation is not null)
+        if (caretInformation.SelectionInformation is not null)
         {
             int start = caretInformation.SelectionInformation.Value.StartIndex;
             int end = caretInformation.SelectionInformation.Value.EndIndex;
@@ -137,7 +136,7 @@ public class StandardMarkdownParser : IMarkdownParser
         for (int i = 0; i < lines.Length; i++)
         {
             int lineLength = lines[i].Length + 1; //+1 for the newline character
-            
+
             if (currentIndex + lineLength > min && currentIndex <= max)
                 result.Add(i);
 
@@ -154,7 +153,7 @@ public class StandardMarkdownParser : IMarkdownParser
         for (int i = 0; i < lines.Length; i++)
         {
             int lineLength = lines[i].Length + 1; //+1 for the newline character
-            
+
             if (currentIndex + lineLength > index)
                 return new Point(index - currentIndex, i);
 

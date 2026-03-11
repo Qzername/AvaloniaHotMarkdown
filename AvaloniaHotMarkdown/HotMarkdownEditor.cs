@@ -1,11 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Media.TextFormatting;
 using AvaloniaHotMarkdown.MarkdownParsing;
-using System.Diagnostics;
-using Avalonia.VisualTree;
-using System.Numerics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -23,7 +19,7 @@ public class HotMarkdownEditor : ContentControl
     //while still rendering the markdown in real-time.
     TextBox textProcessor;
 
-    StackPanel markdownContainer; 
+    StackPanel markdownContainer;
     IMarkdownParser markdownParser;
 
     public string Text
@@ -48,8 +44,8 @@ public class HotMarkdownEditor : ContentControl
         markdownContainer = new StackPanel();
         textProcessor = new TextBox
         {
-            Opacity = 0, 
-            Width = 0,  
+            Opacity = 0,
+            Width = 0,
             Height = 0,
             IsHitTestVisible = false,
             AcceptsReturn = true
@@ -114,7 +110,7 @@ public class HotMarkdownEditor : ContentControl
 
             int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
 
-            if(index != -1)
+            if (index != -1)
                 textProcessor.SelectionEnd = index;
         }
     }
@@ -133,12 +129,12 @@ public class HotMarkdownEditor : ContentControl
 
         CaretPositionOffset offset = new CaretPositionOffset();
 
-        while(control != this)
+        while (control != this)
         {
             if (control is null)
                 return -1;
 
-            if(control.Tag is not null)
+            if (control.Tag is not null)
                 offset = offset + (CaretPositionOffset)control.Tag;
 
             control = control.Parent as Control;
@@ -146,7 +142,7 @@ public class HotMarkdownEditor : ContentControl
 
         int index = GetIndexFromPosition(offset.XInLineOffset, offset.YLineOffset);
 
-        if(sender is RichTextPresenter rich)
+        if (sender is RichTextPresenter rich)
         {
             rich.MoveCaretToPoint(position);
             index += rich.CaretIndex;
@@ -161,8 +157,8 @@ public class HotMarkdownEditor : ContentControl
 
         int totalIndex = 0;
 
-        for(int i = 0; i < line; i++) 
-            totalIndex += lines[i].Length+1;
+        for (int i = 0; i < line; i++)
+            totalIndex += lines[i].Length + 1;
 
         totalIndex += caretIndexInLine;
 
@@ -188,7 +184,7 @@ public class HotMarkdownEditor : ContentControl
             CaretIndex = textProcessor.CaretIndex,
         };
 
-        if(!string.IsNullOrEmpty(textProcessor.SelectedText))
+        if (!string.IsNullOrEmpty(textProcessor.SelectedText))
             caretInformation.SelectionInformation = new SelectionInformation
             {
                 StartIndex = textProcessor.SelectionStart,

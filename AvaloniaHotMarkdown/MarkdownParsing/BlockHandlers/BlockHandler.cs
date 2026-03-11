@@ -68,7 +68,7 @@ internal abstract class BlockHandler
             }
 
             if (markdownObject is LiteralInline literal)
-                if(parseAsFullText)
+                if (parseAsFullText)
                     currentPresenter.Text = $"{endings}{literal.Content.ToString()}{new string(endings.Reverse().ToArray())}";
                 else
                     currentPresenter.Text = literal.Content.ToString();

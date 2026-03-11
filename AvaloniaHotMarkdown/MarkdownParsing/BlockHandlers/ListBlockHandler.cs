@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -16,7 +15,7 @@ internal class ListBlockHandler : BlockHandler
         var listBlock = (ListBlock)block;
         var mainContainer = new StackPanel();
 
-        for(int i = 0; i<listBlock.Count; i++)
+        for (int i = 0; i < listBlock.Count; i++)
         {
             if (listBlock[i] is not ListItemBlock listItem)
                 continue;
@@ -27,18 +26,18 @@ internal class ListBlockHandler : BlockHandler
             string prefix = string.Empty;
 
             if (lineInformations[i].ShowFullText)
-                prefix = listBlock.IsOrdered ? $"{i+1}. " : "- ";
+                prefix = listBlock.IsOrdered ? $"{i + 1}. " : "- ";
             else
-                prefix = listBlock.IsOrdered ? $"{i+1}. " : "• ";
+                prefix = listBlock.IsOrdered ? $"{i + 1}. " : "• ";
 
             var richTextPresenter = CreateNewPresenter();
             richTextPresenter.Text = prefix;
             itemContainer.Children.Add(richTextPresenter);
 
-            foreach(var segment in listItem)
+            foreach (var segment in listItem)
             {
                 var container = ParseBlock(segment, lineInformations);
-                container.Tag = new CaretPositionOffset(0,lineInformations[i].LineYIndex);
+                container.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
                 itemContainer.Children.Add(container);
             }
 

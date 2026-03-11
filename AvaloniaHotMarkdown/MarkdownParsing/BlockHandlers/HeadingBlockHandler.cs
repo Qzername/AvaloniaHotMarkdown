@@ -1,7 +1,5 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Media;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -21,7 +19,7 @@ internal class HeadingBlockHandler : BlockHandler
 
         var container = ParseInline(headingBlock.Inline.Descendants(), lineInformations[0].ShowFullText, prefix.Length) as StackPanel;
 
-        container.Tag = new CaretPositionOffset(0,lineInformations[0].LineYIndex);
+        container.Tag = new CaretPositionOffset(0, lineInformations[0].LineYIndex);
 
         if (lineInformations[0].ShowFullText)
         {
@@ -32,7 +30,7 @@ internal class HeadingBlockHandler : BlockHandler
 
         foreach (RichTextPresenter item in container.Children)
             item.FontSize = Sizes[headingBlock.Level - 1];
-    
+
         return container;
     }
 

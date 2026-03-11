@@ -11,7 +11,7 @@ public struct CaretPositionOffset
         YLineOffset = yLineOffset;
     }
 
-    public static CaretPositionOffset operator+(CaretPositionOffset a, CaretPositionOffset b)
+    public static CaretPositionOffset operator +(CaretPositionOffset a, CaretPositionOffset b)
     {
         return new CaretPositionOffset()
         {
