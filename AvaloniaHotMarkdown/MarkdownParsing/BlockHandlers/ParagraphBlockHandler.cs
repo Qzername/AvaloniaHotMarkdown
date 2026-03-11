@@ -16,7 +16,7 @@ internal class ParagraphBlockHandler : BlockHandler
 
         var container = ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
 
-        container.Tag = lineInformations[0].LineYIndex;
+        container.Tag = new CaretPositionOffset(0, lineInformations[0].LineYIndex);
 
         return container;
     }

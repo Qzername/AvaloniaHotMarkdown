@@ -5,6 +5,7 @@ using Avalonia.Media.TextFormatting;
 using AvaloniaHotMarkdown.MarkdownParsing;
 using System.Diagnostics;
 using Avalonia.VisualTree;
+using System.Numerics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -92,7 +93,7 @@ public class HotMarkdownEditor : ContentControl
         {
             _isSelecting = true;
 
-            int index = FindIndexOfClickedObject(e.Source);
+            int index = FindIndexOfClickedObject(e.Source, e.GetPosition(e.Source as Visual));
 
             textProcessor.SelectionStart = index;
             textProcessor.SelectionEnd = index;
@@ -111,7 +112,7 @@ public class HotMarkdownEditor : ContentControl
             var point = e.GetPosition(this);
             var hit = this.InputHitTest(point) as Control;
 
-            int index = FindIndexOfClickedObject(hit);
+            int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
 
             if(index != -1)
                 textProcessor.SelectionEnd = index;
@@ -126,9 +127,11 @@ public class HotMarkdownEditor : ContentControl
         e.Pointer.Capture(null);
     }
 
-    int FindIndexOfClickedObject(object? sender)
+    int FindIndexOfClickedObject(object? sender, Point position)
     {
         var control = sender as Control;
+
+        CaretPositionOffset offset = new CaretPositionOffset();
 
         while(control != this)
         {
@@ -136,12 +139,20 @@ public class HotMarkdownEditor : ContentControl
                 return -1;
 
             if(control.Tag is not null)
-                return GetIndexFromPosition(0,(int)control.Tag); 
+                offset = offset + (CaretPositionOffset)control.Tag;
 
             control = control.Parent as Control;
         }
 
-        return -1;
+        int index = GetIndexFromPosition(offset.XInLineOffset, offset.YLineOffset);
+
+        if(sender is RichTextPresenter rich)
+        {
+            rich.MoveCaretToPoint(position);
+            index += rich.CaretIndex;
+        }
+
+        return index;
     }
 
     int GetIndexFromPosition(int caretIndexInLine, int line)

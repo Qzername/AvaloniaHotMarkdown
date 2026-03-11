@@ -25,7 +25,7 @@ internal abstract class BlockHandler
     /// </summary>
     protected Control ParseBlock(Block block, LineInformation[] lineInformation) => _parser.ParseBlock(block, lineInformation);
 
-    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText)
+    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
     {
         StackPanel container = new StackPanel();
         container.Orientation = Orientation.Horizontal;
@@ -33,6 +33,9 @@ internal abstract class BlockHandler
 
         RichTextPresenter currentPresenter = CreateNewPresenter();
         string endings = string.Empty;
+
+        int offset = defaultXOffset;
+        currentPresenter.Tag = new CaretPositionOffset(offset, 0);
 
         foreach (var markdownObject in inlineObjects)
         {
@@ -70,9 +73,12 @@ internal abstract class BlockHandler
                 else
                     currentPresenter.Text = literal.Content.ToString();
 
+            offset += currentPresenter.Text.Length;
+
             container.Children.Add(currentPresenter);
 
             currentPresenter = CreateNewPresenter();
+            currentPresenter.Tag = new CaretPositionOffset(offset, 0);
             endings = string.Empty;
         }
 

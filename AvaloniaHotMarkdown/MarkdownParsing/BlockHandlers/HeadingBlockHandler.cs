@@ -17,15 +17,16 @@ internal class HeadingBlockHandler : BlockHandler
     public override Control Handle(Block block, LineInformation[] lineInformations)
     {
         HeadingBlock headingBlock = (HeadingBlock)block;
+        string prefix = new string('#', headingBlock.Level) + " ";
 
-        var container = ParseInline(headingBlock.Inline.Descendants(), lineInformations[0].ShowFullText) as StackPanel;
+        var container = ParseInline(headingBlock.Inline.Descendants(), lineInformations[0].ShowFullText, prefix.Length) as StackPanel;
 
-        container.Tag = lineInformations[0].LineYIndex;
+        container.Tag = new CaretPositionOffset(0,lineInformations[0].LineYIndex);
 
         if (lineInformations[0].ShowFullText)
         {
             var richTextPresenter = CreateNewPresenter();
-            richTextPresenter.Text = new string('#', headingBlock.Level) + " ";
+            richTextPresenter.Text = prefix;
             container.Children.Insert(0, richTextPresenter);
         }
 

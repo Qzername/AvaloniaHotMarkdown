@@ -23,14 +23,13 @@ internal class ListBlockHandler : BlockHandler
 
             StackPanel itemContainer = new();
             itemContainer.Orientation = Orientation.Horizontal;
-            itemContainer.Tag = lineInformations[i].LineYIndex;
 
             string prefix = string.Empty;
 
             if (lineInformations[i].ShowFullText)
-                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "- ";
+                prefix = listBlock.IsOrdered ? $"{i+1}. " : "- ";
             else
-                prefix = listBlock.IsOrdered ? $"{listBlock.OrderedStart + i}." : "• ";
+                prefix = listBlock.IsOrdered ? $"{i+1}. " : "• ";
 
             var richTextPresenter = CreateNewPresenter();
             richTextPresenter.Text = prefix;
@@ -39,7 +38,7 @@ internal class ListBlockHandler : BlockHandler
             foreach(var segment in listItem)
             {
                 var container = ParseBlock(segment, lineInformations);
-                container.Tag = lineInformations[i].LineYIndex;
+                container.Tag = new CaretPositionOffset(0,lineInformations[i].LineYIndex);
                 itemContainer.Children.Add(container);
             }
 
