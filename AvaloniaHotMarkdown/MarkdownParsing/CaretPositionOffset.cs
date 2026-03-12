@@ -1,5 +1,8 @@
 ﻿namespace AvaloniaHotMarkdown.MarkdownParsing;
 
+/// <summary>
+/// Usually contained in .Tag of control defines the offset from the 0,0 point in text
+/// </summary>
 public struct CaretPositionOffset
 {
     public int XInLineOffset;

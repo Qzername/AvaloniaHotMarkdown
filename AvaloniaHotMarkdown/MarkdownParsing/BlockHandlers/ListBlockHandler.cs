@@ -30,9 +30,9 @@ internal class ListBlockHandler : BlockHandler
             else
                 prefix = listBlock.IsOrdered ? $"{i + 1}. " : "• ";
 
-            var richTextPresenter = CreateNewPresenter();
-            richTextPresenter.Text = prefix;
-            itemContainer.Children.Add(richTextPresenter);
+            var prefixTextPresenter = CreateNewPresenter();
+            prefixTextPresenter.Text = prefix;
+            itemContainer.Children.Add(prefixTextPresenter);
 
             foreach (var segment in listItem)
             {
@@ -49,6 +49,7 @@ internal class ListBlockHandler : BlockHandler
 
     public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)
     {
+        //TODO: part of this code is vibecoded, it would be nice to optimize it in the future xd
         UpdateCaret(control, lineInformations);
         UpdateSelection(control, lineInformations);
     }

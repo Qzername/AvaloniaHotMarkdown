@@ -25,6 +25,15 @@ internal abstract class BlockHandler
     /// </summary>
     protected Control ParseBlock(Block block, LineInformation[] lineInformation) => _parser.ParseBlock(block, lineInformation);
 
+    /// <summary>
+    /// Parses a collection of inline Markdown objects and returns a control that visually represents the formatted text
+    /// according to Markdown styling rules.
+    /// </summary>
+    /// <param name="inlineObjects">An enumerable collection of MarkdownObject instances representing the inline elements to be parsed and rendered.</param>
+    /// <param name="parseAsFullText">true to parse the content as full text, applying emphasis delimiters to the entire literal; otherwise, false to
+    /// render the content without additional emphasis.</param>
+    /// <param name="defaultXOffset">The initial horizontal offset, in pixels, to apply to the parsed content for positioning within the container.</param>
+    /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
     {
         StackPanel container = new StackPanel();
@@ -87,6 +96,9 @@ internal abstract class BlockHandler
         return container;
     }
 
+    /// <summary>
+    /// Creates a new stylized presenter 
+    /// </summary>
     protected RichTextPresenter CreateNewPresenter()
     {
         RichTextPresenter currentPresenter = new();
