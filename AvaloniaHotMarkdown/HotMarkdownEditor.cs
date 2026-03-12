@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
 
 namespace AvaloniaHotMarkdown;
@@ -90,18 +91,21 @@ public class HotMarkdownEditor : ContentControl
         base.OnPointerPressed(e);
         var point = e.GetCurrentPoint(this);
 
-        if (point.Properties.IsLeftButtonPressed)
-        {
-            _isSelecting = true;
+        if (!point.Properties.IsLeftButtonPressed)
+            return;
+        
+        _isSelecting = true;
 
-            int index = FindIndexOfClickedObject(e.Source, e.GetPosition(e.Source as Visual));
+        int index = FindIndexOfClickedObject(e.Source, e.GetPosition(e.Source as Visual));
 
-            textProcessor.SelectionStart = index;
-            textProcessor.SelectionEnd = index;
+        if (index == -1)
+            return;
 
-            e.Pointer.Capture(this); // Keep tracking even if mouse leaves control
-            e.Handled = true;
-        }
+        textProcessor.SelectionStart = index;
+        textProcessor.SelectionEnd = index;
+
+        e.Pointer.Capture(this); // Keep tracking even if mouse leaves control
+        e.Handled = true;
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
@@ -198,5 +202,13 @@ public class HotMarkdownEditor : ContentControl
 
         foreach (var control in markdownParser.Parse(currentText, caretInformation))
             markdownContainer.Children.Add(control);
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        //avalonia will not register keys pressed without this line
+        context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
+
+        base.Render(context);
     }
 }
