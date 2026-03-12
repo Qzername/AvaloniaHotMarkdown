@@ -19,6 +19,11 @@ public class HotMarkdownEditor : ContentControl
     //while still rendering the markdown in real-time.
     TextBox textProcessor;
 
+    public int CaretIndex => textProcessor.CaretIndex;
+    public int SelectionStart => textProcessor.SelectionStart;
+    public int SelectionEnd => textProcessor.SelectionEnd;
+    public string SelectedText => textProcessor.SelectedText;
+
     StackPanel markdownContainer;
     IMarkdownParser markdownParser;
 
