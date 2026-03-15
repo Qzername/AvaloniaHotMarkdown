@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -88,19 +89,22 @@ public class HotMarkdownEditor : ContentControl
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
+        Debug.WriteLine("pressed");
+
         base.OnPointerPressed(e);
         var point = e.GetCurrentPoint(this);
 
         if (!point.Properties.IsLeftButtonPressed)
             return;
-        
-        _isSelecting = true;
 
         int index = FindIndexOfClickedObject(e.Source, e.GetPosition(e.Source as Visual));
 
         if (index == -1)
             return;
 
+        _isSelecting = true;
+
+        textProcessor.CaretIndex = index;
         textProcessor.SelectionStart = index;
         textProcessor.SelectionEnd = index;
 
@@ -112,16 +116,16 @@ public class HotMarkdownEditor : ContentControl
     {
         base.OnPointerMoved(e);
 
-        if (_isSelecting)
-        {
-            var point = e.GetPosition(this);
-            var hit = this.InputHitTest(point) as Control;
+        if (!_isSelecting)
+            return;
+        
+        var point = e.GetPosition(this);
+        var hit = this.InputHitTest(point) as Control;
 
-            int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
+        int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
 
-            if (index != -1)
-                textProcessor.SelectionEnd = index;
-        }
+        if (index != -1)
+            textProcessor.SelectionEnd = index;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
