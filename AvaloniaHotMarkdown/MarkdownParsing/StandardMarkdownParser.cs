@@ -73,6 +73,7 @@ public class StandardMarkdownParser : IMarkdownParser
                             emptyBlock.CaretIndex = 0;
                             emptyBlock.ShowCaret();
                         }
+                        emptyBlock.Tag = new CaretPositionOffset(0, j);
 
                         controls.Add(emptyBlock);
                     }
