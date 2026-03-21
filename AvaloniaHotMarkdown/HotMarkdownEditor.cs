@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -89,8 +88,6 @@ public class HotMarkdownEditor : ContentControl
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        Debug.WriteLine("pressed");
-
         base.OnPointerPressed(e);
         var point = e.GetCurrentPoint(this);
 
@@ -118,7 +115,7 @@ public class HotMarkdownEditor : ContentControl
 
         if (!_isSelecting)
             return;
-        
+
         var point = e.GetPosition(this);
         var hit = this.InputHitTest(point) as Control;
 

@@ -22,6 +22,7 @@ internal class ListBlockHandler : BlockHandler
 
             StackPanel itemContainer = new();
             itemContainer.Orientation = Orientation.Horizontal;
+            itemContainer.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
 
             string prefix = string.Empty;
 
@@ -37,7 +38,13 @@ internal class ListBlockHandler : BlockHandler
             foreach (var segment in listItem)
             {
                 var container = ParseBlock(segment, lineInformations);
-                container.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
+                CaretPositionOffset prefixOffset = new CaretPositionOffset(prefix.Length, 0);
+
+                //remove y offset from container
+                container.Tag = (container.Tag is CaretPositionOffset offset ?
+                    new CaretPositionOffset(offset.XInLineOffset + prefixOffset.XInLineOffset, 0) :
+                    prefixOffset);
+
                 itemContainer.Children.Add(container);
             }
 
@@ -82,7 +89,12 @@ internal class ListBlockHandler : BlockHandler
 
                 int temp = 1;
 
-                foreach (RichTextPresenter presenter in paragraphTree)
+                List<RichTextPresenter> texts = new();
+
+                foreach (StackPanel line in paragraphTree)
+                    texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
+
+                foreach (RichTextPresenter presenter in texts)
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
                     {
@@ -119,7 +131,13 @@ internal class ListBlockHandler : BlockHandler
             {
                 var paragraphTree = (itemTree[1] as StackPanel).Children;
                 int temp = 1;
-                foreach (RichTextPresenter presenter in paragraphTree)
+
+                List<RichTextPresenter> texts = new();
+
+                foreach (StackPanel line in paragraphTree)
+                    texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
+
+                foreach (RichTextPresenter presenter in texts)
                 {
                     if (temp + presenter.Text.Length >= selectionInformation.StartIndex &&
                         temp <= selectionInformation.EndIndex)

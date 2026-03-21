@@ -13,4 +13,9 @@ public struct SelectionInformation
 {
     public int StartIndex { get; set; }
     public int EndIndex { get; set; }
+
+    public override string ToString()
+    {
+        return $"Start: {StartIndex} End: {EndIndex}";
+    }
 }

@@ -37,18 +37,31 @@ internal abstract class BlockHandler
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
     {
         StackPanel container = new StackPanel();
-        container.Orientation = Orientation.Horizontal;
-        container.Children.Clear();
+
+        StackPanel line = new StackPanel();
+        line.Orientation = Orientation.Horizontal;
+        container.Children.Add(line);
 
         RichTextPresenter currentPresenter = CreateNewPresenter();
         string endings = string.Empty;
 
-        int offset = defaultXOffset;
-        currentPresenter.Tag = new CaretPositionOffset(offset, 0);
+        int xOffset = defaultXOffset;
+        currentPresenter.Tag = new CaretPositionOffset(xOffset, 0);
+
+        int yOffset = 0;
 
         foreach (var markdownObject in inlineObjects)
         {
             Type type = markdownObject.GetType();
+
+            if (markdownObject is LineBreakInline)
+            {
+                line = new StackPanel();
+                line.Orientation = Orientation.Horizontal;
+                container.Children.Add(line);
+                xOffset = 0;
+                line.Tag = new CaretPositionOffset(0, ++yOffset);
+            }
 
             if (markdownObject is EmphasisInline emphasisInline)
             {
@@ -82,12 +95,12 @@ internal abstract class BlockHandler
                 else
                     currentPresenter.Text = literal.Content.ToString();
 
-            offset += currentPresenter.Text.Length;
+            xOffset += currentPresenter.Text.Length;
 
-            container.Children.Add(currentPresenter);
+            line.Children.Add(currentPresenter);
 
             currentPresenter = CreateNewPresenter();
-            currentPresenter.Tag = new CaretPositionOffset(offset, 0);
+            currentPresenter.Tag = new CaretPositionOffset(xOffset, 0);
             endings = string.Empty;
         }
 

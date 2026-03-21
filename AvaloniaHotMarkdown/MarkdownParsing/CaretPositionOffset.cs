@@ -22,4 +22,9 @@ public struct CaretPositionOffset
             YLineOffset = a.YLineOffset + b.YLineOffset
         };
     }
+
+    public override string ToString()
+    {
+        return $"X: {XInLineOffset} Y: {YLineOffset}";
+    }
 }

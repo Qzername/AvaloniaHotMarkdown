@@ -13,7 +13,7 @@ internal class ParagraphBlockHandler : BlockHandler
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;
 
-        var container = ParseInline(paragraphBlock.Inline.Descendants(), lineInformations[0].ShowFullText);
+        var container = ParseInline(paragraphBlock.Inline.Descendants(), lineInformations.Any(x => x.ShowFullText));
 
         container.Tag = new CaretPositionOffset(0, lineInformations[0].LineYIndex);
 
@@ -27,38 +27,46 @@ internal class ParagraphBlockHandler : BlockHandler
         int temp = 0;
 
         //update caret
-        int? caretIndex = lineInformations[0].CaretIndex;
+        for (int i = 0; i < lineInformations.Length; i++)
+        {
+            int? caretIndex = lineInformations[i].CaretIndex;
 
-        if (lineInformations[0].CaretIndex is not null)
-            foreach (RichTextPresenter presenter in mainTree)
-            {
-                if (temp + presenter.Text.Length >= caretIndex)
+            if (lineInformations[i].CaretIndex is not null)
+                foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
                 {
-                    presenter.CaretIndex = caretIndex.Value - temp;
-                    presenter.ShowCaret();
-                    break;
+                    if (temp + presenter.Text.Length >= caretIndex)
+                    {
+                        presenter.CaretIndex = caretIndex.Value - temp;
+                        presenter.ShowCaret();
+                        break;
+                    }
+
+                    temp += presenter.Text.Length;
                 }
 
-                temp += presenter.Text.Length;
-            }
-
-        temp = 0;
+            temp = 0;
+        }
 
         //update selection
-        var selectionInformation = lineInformations[0].SelectionInformation;
+        for (int i = 0; i < lineInformations.Length; i++)
+        {
+            var selectionInformation = lineInformations[i].SelectionInformation;
 
-        if (selectionInformation is not null)
-            foreach (RichTextPresenter presenter in mainTree)
-            {
-                if (temp + presenter.Text.Length >= selectionInformation.Value.StartIndex &&
-                    temp <= selectionInformation.Value.EndIndex)
+            if (selectionInformation is not null)
+                foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
                 {
-                    presenter.SelectionStart = selectionInformation.Value.StartIndex - temp;
-                    presenter.SelectionEnd = selectionInformation.Value.EndIndex - temp;
-                    presenter.ShowCaret();
+                    if (temp + presenter.Text.Length >= selectionInformation.Value.StartIndex &&
+                        temp <= selectionInformation.Value.EndIndex)
+                    {
+                        presenter.SelectionStart = selectionInformation.Value.StartIndex - temp;
+                        presenter.SelectionEnd = selectionInformation.Value.EndIndex - temp;
+                        presenter.ShowCaret();
+                    }
+
+                    temp += presenter.Text.Length;
                 }
 
-                temp += presenter.Text.Length;
-            }
+            temp = 0;
+        }
     }
 }

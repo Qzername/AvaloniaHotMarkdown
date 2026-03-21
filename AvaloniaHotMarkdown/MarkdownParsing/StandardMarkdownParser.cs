@@ -24,6 +24,8 @@ public class StandardMarkdownParser : IMarkdownParser
 
         markdownPipeline = new MarkdownPipelineBuilder()
             .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
+            .DisableHtml()
+            .UseSoftlineBreakAsHardlineBreak()
             .Build();
     }
 
@@ -78,11 +80,16 @@ public class StandardMarkdownParser : IMarkdownParser
                         controls.Add(emptyBlock);
                     }
 
+            //check where does block end
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = new();
             for (int j = block.Line; j < blockEnd; j++)
             {
+                // we need to check for empty lines
+                if (string.IsNullOrWhiteSpace(lines[j].Replace('\n', ' ')))
+                    break;
+
                 SelectionInformation? selectionInformation = null;
 
                 if (caretInformation.SelectionInformation is not null &&
