@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -121,7 +122,7 @@ public class HotMarkdownEditor : ContentControl
 
         int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
 
-        if (index != -1)
+        if (index > 0)
             textProcessor.SelectionEnd = index;
     }
 

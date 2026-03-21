@@ -52,19 +52,24 @@ internal class ParagraphBlockHandler : BlockHandler
         {
             var selectionInformation = lineInformations[i].SelectionInformation;
 
-            if (selectionInformation is not null)
-                foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
-                {
-                    if (temp + presenter.Text.Length >= selectionInformation.Value.StartIndex &&
-                        temp <= selectionInformation.Value.EndIndex)
-                    {
-                        presenter.SelectionStart = selectionInformation.Value.StartIndex - temp;
-                        presenter.SelectionEnd = selectionInformation.Value.EndIndex - temp;
-                        presenter.ShowCaret();
-                    }
+            if (selectionInformation is null)
+                continue;
 
-                    temp += presenter.Text.Length;
+            int minSelectionStart = Math.Min(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
+            int maxSelectionStart = Math.Max(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
+
+            foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
+            {
+                if (temp + presenter.Text.Length >= minSelectionStart &&
+                    temp <= maxSelectionStart)
+                {
+                    presenter.SelectionStart = minSelectionStart - temp;
+                    presenter.SelectionEnd = maxSelectionStart - temp;
+                    presenter.ShowCaret();
                 }
+
+                temp += presenter.Text.Length;
+            }
 
             temp = 0;
         }
