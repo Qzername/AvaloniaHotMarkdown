@@ -3,7 +3,9 @@ using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
+using Markdig.Parsers;
 using Markdig.Syntax;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -22,11 +24,20 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(ListBlock), new ListBlockHandler(this) },
         };
 
-        markdownPipeline = new MarkdownPipelineBuilder()
-            .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
-            .DisableHtml()
-            .UseSoftlineBreakAsHardlineBreak()
-            .Build();
+        markdownPipeline = BuildPipeline(); 
+    }
+
+    MarkdownPipeline BuildPipeline()
+    {
+        var builder = new MarkdownPipelineBuilder()
+         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
+         .DisableHtml()
+         .Use<StrictListExtension>()
+         .UseSoftlineBreakAsHardlineBreak();
+
+        builder.Extensions.Insert(0, new StrictListExtension());
+
+        return builder.Build();
     }
 
     public Control[] Parse(string markdown, CaretInformation caretInformation)
@@ -176,7 +187,7 @@ public class StandardMarkdownParser : IMarkdownParser
         Type type = block.GetType();
 
         if (!handlers.ContainsKey(type))
-            throw new NotSupportedException("This block is not supported: " + type.Name);
+            return new RichTextPresenter();
 
         return handlers[type].Handle(block, lineInformation);
     }
