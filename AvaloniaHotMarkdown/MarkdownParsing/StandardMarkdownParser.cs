@@ -44,10 +44,21 @@ public class StandardMarkdownParser : IMarkdownParser
 
         var lines = markdown.Split('\n'); //for empty line parsing
 
-        var document = Markdown.Parse(markdown, markdownPipeline);
-
         int[] fullTextLinesIndexes = GetFullTextLines(caretInformation, lines);
         Point caretPosition = IndexToTextPosition(caretInformation.CaretIndex, lines);
+
+        //check for empty lines at start
+        int endOfEmptyLinesAtStart = 0;
+        for (int i = 0; i < lines.Length; i++)
+            if (!string.IsNullOrWhiteSpace(lines[i]))
+            {
+                endOfEmptyLinesAtStart = i;
+                break;
+            }
+
+        controls.AddRange(GenerateEmptyLines(0, endOfEmptyLinesAtStart, caretPosition));
+
+        var document = Markdown.Parse(markdown, markdownPipeline);
 
         Point selectionStart = new Point(0, 0);
         Point selectionEnd = new Point(0, 0);
@@ -125,6 +136,44 @@ public class StandardMarkdownParser : IMarkdownParser
             handlers[block.GetType()].UpdateTextEffects(control, lineInformation.ToArray());
 
             controls.Add(control);
+        }
+
+        //check for empty lines at the end
+        int startOfEmptyLinesAtEnd = 0;
+        for (int i = lines.Length - 1; i >= 0; i--)
+            if (!string.IsNullOrWhiteSpace(lines[i]))
+            {
+                startOfEmptyLinesAtEnd = i+1;
+                break;
+            }
+
+        //we dont want to duplicate empty lines since they were already added at the start
+        if(startOfEmptyLinesAtEnd != 0)
+            controls.AddRange(GenerateEmptyLines(startOfEmptyLinesAtEnd, lines.Length, caretPosition));
+
+        return controls.ToArray();
+    }
+
+    Control[] GenerateEmptyLines(int start, int end, Point caretPosition)
+    {
+        List<Control> controls = new List<Control>();
+
+        for (int i = start; i < end; i++)
+        {
+            var emptyBlock = new RichTextPresenter();
+
+            //check for caret as well
+            if (caretPosition.Y == i)
+            {
+                //TODO: change this...
+                emptyBlock.CaretBrush = Brushes.White;
+                emptyBlock.CaretIndex = 0;
+                emptyBlock.ShowCaret();
+            }
+
+            emptyBlock.Tag = new CaretPositionOffset(0, i);
+
+            controls.Add(emptyBlock);
         }
 
         return controls.ToArray();
