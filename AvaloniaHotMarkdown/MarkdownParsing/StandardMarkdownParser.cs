@@ -3,9 +3,7 @@ using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
-using Markdig.Parsers;
 using Markdig.Syntax;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;

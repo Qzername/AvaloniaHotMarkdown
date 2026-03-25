@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Layout;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -73,10 +72,11 @@ internal class ListBlockHandler : BlockHandler
                 return;
 
             var itemTree = (mainTree[i] as DockPanel).Children;
+            int prefixLength = (itemTree[0] as RichTextPresenter).Text.Length;
 
             var caretIndex = lineInformations[i].CaretIndex!.Value;
 
-            if (caretIndex <= 2)
+            if (caretIndex <= prefixLength)
             {
                 var richTextPresenter = (itemTree[0] as RichTextPresenter);
                 richTextPresenter.CaretIndex = caretIndex;
@@ -95,9 +95,9 @@ internal class ListBlockHandler : BlockHandler
 
                 foreach (RichTextPresenter presenter in texts)
                 {
-                    if (temp + presenter.Text.Length >= caretIndex)
+                    if (temp + presenter.Text.Length >= caretIndex- prefixLength)
                     {
-                        presenter.CaretIndex = caretIndex - temp - 2;
+                        presenter.CaretIndex = caretIndex - temp - prefixLength+1;
                         presenter.ShowCaret();
                         return;
                     }
