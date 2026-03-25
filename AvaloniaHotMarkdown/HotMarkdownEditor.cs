@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 

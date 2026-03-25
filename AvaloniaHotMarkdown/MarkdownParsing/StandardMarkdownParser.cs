@@ -187,7 +187,7 @@ public class StandardMarkdownParser : IMarkdownParser
         Type type = block.GetType();
 
         if (!handlers.ContainsKey(type))
-            return new RichTextPresenter();
+            throw new NotSupportedException("This block is not supported: " + type.Name);
 
         return handlers[type].Handle(block, lineInformation);
     }

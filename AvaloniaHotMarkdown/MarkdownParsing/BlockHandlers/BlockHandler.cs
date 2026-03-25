@@ -38,8 +38,7 @@ internal abstract class BlockHandler
     {
         StackPanel container = new StackPanel();
 
-        StackPanel line = new StackPanel();
-        line.Orientation = Orientation.Horizontal;
+        DockPanel line = new DockPanel();
         container.Children.Add(line);
 
         RichTextPresenter currentPresenter = CreateNewPresenter();
@@ -56,8 +55,7 @@ internal abstract class BlockHandler
 
             if (markdownObject is LineBreakInline)
             {
-                line = new StackPanel();
-                line.Orientation = Orientation.Horizontal;
+                line = new DockPanel();
                 container.Children.Add(line);
                 xOffset = 0;
                 line.Tag = new CaretPositionOffset(0, ++yOffset);

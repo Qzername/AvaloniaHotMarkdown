@@ -20,8 +20,7 @@ internal class ListBlockHandler : BlockHandler
             if (listBlock[i] is not ListItemBlock listItem)
                 continue;
 
-            StackPanel itemContainer = new();
-            itemContainer.Orientation = Orientation.Horizontal;
+            DockPanel itemContainer = new();
             itemContainer.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
 
             string prefix = string.Empty;
@@ -73,7 +72,7 @@ internal class ListBlockHandler : BlockHandler
             if (i >= mainTree.Count)
                 return;
 
-            var itemTree = (mainTree[i] as StackPanel).Children;
+            var itemTree = (mainTree[i] as DockPanel).Children;
 
             var caretIndex = lineInformations[i].CaretIndex!.Value;
 
@@ -91,7 +90,7 @@ internal class ListBlockHandler : BlockHandler
 
                 List<RichTextPresenter> texts = new();
 
-                foreach (StackPanel line in paragraphTree)
+                foreach (DockPanel line in paragraphTree)
                     texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
 
                 foreach (RichTextPresenter presenter in texts)
@@ -118,7 +117,7 @@ internal class ListBlockHandler : BlockHandler
                 continue;
             if (i >= mainTree.Count)
                 return;
-            var itemTree = (mainTree[i] as StackPanel).Children;
+            var itemTree = (mainTree[i] as DockPanel).Children;
             var selectionInformation = lineInformations[i].SelectionInformation!.Value;
             if (selectionInformation.EndIndex <= 2)
             {
@@ -134,7 +133,7 @@ internal class ListBlockHandler : BlockHandler
 
                 List<RichTextPresenter> texts = new();
 
-                foreach (StackPanel line in paragraphTree)
+                foreach (DockPanel line in paragraphTree)
                     texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
 
                 foreach (RichTextPresenter presenter in texts)

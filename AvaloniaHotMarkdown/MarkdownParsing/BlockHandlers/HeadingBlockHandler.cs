@@ -25,13 +25,13 @@ internal class HeadingBlockHandler : BlockHandler
         {
             var richTextPresenter = CreateNewPresenter();
             richTextPresenter.Text = prefix;
-            (container.Children[0] as StackPanel).Children.Insert(0, richTextPresenter);
+            (container.Children[0] as DockPanel).Children.Insert(0, richTextPresenter);
         }
 
         List<Control> richTexts = new List<Control>();
 
-        foreach (StackPanel stackPanel in container.Children)
-            richTexts.AddRange(stackPanel.Children.ToList());
+        foreach (DockPanel dockPanel in container.Children)
+            richTexts.AddRange(dockPanel.Children.ToList());
 
         foreach (RichTextPresenter item in richTexts)
             item.FontSize = Sizes[headingBlock.Level - 1];
@@ -51,7 +51,7 @@ internal class HeadingBlockHandler : BlockHandler
             int? caretIndex = lineInformations[i].CaretIndex;
 
             if (lineInformations[i].CaretIndex is not null)
-                foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
+                foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children)
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
                     {
@@ -77,7 +77,7 @@ internal class HeadingBlockHandler : BlockHandler
             int minSelectionStart = Math.Min(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
             int maxSelectionStart = Math.Max(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
 
-            foreach (RichTextPresenter presenter in (mainTree[i] as StackPanel).Children)
+            foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children)
             {
                 if (temp + presenter.Text.Length >= minSelectionStart &&
                     temp <= maxSelectionStart)
