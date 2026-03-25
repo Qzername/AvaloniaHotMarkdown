@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
@@ -149,15 +150,20 @@ public class HotMarkdownEditor : ContentControl
 
             control = control.Parent as Control;
         }
-
+        
         int index = GetIndexFromPosition(offset.XInLineOffset, offset.YLineOffset);
 
-        if (sender is RichTextPresenter rich)
+        var trueSender = sender;
+
+        if (sender is TextPresenter presenter && presenter.Parent is RichTextPresenter richParent)
+            trueSender = richParent;
+
+        if (trueSender is RichTextPresenter rich)
         {
             rich.MoveCaretToPoint(position);
             index += rich.CaretIndex;
         }
-
+        
         return index;
     }
 

@@ -50,8 +50,8 @@ public class RichTextPresenter : Control
 
     public IBrush? HighlightBrush
     {
-        get => _textPresenter.Background;
-        set => _textPresenter.Background = value;
+        get;
+        set;
     }
 
     public int CaretIndex
@@ -94,6 +94,9 @@ public class RichTextPresenter : Control
         {
             Background = Brushes.Transparent,
         };
+
+        LogicalChildren.Add(_textPresenter);
+        VisualChildren.Add(_textPresenter);
     }
 
     public override void Render(DrawingContext context)
@@ -105,7 +108,6 @@ public class RichTextPresenter : Control
         if (ShowHighlight)
             context.DrawRectangle(HighlightBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
 
-        _textPresenter.Render(context);
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
 
         var pen = new Pen(CaretBrush, 2);
