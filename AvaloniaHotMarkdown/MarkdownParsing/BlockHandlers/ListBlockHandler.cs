@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.VisualTree;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -91,7 +92,8 @@ internal class ListBlockHandler : BlockHandler
                 List<RichTextPresenter> texts = new();
 
                 foreach (DockPanel line in paragraphTree)
-                    texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
+                    texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
+                
 
                 foreach (RichTextPresenter presenter in texts)
                 {
@@ -134,7 +136,7 @@ internal class ListBlockHandler : BlockHandler
                 List<RichTextPresenter> texts = new();
 
                 foreach (DockPanel line in paragraphTree)
-                    texts.AddRange(line.Children.ToList().Cast<RichTextPresenter>());
+                    texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
 
                 foreach (RichTextPresenter presenter in texts)
                 {
