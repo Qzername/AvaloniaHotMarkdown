@@ -181,7 +181,7 @@ public class HotMarkdownEditor : ContentControl
         return totalIndex;
     }
 
-    protected override void OnGotFocus(GotFocusEventArgs e)
+    protected override void OnGotFocus(FocusChangedEventArgs e)
     {
         base.OnGotFocus(e);
         textProcessor.Focus();
