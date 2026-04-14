@@ -169,6 +169,9 @@ public class HotMarkdownEditor : ContentControl
 
     int GetIndexFromPosition(int caretIndexInLine, int line)
     {
+        if (textProcessor.Text is null)
+            return 0;
+
         string[] lines = textProcessor.Text.Split('\n');
 
         int totalIndex = 0;

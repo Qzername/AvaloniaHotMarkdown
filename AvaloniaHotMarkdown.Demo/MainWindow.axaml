@@ -11,6 +11,6 @@
 
         Title="AvaloniaHotMarkdown.Demo">
 	<Panel>
-		<HotMarkdown:HotMarkdownEditor Text="{Binding TextSource}" Padding="10"/>
+		<HotMarkdown:HotMarkdownEditor Padding="10"/>
 	</Panel>
 </Window>
