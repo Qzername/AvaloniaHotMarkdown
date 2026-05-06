@@ -12,11 +12,11 @@ namespace AvaloniaHotMarkdown;
  */
 public class RichTextPresenter : Control
 {
-    TextPresenter _textPresenter;
+    readonly TextPresenter _textPresenter;
 
     public string Text
     {
-        get => _textPresenter.Text;
+        get => _textPresenter.Text ?? string.Empty;
         set
         {
             _textPresenter.Text = value;

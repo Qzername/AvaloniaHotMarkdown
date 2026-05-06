@@ -19,15 +19,15 @@ public class HotMarkdownEditor : ContentControl
     //this is a bit of a hack,
     //but it allows us to use the TextBox's built-in text editing capabilities
     //while still rendering the markdown in real-time.
-    TextBox textProcessor;
+    readonly TextBox textProcessor;
 
     public int CaretIndex => textProcessor.CaretIndex;
     public int SelectionStart => textProcessor.SelectionStart;
     public int SelectionEnd => textProcessor.SelectionEnd;
     public string SelectedText => textProcessor.SelectedText;
 
-    StackPanel markdownContainer;
-    IMarkdownParser markdownParser;
+    readonly StackPanel markdownContainer;
+    readonly IMarkdownParser markdownParser;
 
     public string Text
     {
@@ -36,6 +36,7 @@ public class HotMarkdownEditor : ContentControl
         {
             textProcessor.Text = value;
             ConstructChildren();
+            RaisePropertyChanged(TextProperty, value, textProcessor.Text);
         }
     }
 
@@ -138,7 +139,7 @@ public class HotMarkdownEditor : ContentControl
     {
         var control = sender as Control;
 
-        CaretPositionOffset offset = new CaretPositionOffset();
+        CaretPositionOffset offset = new();
 
         while (control != this)
         {
@@ -146,7 +147,7 @@ public class HotMarkdownEditor : ContentControl
                 return -1;
 
             if (control.Tag is not null)
-                offset = offset + (CaretPositionOffset)control.Tag;
+                offset += (CaretPositionOffset)control.Tag;
 
             control = control.Parent as Control;
         }

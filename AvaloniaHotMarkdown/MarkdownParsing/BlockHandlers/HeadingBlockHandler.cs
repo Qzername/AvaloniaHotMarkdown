@@ -3,14 +3,10 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
-internal class HeadingBlockHandler : BlockHandler
+internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler(parser)
 {
     //TODO: make this customizable
     readonly int[] Sizes = [60, 45, 30];
-
-    public HeadingBlockHandler(StandardMarkdownParser parser) : base(parser)
-    {
-    }
 
     public override Control Handle(Block block, LineInformation[] lineInformations)
     {
@@ -28,7 +24,7 @@ internal class HeadingBlockHandler : BlockHandler
             (container.Children[0] as DockPanel).Children.Insert(0, richTextPresenter);
         }
 
-        List<Control> richTexts = new List<Control>();
+        List<Control> richTexts = [];
 
         foreach (DockPanel dockPanel in container.Children)
             richTexts.AddRange(dockPanel.Children.ToList());

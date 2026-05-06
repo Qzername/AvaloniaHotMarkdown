@@ -25,7 +25,7 @@ public class StandardMarkdownParser : IMarkdownParser
         markdownPipeline = BuildPipeline(); 
     }
 
-    MarkdownPipeline BuildPipeline()
+    static MarkdownPipeline BuildPipeline()
     {
         var builder = new MarkdownPipelineBuilder()
          .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
@@ -40,7 +40,7 @@ public class StandardMarkdownParser : IMarkdownParser
 
     public Control[] Parse(string markdown, CaretInformation caretInformation)
     {
-        List<Control> controls = new();
+        List<Control> controls = [];
 
         var lines = markdown.Split('\n'); //for empty line parsing
 
@@ -60,8 +60,8 @@ public class StandardMarkdownParser : IMarkdownParser
 
         var document = Markdown.Parse(markdown, markdownPipeline);
 
-        Point selectionStart = new Point(0, 0);
-        Point selectionEnd = new Point(0, 0);
+        Point selectionStart = new(0, 0);
+        Point selectionEnd = new(0, 0);
 
         if (caretInformation.SelectionInformation is not null)
         {
@@ -69,11 +69,7 @@ public class StandardMarkdownParser : IMarkdownParser
             selectionEnd = IndexToTextPosition(caretInformation.SelectionInformation.Value.EndIndex, lines);
 
             if (selectionEnd.Y < selectionStart.Y)
-            {
-                var temp = selectionStart;
-                selectionStart = selectionEnd;
-                selectionEnd = temp;
-            }
+                (selectionEnd, selectionStart) = (selectionStart, selectionEnd);
         }
 
         for (int i = 0; i < document.Count; i++)
@@ -103,7 +99,7 @@ public class StandardMarkdownParser : IMarkdownParser
             //check where does block end
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
-            List<LineInformation> lineInformation = new();
+            List<LineInformation> lineInformation = [];
             for (int j = block.Line; j < blockEnd; j++)
             {
                 // we need to check for empty lines
@@ -132,8 +128,8 @@ public class StandardMarkdownParser : IMarkdownParser
                 });
             }
 
-            var control = ParseBlock(block, lineInformation.ToArray());
-            handlers[block.GetType()].UpdateTextEffects(control, lineInformation.ToArray());
+            var control = ParseBlock(block, [.. lineInformation]);
+            handlers[block.GetType()].UpdateTextEffects(control, [.. lineInformation]);
 
             controls.Add(control);
         }
@@ -151,12 +147,12 @@ public class StandardMarkdownParser : IMarkdownParser
         if(startOfEmptyLinesAtEnd != 0)
             controls.AddRange(GenerateEmptyLines(startOfEmptyLinesAtEnd, lines.Length, caretPosition));
 
-        return controls.ToArray();
+        return [.. controls];
     }
 
-    Control[] GenerateEmptyLines(int start, int end, Point caretPosition)
+    static Control[] GenerateEmptyLines(int start, int end, Point caretPosition)
     {
-        List<Control> controls = new List<Control>();
+        List<Control> controls = [];
 
         for (int i = start; i < end; i++)
         {
@@ -176,10 +172,10 @@ public class StandardMarkdownParser : IMarkdownParser
             controls.Add(emptyBlock);
         }
 
-        return controls.ToArray();
+        return [.. controls];
     }
 
-    int[] GetFullTextLines(CaretInformation caretInformation, string[] lines)
+    static int[] GetFullTextLines(CaretInformation caretInformation, string[] lines)
     {
         int min = caretInformation.CaretIndex;
         int max = caretInformation.CaretIndex;
@@ -195,7 +191,7 @@ public class StandardMarkdownParser : IMarkdownParser
 
         //get indexes of lines that are between min and max
 
-        List<int> result = new();
+        List<int> result = [];
 
         int currentIndex = 0;
 
@@ -209,10 +205,10 @@ public class StandardMarkdownParser : IMarkdownParser
             currentIndex += lineLength;
         }
 
-        return result.ToArray();
+        return [.. result];
     }
 
-    Point IndexToTextPosition(int index, string[] lines)
+    static Point IndexToTextPosition(int index, string[] lines)
     {
         int currentIndex = 0;
 
@@ -233,9 +229,9 @@ public class StandardMarkdownParser : IMarkdownParser
     {
         Type type = block.GetType();
 
-        if (!handlers.ContainsKey(type))
+        if (!handlers.TryGetValue(type, out BlockHandler? value))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
-        return handlers[type].Handle(block, lineInformation);
+        return value.Handle(block, lineInformation);
     }
 }
