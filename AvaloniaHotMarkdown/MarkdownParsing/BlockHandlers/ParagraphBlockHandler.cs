@@ -32,17 +32,32 @@ internal class ParagraphBlockHandler : BlockHandler
             int? caretIndex = lineInformations[i].CaretIndex;
 
             if (lineInformations[i].CaretIndex is not null)
-                foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children.OfType<RichTextPresenter>())
+            {
+                var children = (mainTree[i] as DockPanel).Children;
+
+                for(int j = 0; j < children.Count;j++)
                 {
-                    if (temp + presenter.Text.Length >= caretIndex)
+                    var current = children[j];
+
+                    if(current is RichTextPresenter presenter)
                     {
-                        presenter.CaretIndex = caretIndex.Value - temp;
-                        presenter.ShowCaret();
-                        break;
+                        if (temp + presenter.Text.Length >= caretIndex)
+                        {
+                            presenter.CaretIndex = caretIndex.Value - temp;
+                            presenter.ShowCaret();
+                            break;
+                        }
+
+                        temp += presenter.Text.Length;
+                        
+                        continue;
                     }
 
-                    temp += presenter.Text.Length;
+                    if (current.Tag is not null && current.Tag is CaretPositionOffset offset)
+                        temp += offset.XInLineOffset;
                 }
+            }
+               
 
             temp = 0;
         }

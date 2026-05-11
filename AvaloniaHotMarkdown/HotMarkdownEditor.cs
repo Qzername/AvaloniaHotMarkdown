@@ -230,9 +230,7 @@ public class HotMarkdownEditor : ContentControl
     {
         int index = FindIndexOfClickedObject(sender, null);
 
-        Debug.WriteLine(index);
-
         string currentText = Text ?? string.Empty;
-        Text = currentText.Substring(0, index) + newText + currentText.Substring(index + oldTextLength);
+        Text = currentText.Substring(0, index - oldTextLength+1) + newText + currentText.Substring(index+1);
     }
 }

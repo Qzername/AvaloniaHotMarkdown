@@ -14,19 +14,20 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Ordered list
 - Striketrough, bold, underline and italic texts
 - Highlight
+- Checkboxes
 
 ## Missing features that will be added in future:
 - More styling options
 - Custom objects support
 - Custom key combination support
 - Android support
+- Text wrapping
 
 ### Markdown objects:
 - Blockquotes
 - Horizontal line
 - Links
 - Grid
-- Task list
 - Fenced Code Block
 - Subscript
 - Superscript

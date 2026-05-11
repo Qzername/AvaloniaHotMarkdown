@@ -38,6 +38,8 @@ internal abstract class BlockHandler
     /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
     {
+        //TODO: this needs rework
+
         StackPanel container = new StackPanel();
 
         DockPanel line = new DockPanel();
@@ -57,22 +59,29 @@ internal abstract class BlockHandler
 
             if (markdownObject is TaskList taskList)
             {
-                var checkbox = new CheckBox
+                string checkboxText = taskList.Checked ? "- [x]" : "- [ ]";
+
+                if (parseAsFullText)
+                    currentPresenter.Text += checkboxText;
+                else
                 {
-                    IsChecked = taskList.Checked
-                };
+                    var checkbox = new CheckBox
+                    {
+                        IsChecked = taskList.Checked
+                    };
 
-                int objectLength = "- [ ]".Length; 
+                    checkbox.IsCheckedChanged += (s, e) =>
+                    {
+                        _parser.TextUpdateRequestHandler(checkbox, checkboxText.Length+1, checkbox.IsChecked.Value ? "- [x] " : "- [ ] ");
+                    };
 
-                checkbox.IsCheckedChanged += (s, e) =>
-                {
-                    _parser.TextUpdateRequestHandler(checkbox, objectLength, $"- [{(checkbox.IsChecked.Value ? 'X' : ' ')}]");
-                };
+                    xOffset += checkboxText.Length;
 
-                xOffset += objectLength;
+                    checkbox.Tag = new CaretPositionOffset(xOffset, 0);
 
-                line.Children.Add(checkbox);
-                continue;
+                    line.Children.Add(checkbox);
+                    continue;
+                }
             }
 
             if (markdownObject is LineBreakInline)
@@ -143,6 +152,7 @@ internal abstract class BlockHandler
         currentPresenter.HighlightBrush = Brushes.Wheat;
         currentPresenter.CaretBrush = Brushes.White;
         currentPresenter.SelectionBrush = Brushes.Cyan;
+        currentPresenter.VerticalAlignment = VerticalAlignment.Center;
 
         return currentPresenter;
     }
