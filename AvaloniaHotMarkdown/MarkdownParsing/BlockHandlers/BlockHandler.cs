@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -36,6 +38,8 @@ internal abstract class BlockHandler
     /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
     protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
     {
+        //TODO: this needs rework
+
         StackPanel container = new StackPanel();
 
         DockPanel line = new DockPanel();
@@ -52,6 +56,33 @@ internal abstract class BlockHandler
         foreach (var markdownObject in inlineObjects)
         {
             Type type = markdownObject.GetType();
+
+            if (markdownObject is TaskList taskList)
+            {
+                string checkboxText = taskList.Checked ? "- [x]" : "- [ ]";
+
+                if (parseAsFullText)
+                    currentPresenter.Text += checkboxText;
+                else
+                {
+                    var checkbox = new CheckBox
+                    {
+                        IsChecked = taskList.Checked
+                    };
+
+                    checkbox.IsCheckedChanged += (s, e) =>
+                    {
+                        _parser.TextUpdateRequestHandler(checkbox, checkboxText.Length+1, checkbox.IsChecked.Value ? "- [x] " : "- [ ] ");
+                    };
+
+                    xOffset += checkboxText.Length;
+
+                    checkbox.Tag = new CaretPositionOffset(xOffset, 0);
+
+                    line.Children.Add(checkbox);
+                    continue;
+                }
+            }
 
             if (markdownObject is LineBreakInline)
             {
@@ -88,10 +119,12 @@ internal abstract class BlockHandler
             }
 
             if (markdownObject is LiteralInline literal)
+            {
                 if (parseAsFullText)
                     currentPresenter.Text = $"{endings}{literal.Content.ToString()}{new string(endings.Reverse().ToArray())}";
                 else
                     currentPresenter.Text = literal.Content.ToString();
+            }
 
             xOffset += currentPresenter.Text.Length;
 
@@ -119,6 +152,7 @@ internal abstract class BlockHandler
         currentPresenter.HighlightBrush = Brushes.Wheat;
         currentPresenter.CaretBrush = Brushes.White;
         currentPresenter.SelectionBrush = Brushes.Cyan;
+        currentPresenter.VerticalAlignment = VerticalAlignment.Center;
 
         return currentPresenter;
     }

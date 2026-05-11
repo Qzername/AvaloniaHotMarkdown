@@ -4,6 +4,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown;
 
@@ -47,7 +48,7 @@ public class HotMarkdownEditor : ContentControl
 
     public HotMarkdownEditor()
     {
-        markdownParser = new StandardMarkdownParser();
+        markdownParser = new StandardMarkdownParser(TextUpdateRequestHandler);
 
         markdownContainer = new StackPanel();
         textProcessor = new TextBox
@@ -135,7 +136,7 @@ public class HotMarkdownEditor : ContentControl
         e.Pointer.Capture(null);
     }
 
-    int FindIndexOfClickedObject(object? sender, Point position)
+    int FindIndexOfClickedObject(object? sender, Point? position)
     {
         var control = sender as Control;
 
@@ -161,7 +162,9 @@ public class HotMarkdownEditor : ContentControl
 
         if (trueSender is RichTextPresenter rich)
         {
-            rich.MoveCaretToPoint(position);
+            if(position is not null)
+                rich.MoveCaretToPoint(position.Value);
+
             index += rich.CaretIndex;
         }
         
@@ -221,5 +224,13 @@ public class HotMarkdownEditor : ContentControl
         context.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
         base.Render(context);
+    }
+
+    void TextUpdateRequestHandler(Control sender, int oldTextLength, string newText)
+    {
+        int index = FindIndexOfClickedObject(sender, null);
+
+        string currentText = Text ?? string.Empty;
+        Text = currentText.Substring(0, index - oldTextLength+1) + newText + currentText.Substring(index+1);
     }
 }

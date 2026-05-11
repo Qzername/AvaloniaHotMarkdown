@@ -1,20 +1,30 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
+using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
+
+public delegate void TextUpdateRequestHandler(Control control, int oldTextLength, string newText);
 
 public class StandardMarkdownParser : IMarkdownParser
 {
     readonly Dictionary<Type, BlockHandler> handlers;
     readonly MarkdownPipeline markdownPipeline;
 
-    public StandardMarkdownParser()
+    //TODO: change this when inline parsing will be reworked
+    public TextUpdateRequestHandler TextUpdateRequestHandler { get => _textUpdateRequestHandler; }
+    readonly TextUpdateRequestHandler _textUpdateRequestHandler;
+
+    public StandardMarkdownParser(TextUpdateRequestHandler textUpdateRequestHandler)
     {
+        _textUpdateRequestHandler = textUpdateRequestHandler;
+
         handlers = new()
         {
             { typeof(ParagraphBlock), new ParagraphBlockHandler(this) },
@@ -28,12 +38,15 @@ public class StandardMarkdownParser : IMarkdownParser
     static MarkdownPipeline BuildPipeline()
     {
         var builder = new MarkdownPipelineBuilder()
+         .UseTaskLists()
          .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
          .DisableHtml()
+         .Use<UnwrapTaskListExtension>()
          .Use<StrictListExtension>()
          .UseSoftlineBreakAsHardlineBreak();
 
-        builder.Extensions.Insert(0, new StrictListExtension());
+        builder.Extensions.Insert(0, new UnwrapTaskListExtension());
+        builder.Extensions.Insert(1, new StrictListExtension());
 
         return builder.Build();
     }
