@@ -32,7 +32,7 @@ internal class ParagraphBlockHandler : BlockHandler
             int? caretIndex = lineInformations[i].CaretIndex;
 
             if (lineInformations[i].CaretIndex is not null)
-                foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children)
+                foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children.OfType<RichTextPresenter>())
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
                     {
@@ -58,7 +58,7 @@ internal class ParagraphBlockHandler : BlockHandler
             int minSelectionStart = Math.Min(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
             int maxSelectionStart = Math.Max(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
 
-            foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children)
+            foreach (RichTextPresenter presenter in (mainTree[i] as DockPanel).Children.OfType<RichTextPresenter>())
             {
                 if (temp + presenter.Text.Length >= minSelectionStart &&
                     temp <= maxSelectionStart)

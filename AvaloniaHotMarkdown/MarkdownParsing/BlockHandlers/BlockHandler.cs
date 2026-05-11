@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -53,6 +55,26 @@ internal abstract class BlockHandler
         {
             Type type = markdownObject.GetType();
 
+            if (markdownObject is TaskList taskList)
+            {
+                var checkbox = new CheckBox
+                {
+                    IsChecked = taskList.Checked
+                };
+
+                int objectLength = "- [ ]".Length; 
+
+                checkbox.IsCheckedChanged += (s, e) =>
+                {
+                    _parser.TextUpdateRequestHandler(checkbox, objectLength, $"- [{(checkbox.IsChecked.Value ? 'X' : ' ')}]");
+                };
+
+                xOffset += objectLength;
+
+                line.Children.Add(checkbox);
+                continue;
+            }
+
             if (markdownObject is LineBreakInline)
             {
                 line = new DockPanel();
@@ -88,10 +110,12 @@ internal abstract class BlockHandler
             }
 
             if (markdownObject is LiteralInline literal)
+            {
                 if (parseAsFullText)
                     currentPresenter.Text = $"{endings}{literal.Content.ToString()}{new string(endings.Reverse().ToArray())}";
                 else
                     currentPresenter.Text = literal.Content.ToString();
+            }
 
             xOffset += currentPresenter.Text.Length;
 
