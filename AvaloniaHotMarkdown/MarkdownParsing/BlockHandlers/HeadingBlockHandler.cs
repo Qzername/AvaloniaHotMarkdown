@@ -8,7 +8,7 @@ internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler
     //TODO: make this customizable
     readonly int[] Sizes = [60, 45, 30];
 
-    public override Control Handle(Block block, LineInformation[] lineInformations)
+    public override Control Handle(Block block, string markdownText, LineInformation[] lineInformations)
     {
         HeadingBlock headingBlock = (HeadingBlock)block;
         string prefix = new string('#', headingBlock.Level) + " ";

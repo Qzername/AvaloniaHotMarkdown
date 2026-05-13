@@ -146,7 +146,7 @@ public class StandardMarkdownParser : IMarkdownParser
                 });
             }
 
-            var control = ParseBlock(block, [.. lineInformation]);
+            var control = ParseBlock(block, markdown, [.. lineInformation]);
             handlers[block.GetType()].UpdateTextEffects(control, [.. lineInformation]);
 
             controls.Add(control);
@@ -243,13 +243,13 @@ public class StandardMarkdownParser : IMarkdownParser
         return new Point(0, lines.Length - 1);
     }
 
-    public Control ParseBlock(Block block, LineInformation[] lineInformation)
+    public Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
     {
         Type type = block.GetType();
 
         if (!handlers.TryGetValue(type, out BlockHandler? value))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
-        return value.Handle(block, lineInformation);
+        return value.Handle(block, markdownText, lineInformation);
     }
 }

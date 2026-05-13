@@ -9,16 +9,16 @@ using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
-
 /*
 | a | b | c |
 |---|---|---|
 | 1 | 2 | 3 |
 | 4 | 5 | 6 |
  */
+
 internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser)
 {
-    public override Control Handle(Block block, LineInformation[] lineInformations)
+    public override Control Handle(Block block, string markdownText, LineInformation[] lineInformations)
     {
         var showFull = lineInformations.Any(x => x.ShowFullText);
 
@@ -30,51 +30,21 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
         Control result;
 
         if(showFull)
-            result = ParseAsText(table, rowsCount, columnsCount, lineInformations);
+            result = ParseAsText(table, markdownText, rowsCount, columnsCount, lineInformations);
         else
-            result = ParseAsTable(table, rowsCount, columnsCount, lineInformations);
+            result = ParseAsTable(table, markdownText, rowsCount, columnsCount, lineInformations);
 
         return result;
     }
 
-    Control ParseAsText(Table table, int rowsCount, int columnsCount, LineInformation[] lineInformation)
+    Control ParseAsText(Table table, string markdownText, int rowsCount, int columnsCount, LineInformation[] lineInformation)
     {
-        Debug.WriteLine(table.ToPositionText());
-
-        List<Control> controls = new List<Control>();
-
-        List<MarkdownObject> line = new List<MarkdownObject>();
-
-        for(int rowIndex = 0; rowIndex < rowsCount; rowIndex++)
-        {
-            var row = (TableRow)table[rowIndex];
-
-            for(int colIndex = 0; colIndex < columnsCount; colIndex++)
-            {
-                var cell = (TableCell)row[colIndex];
-
-                Debug.WriteLine(cell.ToPositionText());
-
-                if(cell.Count == 0)
-                    continue;
-
-                var paragraphBlock = cell[0] as ParagraphBlock;
-                var containerInline = paragraphBlock?.Inline;
-
-                line.AddRange(containerInline.Descendants());
-            }
-
-            controls.Add(ParseInline(line, true));
-            line.Clear();
-        }
-
-        StackPanel container = new();
-        container.Children.AddRange(controls);
-
-        return container;
+        RichTextPresenter richTextPresenter = CreateNewPresenter();
+        richTextPresenter.Text = markdownText.Substring(table.Span.Start, table.Span.End - table.Span.Start + 1);
+        return richTextPresenter;
     }
 
-    Control ParseAsTable(Table table, int rowsCount, int columnsCount, LineInformation[] lineInformations)
+    Control ParseAsTable(Table table, string markdownText, int rowsCount, int columnsCount, LineInformation[] lineInformations)
     {
         var tableControl = new Grid();
 
@@ -95,7 +65,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
                 if (cell.Count == 0)
                     continue;
 
-                var control = ParseBlock(cell[0], [lineInformations[rowIndex]]);
+                var control = ParseBlock(cell[0], markdownText, [lineInformations[rowIndex]]);
 
                 var cellContainer = new Border
                 {

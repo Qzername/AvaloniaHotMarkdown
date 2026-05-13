@@ -9,7 +9,7 @@ internal class ParagraphBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block, LineInformation[] lineInformations)
+    public override Control Handle(Block block, string markdownText, LineInformation[] lineInformations)
     {
         ParagraphBlock paragraphBlock = block as ParagraphBlock;
 

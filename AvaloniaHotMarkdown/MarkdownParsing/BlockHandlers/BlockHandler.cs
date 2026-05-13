@@ -17,7 +17,7 @@ internal abstract class BlockHandler
         _parser = parser;
     }
 
-    public abstract Control Handle(Block block, LineInformation[] lineInformations);
+    public abstract Control Handle(Block block, string markdown, LineInformation[] lineInformations);
     public abstract void UpdateTextEffects(Control control, LineInformation[] lineInformations);
 
     /// <summary>
@@ -25,7 +25,7 @@ internal abstract class BlockHandler
     /// 
     /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
     /// </summary>
-    protected Control ParseBlock(Block block, LineInformation[] lineInformation) => _parser.ParseBlock(block, lineInformation);
+    protected Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation) => _parser.ParseBlock(block, ref markdownText, lineInformation);
 
     /// <summary>
     /// Parses a collection of inline Markdown objects and returns a control that visually represents the formatted text
