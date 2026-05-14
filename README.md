@@ -15,6 +15,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Striketrough, bold, underline and italic texts
 - Highlight
 - Checkboxes
+- Pipe Tables
 
 ## Missing features that will be added in future:
 - More styling options
@@ -25,9 +26,9 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 ### Markdown objects:
 - Blockquotes
+- Images
 - Horizontal line
 - Links
-- Grid
 - Fenced Code Block
 - Subscript
 - Superscript
