@@ -76,7 +76,7 @@ public class StandardMarkdownParser : IMarkdownParser
 
         var document = Markdown.Parse(markdown, markdownPipeline);
 
-        Debug.WriteLine(document.ToAstString());
+        //Debug.WriteLine(document.ToAstString());
 
         Point selectionStart = new(0, 0);
         Point selectionEnd = new(0, 0);

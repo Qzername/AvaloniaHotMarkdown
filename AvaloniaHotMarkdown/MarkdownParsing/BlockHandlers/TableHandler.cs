@@ -39,9 +39,29 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
 
     Control ParseAsText(Table table, string markdownText, int rowsCount, int columnsCount, LineInformation[] lineInformation)
     {
-        RichTextPresenter richTextPresenter = CreateNewPresenter();
-        richTextPresenter.Text = markdownText.Substring(table.Span.Start, table.Span.End - table.Span.Start + 1);
-        return richTextPresenter;
+        StackPanel container = new();
+        container.Spacing = 0;
+
+        string tableText = markdownText.Substring(table.Span.Start, table.Span.End - table.Span.Start + 1);
+        string[] lines = tableText.Split(["\n", "\r\n"], StringSplitOptions.None);
+
+        for(int i =0; i < lines.Length; i++)
+        {
+            var presenter = CreateNewPresenter();
+
+            presenter.Text = lines[i];
+            presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);
+
+            //dockpanel for builtin updatetexteffects to work
+            DockPanel lineContainer = new();
+            lineContainer.Children.Add(presenter);
+
+            container.Children.Add(lineContainer);
+        }
+
+        container.ApplyTemplate();
+
+        return container;
     }
 
     Control ParseAsTable(Table table, string markdownText, int rowsCount, int columnsCount, LineInformation[] lineInformations)
@@ -83,9 +103,5 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
         }
     
         return tableControl;
-    }
-
-    public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)
-    {
     }
 }

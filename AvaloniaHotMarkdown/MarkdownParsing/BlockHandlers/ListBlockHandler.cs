@@ -36,7 +36,7 @@ internal class ListBlockHandler : BlockHandler
 
             foreach (var segment in listItem)
             {
-                var container = ParseBlock(segment, ref markdownText, lineInformations);
+                var container = ParseBlock(segment, markdownText, lineInformations);
                 CaretPositionOffset prefixOffset = new CaretPositionOffset(prefix.Length, 0);
 
                 //remove y offset from container
