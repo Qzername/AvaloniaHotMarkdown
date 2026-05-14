@@ -4,6 +4,7 @@ using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
+using Markdig.Extensions.Tables;
 using Markdig.Syntax;
 using System.Diagnostics;
 using System.Drawing;
@@ -30,6 +31,7 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(ParagraphBlock), new ParagraphBlockHandler(this) },
             { typeof(HeadingBlock), new HeadingBlockHandler(this) },
             { typeof(ListBlock), new ListBlockHandler(this) },
+            { typeof(Table), new TableHandler(this)  },
         };
 
         markdownPipeline = BuildPipeline(); 
@@ -39,6 +41,7 @@ public class StandardMarkdownParser : IMarkdownParser
     {
         var builder = new MarkdownPipelineBuilder()
          .UseTaskLists()
+         .UsePipeTables()
          .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
          .DisableHtml()
          .Use<UnwrapTaskListExtension>()
@@ -72,6 +75,8 @@ public class StandardMarkdownParser : IMarkdownParser
         controls.AddRange(GenerateEmptyLines(0, endOfEmptyLinesAtStart, caretPosition));
 
         var document = Markdown.Parse(markdown, markdownPipeline);
+
+        //Debug.WriteLine(document.ToAstString());
 
         Point selectionStart = new(0, 0);
         Point selectionEnd = new(0, 0);
@@ -141,7 +146,7 @@ public class StandardMarkdownParser : IMarkdownParser
                 });
             }
 
-            var control = ParseBlock(block, [.. lineInformation]);
+            var control = ParseBlock(block, markdown, [.. lineInformation]);
             handlers[block.GetType()].UpdateTextEffects(control, [.. lineInformation]);
 
             controls.Add(control);
@@ -238,13 +243,13 @@ public class StandardMarkdownParser : IMarkdownParser
         return new Point(0, lines.Length - 1);
     }
 
-    public Control ParseBlock(Block block, LineInformation[] lineInformation)
+    public Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
     {
         Type type = block.GetType();
 
         if (!handlers.TryGetValue(type, out BlockHandler? value))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
-        return value.Handle(block, lineInformation);
+        return value.Handle(block, markdownText, lineInformation);
     }
 }

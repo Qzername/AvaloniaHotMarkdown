@@ -10,7 +10,7 @@ internal class ListBlockHandler : BlockHandler
     {
     }
 
-    public override Control Handle(Block block, LineInformation[] lineInformations)
+    public override Control Handle(Block block, string markdownText, LineInformation[] lineInformations)
     {
         var listBlock = (ListBlock)block;
         var mainContainer = new StackPanel();
@@ -36,7 +36,7 @@ internal class ListBlockHandler : BlockHandler
 
             foreach (var segment in listItem)
             {
-                var container = ParseBlock(segment, lineInformations);
+                var container = ParseBlock(segment, markdownText, lineInformations);
                 CaretPositionOffset prefixOffset = new CaretPositionOffset(prefix.Length, 0);
 
                 //remove y offset from container
