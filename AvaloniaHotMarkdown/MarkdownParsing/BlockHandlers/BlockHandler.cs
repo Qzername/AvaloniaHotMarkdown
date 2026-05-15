@@ -110,7 +110,7 @@ internal abstract class BlockHandler
         DockPanel line = new DockPanel();
         container.Children.Add(line);
 
-        RichTextPresenter currentPresenter = CreateNewPresenter();
+        RichTextPresenter currentPresenter = StylizationHelper.CreateNewPresenter();
         string endings = string.Empty;
 
         int xOffset = defaultXOffset;
@@ -195,7 +195,7 @@ internal abstract class BlockHandler
 
             line.Children.Add(currentPresenter);
 
-            currentPresenter = CreateNewPresenter();
+            currentPresenter = StylizationHelper.CreateNewPresenter();
             currentPresenter.Tag = new CaretPositionOffset(xOffset, 0);
             endings = string.Empty;
         }
@@ -205,20 +205,5 @@ internal abstract class BlockHandler
         return container;
     }
 
-    /// <summary>
-    /// Creates a new stylized presenter 
-    /// </summary>
-    protected RichTextPresenter CreateNewPresenter()
-    {
-        RichTextPresenter currentPresenter = new();
-        //TODO: replace this with a style
-        currentPresenter.Foreground = Brushes.White;
-        currentPresenter.FontSize = 14;
-        currentPresenter.HighlightBrush = Brushes.Wheat;
-        currentPresenter.CaretBrush = Brushes.White;
-        currentPresenter.SelectionBrush = Brushes.Cyan;
-        currentPresenter.VerticalAlignment = VerticalAlignment.Center;
-
-        return currentPresenter;
-    }
+    
 }
