@@ -2,12 +2,20 @@
 using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
+using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
-using System.Diagnostics;
 using System.Drawing;
+using Markdig.Extensions.TaskLists;
+using Markdig.Syntax.Inlines;
+
+
+
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -15,7 +23,8 @@ public delegate void TextUpdateRequestHandler(Control control, int oldTextLength
 
 public class StandardMarkdownParser : IMarkdownParser
 {
-    readonly Dictionary<Type, BlockHandler> handlers;
+    readonly Dictionary<Type, BlockHandler> blockHandlers;
+    readonly Dictionary<Type, IInlineHandler> inlineHandlers;
     readonly MarkdownPipeline markdownPipeline;
 
     //TODO: change this when inline parsing will be reworked
@@ -26,12 +35,20 @@ public class StandardMarkdownParser : IMarkdownParser
     {
         _textUpdateRequestHandler = textUpdateRequestHandler;
 
-        handlers = new()
+        blockHandlers = new()
         {
             { typeof(ParagraphBlock), new ParagraphBlockHandler(this) },
             { typeof(HeadingBlock), new HeadingBlockHandler(this) },
             { typeof(ListBlock), new ListBlockHandler(this) },
             { typeof(Table), new TableHandler(this)  },
+        };
+
+        inlineHandlers = new()
+        {
+            { typeof(TaskList), new TaskListInlineHandler() },
+            { typeof(LineBreakInline), new LineBreakInlineHandler() },
+            { typeof(EmphasisInline), new EmphasisInlineHandler() },
+            { typeof(LiteralInline), new LiteralInlineHandler() },
         };
 
         markdownPipeline = BuildPipeline(); 
@@ -147,7 +164,7 @@ public class StandardMarkdownParser : IMarkdownParser
             }
 
             var control = ParseBlock(block, markdown, [.. lineInformation]);
-            handlers[block.GetType()].UpdateTextEffects(control, [.. lineInformation]);
+            blockHandlers[block.GetType()].UpdateTextEffects(control, [.. lineInformation]);
 
             controls.Add(control);
         }
@@ -247,9 +264,27 @@ public class StandardMarkdownParser : IMarkdownParser
     {
         Type type = block.GetType();
 
-        if (!handlers.TryGetValue(type, out BlockHandler? value))
+        if (!blockHandlers.TryGetValue(type, out BlockHandler? value))
             throw new NotSupportedException("This block is not supported: " + type.Name);
 
         return value.Handle(block, markdownText, lineInformation);
+    }
+
+    public Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0)
+    {
+        InlineParsingContext context = new InlineParsingContext(parseAsFullText, defaultXOffset);
+
+        foreach (var markdownObject in inlineObjects)
+        {
+            Type type = markdownObject.GetType();
+
+            if (!inlineHandlers.TryGetValue(type, out IInlineHandler? value))
+                continue;
+                //throw new NotSupportedException("This Inline element is not supported: " + type.Name);
+
+            value.Handle(markdownObject, context, _textUpdateRequestHandler);
+        }
+
+        return context.Container;
     }
 }
