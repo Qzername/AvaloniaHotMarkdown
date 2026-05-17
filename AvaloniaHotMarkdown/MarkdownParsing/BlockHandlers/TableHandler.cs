@@ -47,7 +47,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
 
         for(int i =0; i < lines.Length; i++)
         {
-            var presenter = CreateNewPresenter();
+            var presenter = StylizationHelper.CreateNewPresenter();
 
             presenter.Text = lines[i];
             presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);

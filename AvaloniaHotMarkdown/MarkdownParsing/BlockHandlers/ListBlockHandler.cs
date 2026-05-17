@@ -30,7 +30,7 @@ internal class ListBlockHandler : BlockHandler
             else
                 prefix = listBlock.IsOrdered ? $"{i + 1}. " : "• ";
 
-            var prefixTextPresenter = CreateNewPresenter();
+            var prefixTextPresenter = StylizationHelper.CreateNewPresenter();
             prefixTextPresenter.Text = prefix;
             itemContainer.Children.Add(prefixTextPresenter);
 

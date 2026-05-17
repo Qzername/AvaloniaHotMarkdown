@@ -19,7 +19,7 @@ internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler
 
         if (lineInformations[0].ShowFullText)
         {
-            var richTextPresenter = CreateNewPresenter();
+            var richTextPresenter = StylizationHelper.CreateNewPresenter();
             richTextPresenter.Text = prefix;
             (container.Children[0] as DockPanel).Children.Insert(0, richTextPresenter);
         }
