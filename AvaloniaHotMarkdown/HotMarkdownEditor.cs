@@ -231,6 +231,6 @@ public class HotMarkdownEditor : ContentControl
         int index = FindIndexOfClickedObject(sender, null);
 
         string currentText = Text ?? string.Empty;
-        Text = currentText.Substring(0, index - oldTextLength+1) + newText + currentText.Substring(index+1);
+        Text = currentText.Substring(0, index - oldTextLength) + newText + currentText.Substring(index);
     }
 }

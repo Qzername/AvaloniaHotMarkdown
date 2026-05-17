@@ -30,7 +30,7 @@ internal class TaskListInlineHandler : IInlineHandler
 
             checkbox.IsCheckedChanged += (s, e) =>
             {
-                textUpdateRequestHandler(checkbox, checkboxText.Length + 1, checkbox.IsChecked.Value ? "- [x] " : "- [ ] ");
+                textUpdateRequestHandler(checkbox, checkboxText.Length, checkbox.IsChecked.Value ? "- [x]" : "- [ ]");
             };
 
             context.XOffset += checkboxText.Length;
