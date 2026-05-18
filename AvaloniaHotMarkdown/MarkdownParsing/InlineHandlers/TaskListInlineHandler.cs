@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 

@@ -93,13 +93,13 @@ internal class ListBlockHandler : BlockHandler
 
                 foreach (DockPanel line in paragraphTree)
                     texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
-                
+
 
                 foreach (RichTextPresenter presenter in texts)
                 {
-                    if (temp + presenter.Text.Length >= caretIndex- prefixLength)
+                    if (temp + presenter.Text.Length >= caretIndex - prefixLength)
                     {
-                        presenter.CaretIndex = caretIndex - temp - prefixLength+1;
+                        presenter.CaretIndex = caretIndex - temp - prefixLength + 1;
                         presenter.ShowCaret();
                         return;
                     }

@@ -1,7 +1,6 @@
 ﻿using Avalonia.Media;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
@@ -29,8 +28,8 @@ public class EmphasisInlineHandler : IInlineHandler
         }
         else if (emphasisInline.DelimiterChar == '=')
             context.CurrentPresenter.ShowHighlight = true;
-        
-        if(context.ParseAsFullText)
+
+        if (context.ParseAsFullText)
         {
             string ending = new string(emphasisInline.DelimiterChar, emphasisInline.DelimiterCount);
             int index = Array.IndexOf(context.CurrentLine.Children.ToArray(), context.CurrentPresenter);
@@ -43,7 +42,7 @@ public class EmphasisInlineHandler : IInlineHandler
             RichTextPresenter closingEndingObject = StylizationHelper.CreateNewPresenter();
             closingEndingObject.Text = ending;
 
-            context.CurrentLine.Children.Insert(index+2, closingEndingObject);
+            context.CurrentLine.Children.Insert(index + 2, closingEndingObject);
         }
     }
 }

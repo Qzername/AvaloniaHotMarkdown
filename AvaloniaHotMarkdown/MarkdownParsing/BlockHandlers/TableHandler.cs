@@ -3,9 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using System;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -29,7 +26,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
 
         Control result;
 
-        if(showFull)
+        if (showFull)
             result = ParseAsText(table, markdownText, rowsCount, columnsCount, lineInformations);
         else
             result = ParseAsTable(table, markdownText, rowsCount, columnsCount, lineInformations);
@@ -45,7 +42,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
         string tableText = markdownText.Substring(table.Span.Start, table.Span.End - table.Span.Start + 1);
         string[] lines = tableText.Split(["\n", "\r\n"], StringSplitOptions.None);
 
-        for(int i =0; i < lines.Length; i++)
+        for (int i = 0; i < lines.Length; i++)
         {
             var presenter = StylizationHelper.CreateNewPresenter();
 
@@ -101,7 +98,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
                 tableControl.Children.Add(cellContainer);
             }
         }
-    
+
         return tableControl;
     }
 }

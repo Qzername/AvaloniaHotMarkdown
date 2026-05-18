@@ -6,15 +6,14 @@ using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Extensions.Tables;
-using Markdig.Syntax;
-using System.Drawing;
 using Markdig.Extensions.TaskLists;
+using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Drawing;
 
 
 
 #if DEBUG
-using System.Diagnostics;
 #endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -51,7 +50,7 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(LiteralInline), new LiteralInlineHandler() },
         };
 
-        markdownPipeline = BuildPipeline(); 
+        markdownPipeline = BuildPipeline();
     }
 
     static MarkdownPipeline BuildPipeline()
@@ -133,7 +132,7 @@ public class StandardMarkdownParser : IMarkdownParser
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = [];
-            
+
             for (int j = block.Line; j < blockEnd; j++)
             {
                 // we need to check for empty lines
@@ -173,12 +172,12 @@ public class StandardMarkdownParser : IMarkdownParser
         for (int i = lines.Length - 1; i >= 0; i--)
             if (!string.IsNullOrWhiteSpace(lines[i]))
             {
-                startOfEmptyLinesAtEnd = i+1;
+                startOfEmptyLinesAtEnd = i + 1;
                 break;
             }
 
         //we dont want to duplicate empty lines since they were already added at the start
-        if(startOfEmptyLinesAtEnd != 0)
+        if (startOfEmptyLinesAtEnd != 0)
             controls.AddRange(GenerateEmptyLines(startOfEmptyLinesAtEnd, lines.Length, caretPosition));
 
         return [.. controls];
@@ -279,7 +278,7 @@ public class StandardMarkdownParser : IMarkdownParser
 
             if (!inlineHandlers.TryGetValue(type, out IInlineHandler? value))
                 continue;
-                //throw new NotSupportedException("This Inline element is not supported: " + type.Name);
+            //throw new NotSupportedException("This Inline element is not supported: " + type.Name);
 
             value.Handle(markdownObject, context, _textUpdateRequestHandler);
         }

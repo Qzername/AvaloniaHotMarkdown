@@ -11,7 +11,7 @@ public class StrictListExtension : IMarkdownExtension
     public void Setup(MarkdownPipelineBuilder pipeline)
     {
         var listParser = pipeline.BlockParsers.Find<ListBlockParser>();
-        
+
         if (listParser != null)
             pipeline.BlockParsers.Remove(listParser);
 
@@ -36,7 +36,7 @@ public class StrictListParser : ListBlockParser
          */
         if (processor.CurrentBlock is ParagraphBlock)
             processor.Close(processor.CurrentBlock);
-        
+
         return base.TryContinue(processor, block);
     }
 }

@@ -19,6 +19,13 @@ namespace AvaloniaHotMarkdown.Demo
             1. Ordered Item 1
             2. Ordered Item 2
             3. Ordered Item 3
+
+            - [ ] Checkboxes
+
+            | basic | pipe | table |
+            | --- | --- | --- |
+            | row1 | row1 | row1 |
+            | row2 | row2 | row2 |
             """;
 
         public string TextSource

@@ -3,9 +3,6 @@ using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Xml.Linq;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 
@@ -15,7 +12,8 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 // this code is digusting but its working
 public class UnlistTaskListExtension : IMarkdownExtension
 {
-    public void Setup(MarkdownPipelineBuilder pipeline) {
+    public void Setup(MarkdownPipelineBuilder pipeline)
+    {
         pipeline.DocumentProcessed += OnDocumentProcessed;
     }
 
@@ -37,7 +35,7 @@ public class UnlistTaskListExtension : IMarkdownExtension
             //true means block is a checkbox
             Queue<bool> blockQueue = new Queue<bool>();
 
-            for(int i = 0; i < listBlock.Count; i++)
+            for (int i = 0; i < listBlock.Count; i++)
             {
                 ListItemBlock listItemBlock = (ListItemBlock)listBlock[i];
 
@@ -58,13 +56,13 @@ public class UnlistTaskListExtension : IMarkdownExtension
 
                 blockQueue.Enqueue(true);
 
-                if (i != listBlock.Count -1)
+                if (i != listBlock.Count - 1)
                 {
                     splitedLists.Add(new List<ListItemBlock>());
                     blockQueue.Enqueue(false);
                 }
 
-                if(splitedLists.Count!=1)
+                if (splitedLists.Count != 1)
                     currentIndex++;
 
                 checkboxBlocks.Add(paragraphBlock);
@@ -85,11 +83,11 @@ public class UnlistTaskListExtension : IMarkdownExtension
             int currentListBlockIndex = 0;
             int currentParagraphBlockIndex = 0;
 
-            while(blockQueue.Count != 0)
+            while (blockQueue.Count != 0)
             {
                 bool isCurrentParagraph = blockQueue.Dequeue();
 
-                if(isCurrentParagraph)
+                if (isCurrentParagraph)
                 {
                     checkboxBlocks[currentParagraphBlockIndex].Remove();
 
@@ -113,10 +111,10 @@ public class UnlistTaskListExtension : IMarkdownExtension
 
                     document.Insert(indexOfListBlock, newList);
 
-        
+
                     currentListBlockIndex++;
                 }
-                
+
                 indexOfListBlock++;
             }
 
