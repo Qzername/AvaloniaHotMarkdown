@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Markdig.Syntax;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 

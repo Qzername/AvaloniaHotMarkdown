@@ -61,12 +61,10 @@ public class StandardMarkdownParser : IMarkdownParser
          .UsePipeTables()
          .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
          .DisableHtml()
-         .Use<UnwrapTaskListExtension>()
-         .Use<StrictListExtension>()
          .UseSoftlineBreakAsHardlineBreak();
 
-        builder.Extensions.Insert(0, new UnwrapTaskListExtension());
-        builder.Extensions.Insert(1, new StrictListExtension());
+        builder.Extensions.Insert(0, new StrictListExtension());
+        builder.Extensions.Insert(1, new UnlistTaskListExtension());
 
         return builder.Build();
     }
@@ -135,6 +133,7 @@ public class StandardMarkdownParser : IMarkdownParser
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = [];
+            
             for (int j = block.Line; j < blockEnd; j++)
             {
                 // we need to check for empty lines

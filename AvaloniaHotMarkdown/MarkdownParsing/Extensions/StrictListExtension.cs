@@ -28,7 +28,15 @@ public class StrictListParser : ListBlockParser
     {
         if (processor.IsBlankLine)
             return BlockState.Break;
-    
+
+        /*
+         * force to make two seperate blocks in such scenario:
+         * - list
+         * paragraph
+         */
+        if (processor.CurrentBlock is ParagraphBlock)
+            processor.Close(processor.CurrentBlock);
+        
         return base.TryContinue(processor, block);
     }
 }
