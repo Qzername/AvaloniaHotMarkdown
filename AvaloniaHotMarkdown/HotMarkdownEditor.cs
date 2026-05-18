@@ -83,6 +83,9 @@ public class HotMarkdownEditor : ContentControl
         if (!PropertiesToWatch.Contains(e.Property.Name))
             return;
 
+        if(e.Property.Name == nameof(TextBox.Text))
+            RaisePropertyChanged(TextProperty, (string)e.OldValue, textProcessor.Text);
+
         ConstructChildren();
     }
 
