@@ -11,9 +11,8 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Drawing;
 
-
-
 #if DEBUG
+using System.Diagnostics;
 #endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -40,6 +39,7 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(HeadingBlock), new HeadingBlockHandler(this) },
             { typeof(ListBlock), new ListBlockHandler(this) },
             { typeof(Table), new TableHandler(this)  },
+            { typeof(ThematicBreakBlock), new ThematicBreakBlockHandler(this) }
         };
 
         inlineHandlers = new()
@@ -90,7 +90,7 @@ public class StandardMarkdownParser : IMarkdownParser
 
         var document = Markdown.Parse(markdown, markdownPipeline);
 
-        //Debug.WriteLine(document.ToAstString());
+        Debug.WriteLine(document.ToAstString());
 
         Point selectionStart = new(0, 0);
         Point selectionEnd = new(0, 0);
