@@ -28,6 +28,8 @@ namespace AvaloniaHotMarkdown.Demo
             | --- | --- | --- |
             | row1 | row1 | row1 |
             | row2 | row2 | row2 |
+
+            [Link to the repo](https://github.com/Qzername/AvaloniaHotMarkdown)
             """;
 
         public string TextSource

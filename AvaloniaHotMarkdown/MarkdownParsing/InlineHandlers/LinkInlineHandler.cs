@@ -35,10 +35,12 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
 
     void FullText(LinkInline linkInline, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
+        string prefix = (linkInline.IsImage ? "!" : string.Empty)+ "[";
+
         context.CurrentPresenter.Text = $"[";
         context.DefaultFinalizationOfLine();
 
-        var stackPanel = ParseInline(linkInline.ToArray(), context.ParseAsFullText, context.XOffset + 1) as StackPanel;
+        var stackPanel = ParseInline(linkInline.ToArray(), context.ParseAsFullText, context.XOffset + prefix.Length) as StackPanel;
         var dockPanel = stackPanel.Children[0] as DockPanel;
 
         for (int i = dockPanel.Children.Count - 1; i >= 0; i--)
