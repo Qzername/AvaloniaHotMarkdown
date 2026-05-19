@@ -8,31 +8,30 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 ![FIANL](https://github.com/user-attachments/assets/7732a4f6-86f7-48f6-8eb2-a4b88a04fdf2)
 
-## Current features:
+## Current supported blocks:
 - Headings
-- Unordered list
-- Ordered list
-- Striketrough, bold, underline and italic texts
-- Highlight
+- Unordered lists
+- Ordered lists
+- Strikethrough, bold, underline and italic texts
+- Highlights
 - Checkboxes
 - Pipe Tables
+- Thematic breaks
 
-## Missing features that will be added in future:
+## Missing features to be added in the future:
 - More styling options
 - Custom objects support
-- Custom key combination support
+- Custom key binding support
 - Android support
 - Text wrapping
 
 ### Markdown objects:
-- Blockquotes
 - Images
-- Horizontal line
 - Links
-- Fenced Code Block
 - Subscript
 - Superscript
+- Blockquotes
 
 ## Todo:
-- Better guide on installing the library
-- Website where anyone could check out this library
+- Add a better guide on installing
+- Create a website where anyone can test the library

@@ -6,9 +6,28 @@ namespace AvaloniaHotMarkdown.Demo
     {
         string _textSource =
             """
+            # Header 1
+            ## Header 2
+            ### Header 3
 
+            This is a **bold** text and this is an *italic* text. ~~Strikethrough~~ text is also supported. __Underline__ text is here. ==Hightlighted== text too.
+
+            - Unordered Item 1
+            - Unordered Item 2
+            - Unordered Item 3
 
             ---
+
+            1. Ordered Item 1
+            2. Ordered Item 2
+            3. Ordered Item 3
+
+            - [ ] Checkboxes
+
+            | basic | pipe | table |
+            | --- | --- | --- |
+            | row1 | row1 | row1 |
+            | row2 | row2 | row2 |
             """;
 
         public string TextSource
