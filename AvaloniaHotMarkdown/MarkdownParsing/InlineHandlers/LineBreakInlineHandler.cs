@@ -3,9 +3,9 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
-public class LineBreakInlineHandler : IInlineHandler
+public class LineBreakInlineHandler(StandardMarkdownParser parser) : InlineHandler(parser)
 {
-    public void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
+    public override void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
         context.CurrentLine = new DockPanel();
         context.Container.Children.Add(context.CurrentLine);

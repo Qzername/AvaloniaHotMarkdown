@@ -17,6 +17,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Checkboxes
 - Pipe Tables
 - Thematic breaks
+- Links
 
 ## Missing features to be added in the future:
 - More styling options
@@ -27,7 +28,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 ### Markdown objects:
 - Images
-- Links
 - Subscript
 - Superscript
 - Blockquotes

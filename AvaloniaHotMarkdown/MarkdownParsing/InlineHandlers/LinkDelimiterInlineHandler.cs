@@ -3,13 +3,13 @@ using Markdig.Syntax.Inlines;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
-public class LiteralInlineHandler(StandardMarkdownParser parser) : InlineHandler(parser)
+internal class LinkDelimiterInlineHandler(StandardMarkdownParser parser) : InlineHandler(parser)
 {
     public override void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
-        LiteralInline literal = (LiteralInline)inlineObject;
+        LinkDelimiterInline linkDelimiterInline = (LinkDelimiterInline)inlineObject;
 
-        context.CurrentPresenter.Text = literal.Content.ToString();
+        context.CurrentPresenter.Text += linkDelimiterInline.Type == DelimiterType.Open ? '[' : ']';
 
         context.DefaultFinalizationOfLine();
     }

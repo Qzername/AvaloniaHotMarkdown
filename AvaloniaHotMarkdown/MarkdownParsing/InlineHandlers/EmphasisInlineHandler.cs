@@ -4,9 +4,9 @@ using Markdig.Syntax.Inlines;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
-public class EmphasisInlineHandler : IInlineHandler
+public class EmphasisInlineHandler(StandardMarkdownParser parser) : InlineHandler(parser)
 {
-    public void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
+    public override void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
         EmphasisInline emphasisInline = (EmphasisInline)inlineObject;
 

@@ -22,7 +22,7 @@ public delegate void TextUpdateRequestHandler(Control control, int oldTextLength
 public class StandardMarkdownParser : IMarkdownParser
 {
     readonly Dictionary<Type, BlockHandler> blockHandlers;
-    readonly Dictionary<Type, IInlineHandler> inlineHandlers;
+    readonly Dictionary<Type, InlineHandler> inlineHandlers;
     readonly MarkdownPipeline markdownPipeline;
 
     //TODO: change this when inline parsing will be reworked
@@ -44,10 +44,12 @@ public class StandardMarkdownParser : IMarkdownParser
 
         inlineHandlers = new()
         {
-            { typeof(TaskList), new TaskListInlineHandler() },
-            { typeof(LineBreakInline), new LineBreakInlineHandler() },
-            { typeof(EmphasisInline), new EmphasisInlineHandler() },
-            { typeof(LiteralInline), new LiteralInlineHandler() },
+            { typeof(TaskList), new TaskListInlineHandler(this) },
+            { typeof(LineBreakInline), new LineBreakInlineHandler(this) },
+            { typeof(EmphasisInline), new EmphasisInlineHandler(this) },
+            { typeof(LiteralInline), new LiteralInlineHandler(this) },
+            { typeof(LinkInline), new LinkInlineHandler(this) },
+            { typeof(LinkDelimiterInline), new LinkDelimiterInlineHandler(this) }
         };
 
         markdownPipeline = BuildPipeline();
@@ -276,7 +278,7 @@ public class StandardMarkdownParser : IMarkdownParser
         {
             Type type = markdownObject.GetType();
 
-            if (!inlineHandlers.TryGetValue(type, out IInlineHandler? value))
+            if (!inlineHandlers.TryGetValue(type, out InlineHandler? value))
                 continue;
             //throw new NotSupportedException("This Inline element is not supported: " + type.Name);
 

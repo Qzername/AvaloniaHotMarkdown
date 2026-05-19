@@ -4,9 +4,9 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
-internal class TaskListInlineHandler : IInlineHandler
+internal class TaskListInlineHandler(StandardMarkdownParser parser) : InlineHandler(parser)
 {
-    public void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateRequestHandler)
+    public override void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateRequestHandler)
     {
         var taskList = (TaskList)inlineObject;
 
