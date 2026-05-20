@@ -33,6 +33,8 @@ namespace AvaloniaHotMarkdown.Demo
             | row1 | row1 | row1 |
             | row2 | row2 | row2 |
 
+            > Quote block
+
             [Link to the repo](https://github.com/Qzername/AvaloniaHotMarkdown)
 
             ![image](avares://AvaloniaHotMarkdown.Demo/picture.png)

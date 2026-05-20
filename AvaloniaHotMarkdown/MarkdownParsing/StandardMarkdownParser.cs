@@ -39,7 +39,8 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(HeadingBlock), new HeadingBlockHandler(this) },
             { typeof(ListBlock), new ListBlockHandler(this) },
             { typeof(Table), new TableHandler(this)  },
-            { typeof(ThematicBreakBlock), new ThematicBreakBlockHandler(this) }
+            { typeof(ThematicBreakBlock), new ThematicBreakBlockHandler(this) },
+            { typeof(QuoteBlock), new QuoteBlockHandler(this) },
         };
 
         inlineHandlers = new()
