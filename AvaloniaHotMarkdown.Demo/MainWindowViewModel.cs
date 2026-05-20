@@ -30,6 +30,8 @@ namespace AvaloniaHotMarkdown.Demo
             | row2 | row2 | row2 |
 
             [Link to the repo](https://github.com/Qzername/AvaloniaHotMarkdown)
+
+            ![image](avares://AvaloniaHotMarkdown.Demo/picture.png)
             """;
 
         public string TextSource

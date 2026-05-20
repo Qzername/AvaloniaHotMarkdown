@@ -21,4 +21,9 @@
   <ItemGroup>
     <ProjectReference Include="..\AvaloniaHotMarkdown\AvaloniaHotMarkdown.csproj" />
   </ItemGroup>
+
+    <ItemGroup>
+	    <AvaloniaResource Include="picture.png" />
+    </ItemGroup>
+
 </Project>

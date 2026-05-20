@@ -18,6 +18,7 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Pipe Tables
 - Thematic breaks
 - Links
+- Images
 
 ## Missing features to be added in the future:
 - More styling options
@@ -27,7 +28,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Text wrapping
 
 ### Markdown objects:
-- Images
 - Subscript
 - Superscript
 - Blockquotes

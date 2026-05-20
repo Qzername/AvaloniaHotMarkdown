@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls;
-using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System;
 using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
@@ -18,18 +18,44 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
             FullText(linkInline, context, textUpdateHandler);
         else
         {
-            //TODO: change it later...
-            context.CurrentPresenter.Foreground = Brushes.Blue;
-
-            context.CurrentPresenter.PointerPressed += (s,e) => {
-                ProcessStartInfo psi = new()
+            if (linkInline.IsImage)
+            {
+                Image image = new Image()
                 {
-                    FileName = linkInline.Url,
-                    UseShellExecute = true
+                    Stretch = Stretch.None,
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left
                 };
 
-                Process.Start(psi);
-            };
+                var uri = new Uri(linkInline.Url);
+                
+                try
+                {
+                    image.Source = new Bitmap(AssetLoader.Open(uri));
+                }
+                catch(Exception)
+                {
+                    FullText(linkInline, context, textUpdateHandler);
+                    return;
+                }
+
+                context.CurrentLine.Children.Add(image);
+                RemoveChildren(linkInline);
+            }
+            else
+            {
+                //TODO: change it later...
+                context.CurrentPresenter.Foreground = Brushes.Blue;
+
+                context.CurrentPresenter.PointerPressed += (s, e) => {
+                    ProcessStartInfo psi = new()
+                    {
+                        FileName = linkInline.Url,
+                        UseShellExecute = true
+                    };
+
+                    Process.Start(psi);
+                };
+            }
         }
     }
 
@@ -54,6 +80,11 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
         context.CurrentPresenter.Text = $"]({linkInline.Url})";
         context.DefaultFinalizationOfLine();
 
+        RemoveChildren(linkInline);
+    }
+
+    void RemoveChildren(LinkInline linkInline)
+    {
         foreach (var children in linkInline)
             children.Remove();
     }
