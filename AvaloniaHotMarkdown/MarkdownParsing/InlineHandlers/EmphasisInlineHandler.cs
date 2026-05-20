@@ -18,7 +18,12 @@ public class EmphasisInlineHandler(StandardMarkdownParser parser) : InlineHandle
                 context.CurrentPresenter.FontWeight = FontWeight.Bold;
         }
         else if (emphasisInline.DelimiterChar == '~')
-            context.CurrentPresenter.ShowStrikethrough = true;
+        {
+            if (emphasisInline.DelimiterCount == 1)
+                context.CurrentPresenter.FontType = FontType.Subscript;
+            else if (emphasisInline.DelimiterCount == 2)
+                context.CurrentPresenter.ShowStrikethrough = true;
+        }
         else if (emphasisInline.DelimiterChar == '_')
         {
             if (emphasisInline.DelimiterCount == 1)
@@ -28,6 +33,8 @@ public class EmphasisInlineHandler(StandardMarkdownParser parser) : InlineHandle
         }
         else if (emphasisInline.DelimiterChar == '=')
             context.CurrentPresenter.ShowHighlight = true;
+        else if (emphasisInline.DelimiterChar == '^')
+            context.CurrentPresenter.FontType = FontType.Superscript;
 
         if (context.ParseAsFullText)
         {

@@ -1,6 +1,7 @@
 ﻿
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -17,6 +18,7 @@ internal static class StylizationHelper
         currentPresenter.Foreground = Brushes.White;
         currentPresenter.FontSize = 14;
         currentPresenter.HighlightBrush = Brushes.Wheat;
+        currentPresenter.CodeInlineBrush = new ImmutableSolidColorBrush(Color.FromRgb(53, 55, 72));
         currentPresenter.CaretBrush = Brushes.White;
         currentPresenter.SelectionBrush = Brushes.Cyan;
         currentPresenter.VerticalAlignment = VerticalAlignment.Center;

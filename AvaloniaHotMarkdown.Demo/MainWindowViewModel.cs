@@ -16,6 +16,10 @@ namespace AvaloniaHotMarkdown.Demo
             - Unordered Item 2
             - Unordered Item 3
 
+            `Code Inline`
+
+            10^10^ H~2~0
+
             ---
 
             1. Ordered Item 1

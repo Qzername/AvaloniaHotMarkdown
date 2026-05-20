@@ -19,6 +19,9 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Thematic breaks
 - Links
 - Images
+- `Code inlines`
+- Subscript
+- Superscript
 
 ## Missing features to be added in the future:
 - More styling options
@@ -28,8 +31,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Text wrapping
 
 ### Markdown objects:
-- Subscript
-- Superscript
 - Blockquotes
 
 ## Todo:

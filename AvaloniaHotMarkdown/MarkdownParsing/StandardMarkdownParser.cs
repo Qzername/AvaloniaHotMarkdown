@@ -49,7 +49,8 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(EmphasisInline), new EmphasisInlineHandler(this) },
             { typeof(LiteralInline), new LiteralInlineHandler(this) },
             { typeof(LinkInline), new LinkInlineHandler(this) },
-            { typeof(LinkDelimiterInline), new LinkDelimiterInlineHandler(this) }
+            { typeof(LinkDelimiterInline), new LinkDelimiterInlineHandler(this) },
+            { typeof(CodeInline), new CodeInlineHandler(this) },
         };
 
         markdownPipeline = BuildPipeline();
@@ -60,7 +61,10 @@ public class StandardMarkdownParser : IMarkdownParser
         var builder = new MarkdownPipelineBuilder()
          .UseTaskLists()
          .UsePipeTables()
-         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | EmphasisExtraOptions.Marked)
+         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | 
+                            EmphasisExtraOptions.Marked | 
+                            EmphasisExtraOptions.Superscript |
+                            EmphasisExtraOptions.Subscript)
          .DisableHtml()
          .UseSoftlineBreakAsHardlineBreak();
 

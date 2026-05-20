@@ -5,6 +5,13 @@ using Avalonia.Media;
 
 namespace AvaloniaHotMarkdown;
 
+public enum FontType
+{
+    Normal,
+    Superscript,
+    Subscript,
+}
+
 /*
  * i hate the fact that this control has to exist
  * because TextPresenter dosen't support text decorations
@@ -54,6 +61,12 @@ public class RichTextPresenter : Control
         set;
     }
 
+    public IBrush? CodeInlineBrush
+    {
+        get;
+        set;
+    }
+
     public int CaretIndex
     {
         get => _textPresenter.CaretIndex;
@@ -88,12 +101,56 @@ public class RichTextPresenter : Control
     public bool ShowStrikethrough;
     public bool ShowHighlight;
 
+    readonly FontFamily _defaultFontFamily;
+    bool _isCodeInline;
+    public bool IsCodeInline
+    {
+        get => _isCodeInline;
+        set 
+        {
+            _isCodeInline = value;
+
+            if(value)
+                _textPresenter.FontFamily = new FontFamily("Consolas");
+            else
+                _textPresenter.FontFamily = _defaultFontFamily;
+        }
+    }
+
+    readonly double _defaultFontSize;
+    FontType _fontType; 
+    public FontType FontType
+    {
+        get => _fontType;
+        set
+        {
+            _fontType = value;
+
+            if (value == FontType.Normal)
+                _textPresenter.FontSize = _defaultFontSize;
+            else
+            {
+                //TODO: this should be changeable in style options
+                _textPresenter.FontSize = _defaultFontSize * 0.75;
+                _textPresenter.Margin = new Thickness(0, -2, 0, -2);
+
+                if (value == FontType.Subscript)
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom;
+                else//if (value == FontSize.Superscript)
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top;
+            }
+        }
+    }
+
     public RichTextPresenter()
     {
         _textPresenter = new()
         {
             Background = Brushes.Transparent,
         };
+
+        _defaultFontFamily = _textPresenter.FontFamily;
+        _defaultFontSize = _textPresenter.FontSize;
 
         LogicalChildren.Add(_textPresenter);
         VisualChildren.Add(_textPresenter);
@@ -107,6 +164,9 @@ public class RichTextPresenter : Control
 
         if (ShowHighlight)
             context.DrawRectangle(HighlightBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height));
+
+        if (IsCodeInline)
+            context.DrawRectangle(CodeInlineBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height), 5);
 
         var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
 
