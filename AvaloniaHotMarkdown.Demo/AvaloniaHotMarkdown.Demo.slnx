@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Project Path="AvaloniaHotMarkdown.Demo.Android/AvaloniaHotMarkdown.Demo.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="AvaloniaHotMarkdown.Demo.Browser/AvaloniaHotMarkdown.Demo.Browser.csproj" />
+  <Project Path="AvaloniaHotMarkdown.Demo.Desktop/AvaloniaHotMarkdown.Demo.Desktop.csproj" />
+  <Project Path="AvaloniaHotMarkdown.Demo.iOS/AvaloniaHotMarkdown.Demo.iOS.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="AvaloniaHotMarkdown.Demo/AvaloniaHotMarkdown.Demo.csproj" />
+</Solution>

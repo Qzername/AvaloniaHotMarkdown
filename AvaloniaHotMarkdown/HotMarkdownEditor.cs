@@ -28,6 +28,7 @@ public class HotMarkdownEditor : ContentControl
 
     readonly StackPanel markdownContainer;
     readonly IMarkdownParser markdownParser;
+    readonly MyTextInputClient textInputClient;
 
     public string Text
     {
@@ -48,6 +49,12 @@ public class HotMarkdownEditor : ContentControl
     public HotMarkdownEditor()
     {
         markdownParser = new StandardMarkdownParser(TextUpdateRequestHandler);
+        AddHandler(TextInputMethodClientRequestedEvent, (s, e) =>
+        {
+            e.Client = textInputClient;
+        });
+
+        textInputClient = new MyTextInputClient(this);
 
         markdownContainer = new StackPanel();
         textProcessor = new TextBox
@@ -60,9 +67,8 @@ public class HotMarkdownEditor : ContentControl
         };
 
         //TODO: make it so it wont rerender every event
-        textProcessor.TextChanged += (s, e) => ConstructChildren();
-        textProcessor.KeyUp += (s, e) => ConstructChildren();
         textProcessor.PropertyChanged += TextProcessor_PropertyChanged;
+
 
         var rootPanel = new Panel();
         rootPanel.Children.Add(textProcessor);
@@ -198,7 +204,8 @@ public class HotMarkdownEditor : ContentControl
 
     void ConstructChildren()
     {
-        if (markdownContainer == null) return;
+        if (markdownContainer == null) 
+            return;
 
         markdownContainer.Children.Clear();
 
@@ -218,6 +225,9 @@ public class HotMarkdownEditor : ContentControl
 
         foreach (var control in markdownParser.Parse(currentText, caretInformation))
             markdownContainer.Children.Add(control);
+
+        textProcessor.Focus(NavigationMethod.Pointer);
+        textInputClient.OnTapped();
     }
 
     public override void Render(DrawingContext context)

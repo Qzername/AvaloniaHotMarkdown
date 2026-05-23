@@ -1,10 +1,11 @@
-﻿using ReactiveUI;
+﻿
+using ReactiveUI;
 
-namespace AvaloniaHotMarkdown.Demo
+namespace AvaloniaHotMarkdown.Demo.ViewModels;
+
+public class MainViewModel : ViewModelBase
 {
-    internal class MainWindowViewModel : ReactiveObject
-    {
-        string _textSource =
+    string _textSource =
             """
             # Header 1
             ## Header 2
@@ -37,17 +38,16 @@ namespace AvaloniaHotMarkdown.Demo
 
             [Link to the repo](https://github.com/Qzername/AvaloniaHotMarkdown)
 
-            ![image](avares://AvaloniaHotMarkdown.Demo/picture.png)
+            ![image](avares://AvaloniaHotMarkdown.Demo/Assets/picture.png)
             """;
 
-        public string TextSource
+    public string TextSource
+    {
+        get => _textSource;
+        set
         {
-            get => _textSource;
-            set
-            {
-                _textSource = value;
-                this.RaiseAndSetIfChanged(ref _textSource, value);
-            }
+            _textSource = value;
+            this.RaiseAndSetIfChanged(ref _textSource, value);
         }
     }
 }

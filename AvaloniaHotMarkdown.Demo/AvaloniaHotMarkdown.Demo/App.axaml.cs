@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using AvaloniaHotMarkdown.Demo.Views;
+using System.Linq.Expressions;
 
 namespace AvaloniaHotMarkdown.Demo
 {
@@ -20,6 +22,10 @@ namespace AvaloniaHotMarkdown.Demo
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
+            }
+            else if(ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+            {
+                singleView.MainView = new MainView();
             }
 
             base.OnFrameworkInitializationCompleted();

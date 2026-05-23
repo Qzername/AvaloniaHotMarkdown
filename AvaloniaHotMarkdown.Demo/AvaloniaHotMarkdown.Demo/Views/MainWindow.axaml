@@ -3,14 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="AvaloniaHotMarkdown.Demo.MainWindow"
-		xmlns:HotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown"
-        
-        xmlns:local="clr-namespace:AvaloniaHotMarkdown.Demo"
-        x:DataType="local:MainWindowViewModel"
 
+        x:Class="AvaloniaHotMarkdown.Demo.Views.MainWindow"
+		  
+        xmlns:local="clr-namespace:AvaloniaHotMarkdown.Demo.Views"
+        
         Title="AvaloniaHotMarkdown.Demo">
-	<Panel>
-		<HotMarkdown:HotMarkdownEditor Text="{Binding TextSource}" Padding="10"/>
-	</Panel>
+    <local:MainView/>
 </Window>

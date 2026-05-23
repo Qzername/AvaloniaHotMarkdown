@@ -28,7 +28,6 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - More styling options
 - Custom objects support
 - Custom key binding support
-- Android support
 - Text wrapping
 - Add a better guide on installing
 - Create a website where anyone can test the library
