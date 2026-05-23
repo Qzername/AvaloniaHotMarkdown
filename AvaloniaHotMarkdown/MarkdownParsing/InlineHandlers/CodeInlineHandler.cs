@@ -11,7 +11,11 @@ public class CodeInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
 
         var presenter = context.CurrentPresenter;
 
-        presenter.Text = codeInline.Content.ToString();
+        if(context.ParseAsFullText)
+            presenter.Text = $"`{codeInline.Content.ToString()}`";
+        else
+            presenter.Text = codeInline.Content.ToString();
+
         presenter.IsCodeInline = true;
     }
 }
