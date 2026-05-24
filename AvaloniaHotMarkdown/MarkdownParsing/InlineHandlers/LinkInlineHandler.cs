@@ -67,13 +67,13 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
         context.DefaultFinalizationOfLine();
 
         var stackPanel = ParseInline(linkInline.ToArray(), context.ParseAsFullText, context.XOffset + prefix.Length) as StackPanel;
-        var dockPanel = stackPanel.Children[0] as DockPanel;
+        var wrapPanel = stackPanel.Children[0] as WrapPanel;
 
-        for (int i = dockPanel.Children.Count - 1; i >= 0; i--)
+        for (int i = wrapPanel.Children.Count - 1; i >= 0; i--)
         {
-            var item = dockPanel.Children[i];
+            var item = wrapPanel.Children[i];
 
-            dockPanel.Children.Remove(item);
+            wrapPanel.Children.Remove(item);
             context.CurrentLine.Children.Insert(context.CurrentLine.Children.Count - 1, item);
         }
         

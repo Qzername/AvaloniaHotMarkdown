@@ -41,8 +41,8 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
             presenter.Text = lines[i];
             presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);
 
-            //dockpanel for builtin updatetexteffects to work
-            DockPanel lineContainer = new();
+            //WrapPanel for builtin updatetexteffects to work
+            WrapPanel lineContainer = new();
             lineContainer.Children.Add(presenter);
 
             container.Children.Add(lineContainer);

@@ -49,8 +49,8 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
             presenter.Text = lines[i];
             presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);
 
-            //dockpanel for builtin updatetexteffects to work
-            DockPanel lineContainer = new();
+            //wrappanel for builtin updatetexteffects to work
+            WrapPanel lineContainer = new();
             lineContainer.Children.Add(presenter);
 
             container.Children.Add(lineContainer);

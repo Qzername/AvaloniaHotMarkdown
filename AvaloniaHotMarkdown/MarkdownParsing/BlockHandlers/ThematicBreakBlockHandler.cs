@@ -15,7 +15,7 @@ internal class ThematicBreakBlockHandler(StandardMarkdownParser parser) : BlockH
         {
             //required for default caret/selection method
             StackPanel mainContainer = new();
-            DockPanel lineContainer = new();
+            WrapPanel lineContainer = new();
 
             mainContainer.Children.Add(lineContainer);
 

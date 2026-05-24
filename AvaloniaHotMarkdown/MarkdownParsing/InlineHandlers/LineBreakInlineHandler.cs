@@ -7,7 +7,7 @@ public class LineBreakInlineHandler(StandardMarkdownParser parser) : InlineHandl
 {
     public override void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
-        context.CurrentLine = new DockPanel();
+        context.CurrentLine = new WrapPanel();
         context.Container.Children.Add(context.CurrentLine);
         context.XOffset = 0;
         context.CurrentLine.Tag = new CaretPositionOffset(0, ++context.YOffset);

@@ -21,13 +21,13 @@ internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler
         {
             var richTextPresenter = StylizationHelper.CreateNewPresenter();
             richTextPresenter.Text = prefix;
-            (container.Children[0] as DockPanel).Children.Insert(0, richTextPresenter);
+            (container.Children[0] as WrapPanel).Children.Insert(0, richTextPresenter);
         }
 
         List<Control> richTexts = [];
 
-        foreach (DockPanel dockPanel in container.Children)
-            richTexts.AddRange(dockPanel.Children.ToList());
+        foreach (WrapPanel wrapPanel in container.Children)
+            richTexts.AddRange(wrapPanel.Children.ToList());
 
         foreach (RichTextPresenter item in richTexts)
             item.FontSize = Sizes[headingBlock.Level - 1];

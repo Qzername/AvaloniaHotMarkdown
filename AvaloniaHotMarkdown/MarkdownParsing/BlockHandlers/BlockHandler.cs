@@ -30,8 +30,8 @@ internal abstract class BlockHandler
             if (mainTree.Count <= i)
                 break;
 
-            if (lineInformations[i].CaretIndex is not null && mainTree[i] is DockPanel dockPanel)
-                foreach (RichTextPresenter presenter in dockPanel.Children)
+            if (lineInformations[i].CaretIndex is not null && mainTree[i] is WrapPanel wrapPanel)
+                foreach (RichTextPresenter presenter in wrapPanel.Children)
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
                     {
@@ -60,10 +60,10 @@ internal abstract class BlockHandler
             int minSelectionStart = Math.Min(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
             int maxSelectionStart = Math.Max(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
 
-            if (mainTree[i] is not DockPanel dockPanel)
+            if (mainTree[i] is not WrapPanel wrapPanel)
                 continue;
 
-            foreach (RichTextPresenter presenter in dockPanel.Children)
+            foreach (RichTextPresenter presenter in wrapPanel.Children)
             {
                 if (temp + presenter.Text.Length >= minSelectionStart &&
                     temp <= maxSelectionStart)

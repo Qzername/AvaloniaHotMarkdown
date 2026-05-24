@@ -5,7 +5,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 public class InlineParsingContext
 {
     public StackPanel Container { get; } = new StackPanel();
-    public DockPanel CurrentLine { get; set; } = new DockPanel();
+    public WrapPanel CurrentLine { get; set; } = new WrapPanel();
     public RichTextPresenter CurrentPresenter { get; set; } = StylizationHelper.CreateNewPresenter();
     public int XOffset { get; set; } = 0;
     public int YOffset { get; set; } = 0;
