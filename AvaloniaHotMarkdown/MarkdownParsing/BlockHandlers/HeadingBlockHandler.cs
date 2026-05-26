@@ -5,9 +5,6 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler(parser)
 {
-    //TODO: make this customizable
-    readonly int[] Sizes = [60, 45, 30];
-
     public override Control Handle(Block block, string markdownText, LineInformation[] lineInformations)
     {
         HeadingBlock headingBlock = (HeadingBlock)block;
@@ -29,8 +26,20 @@ internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler
         foreach (WrapPanel wrapPanel in container.Children)
             richTexts.AddRange(wrapPanel.Children.ToList());
 
+        string resourceKey = $"HotMarkdownHeading{headingBlock.Level}Size";
+
         foreach (RichTextPresenter item in richTexts)
-            item.FontSize = Sizes[headingBlock.Level - 1];
+        {
+            if (container.TryFindResource(resourceKey, out var resValue) && resValue is double customSize)
+                item.FontSize = customSize;
+            else
+                item.FontSize = headingBlock.Level switch
+                {
+                    1 => 60,
+                    2 => 45,
+                    _ => 30
+                };
+        }
 
         return container;
     }

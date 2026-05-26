@@ -25,7 +25,6 @@ public class StandardMarkdownParser : IMarkdownParser
     readonly Dictionary<Type, InlineHandler> inlineHandlers;
     readonly MarkdownPipeline markdownPipeline;
 
-    //TODO: change this when inline parsing will be reworked
     public TextUpdateRequestHandler TextUpdateRequestHandler { get => _textUpdateRequestHandler; }
     readonly TextUpdateRequestHandler _textUpdateRequestHandler;
 
@@ -125,11 +124,10 @@ public class StandardMarkdownParser : IMarkdownParser
                         //check for caret as well
                         if (caretPosition.Y == j)
                         {
-                            //TODO: change this...
-                            emptyBlock.CaretBrush = Brushes.White;
                             emptyBlock.CaretIndex = 0;
                             emptyBlock.ShowCaret();
                         }
+
                         emptyBlock.Tag = new CaretPositionOffset(0, j);
 
                         controls.Add(emptyBlock);
@@ -201,8 +199,6 @@ public class StandardMarkdownParser : IMarkdownParser
             //check for caret as well
             if (caretPosition.Y == i)
             {
-                //TODO: change this...
-                emptyBlock.CaretBrush = Brushes.White;
                 emptyBlock.CaretIndex = 0;
                 emptyBlock.ShowCaret();
             }

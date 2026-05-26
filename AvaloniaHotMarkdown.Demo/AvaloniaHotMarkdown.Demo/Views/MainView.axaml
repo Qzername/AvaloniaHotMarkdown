@@ -9,11 +9,22 @@
              xmlns:HotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown"
         
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
+
+    <!--
+    this is how you can change style:
+    
+    <UserControl.Styles>
+        <Style Selector="HotMarkdown|HotMarkdownEditor HotMarkdown|RichTextPresenter.text">
+			<Setter Property="Foreground" Value="Red" />
+        </Style>
+    </UserControl.Styles>
+    -->
+
     <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
     <Panel>
 		<HotMarkdown:HotMarkdownEditor Text="{Binding TextSource}" Padding="10"/>
 	</Panel>

@@ -24,9 +24,9 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 - Superscript
 - Blockquotes
 
+If you need any feature, please open an issue or submit a PR. I will try to add it as soon as possible.
+
 ## Missing features to be added in 1.0.0v:
-- More styling options
-- Custom objects support
-- Custom key binding support
+- Caret and selection improvments
 - Add a better guide on installing
 - Create a website where anyone can test the library

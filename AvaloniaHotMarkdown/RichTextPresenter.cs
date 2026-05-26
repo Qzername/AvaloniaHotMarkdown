@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace AvaloniaHotMarkdown;
 
@@ -12,78 +13,79 @@ public enum FontType
     Subscript,
 }
 
-/*
- * i hate the fact that this control has to exist
- * because TextPresenter dosen't support text decorations
- * and its Render method is sealed
- */
+// i hate the fact this control has to exist
+// because TextPresenter dosen't support text decorations
+// and its Render method is sealed
 public class RichTextPresenter : Control
 {
     readonly TextPresenter _textPresenter;
 
+    public static readonly StyledProperty<double> FontSizeProperty = AvaloniaProperty.Register<RichTextPresenter, double>(nameof(FontSize));
+    public static readonly StyledProperty<IBrush?> CaretBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(CaretBrush), Brushes.White);
+    public static readonly StyledProperty<IBrush?> SelectionBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(SelectionBrush), Brushes.Cyan);
+    public static readonly StyledProperty<IBrush?> ForegroundProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(Foreground));
+    public static readonly StyledProperty<IBrush?> HighlightBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(HighlightBrush), Brushes.Wheat);
+    public static readonly StyledProperty<IBrush?> CodeInlineBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(CodeInlineBrush), new ImmutableSolidColorBrush(Color.FromRgb(53, 55, 72)));
+    public static readonly StyledProperty<FontWeight> FontWeightProperty = AvaloniaProperty.Register<RichTextPresenter, FontWeight>(nameof(FontWeight));
+    public static readonly StyledProperty<FontStyle> FontStyleProperty = AvaloniaProperty.Register<RichTextPresenter, FontStyle>(nameof(FontStyle));
+    
     public string Text
     {
-        get => _textPresenter.Text ?? string.Empty;
-        set
-        {
-            _textPresenter.Text = value;
-            InvalidateVisual();
-        }
+        get => _textPresenter.Text;
+        set => _textPresenter.Text = value;
     }
 
     public double FontSize
     {
-        get => _textPresenter.FontSize;
-        set => _textPresenter.FontSize = value;
+        get => GetValue(FontSizeProperty);
+        set => SetValue(FontSizeProperty, value);
     }
 
     public IBrush? CaretBrush
     {
-        get => _textPresenter.CaretBrush;
-        set => _textPresenter.CaretBrush = value;
+        get => GetValue(CaretBrushProperty);
+        set => SetValue(CaretBrushProperty, value);
     }
 
     public IBrush? SelectionBrush
     {
-        get => _textPresenter.SelectionBrush;
-        set => _textPresenter.SelectionBrush = value;
+        get => GetValue(SelectionBrushProperty);
+        set => SetValue(SelectionBrushProperty, value);
     }
 
     public IBrush? Foreground
     {
-        get => _textPresenter.Foreground;
-        set => _textPresenter.Foreground = value;
+        get => GetValue(ForegroundProperty);
+        set => SetValue(ForegroundProperty, value);
     }
 
     public IBrush? HighlightBrush
     {
-        get;
-        set;
+        get => GetValue(HighlightBrushProperty);
+        set => SetValue(HighlightBrushProperty, value);
     }
 
     public IBrush? CodeInlineBrush
     {
-        get;
-        set;
-    }
-
-    public int CaretIndex
-    {
-        get => _textPresenter.CaretIndex;
-        set => _textPresenter.CaretIndex = value;
+        get => GetValue(CodeInlineBrushProperty);
+        set => SetValue(CodeInlineBrushProperty, value);
     }
 
     public FontWeight FontWeight
     {
-        get => _textPresenter.FontWeight;
-        set => _textPresenter.FontWeight = value;
+        get => GetValue(FontWeightProperty);
+        set => SetValue(FontWeightProperty, value);
     }
 
     public FontStyle FontStyle
     {
-        get => _textPresenter.FontStyle;
-        set => _textPresenter.FontStyle = value;
+        get => GetValue(FontStyleProperty);
+        set => SetValue(FontStyleProperty, value);
     }
+
+    public bool ShowUnderline;
+    public bool ShowStrikethrough;
+    public bool ShowHighlight;
 
     public int SelectionStart
     {
@@ -97,20 +99,22 @@ public class RichTextPresenter : Control
         set => _textPresenter.SelectionEnd = value;
     }
 
-    public bool ShowUnderline;
-    public bool ShowStrikethrough;
-    public bool ShowHighlight;
+    public int CaretIndex
+    {
+        get => _textPresenter.CaretIndex;
+        set => _textPresenter.CaretIndex = value;
+    }
 
     readonly FontFamily _defaultFontFamily;
     bool _isCodeInline;
     public bool IsCodeInline
     {
         get => _isCodeInline;
-        set 
+        set
         {
             _isCodeInline = value;
 
-            if(value)
+            if (value)
                 _textPresenter.FontFamily = new FontFamily("Consolas");
             else
                 _textPresenter.FontFamily = _defaultFontFamily;
@@ -118,7 +122,7 @@ public class RichTextPresenter : Control
     }
 
     readonly double _defaultFontSize;
-    FontType _fontType; 
+    FontType _fontType;
     public FontType FontType
     {
         get => _fontType;
@@ -130,7 +134,6 @@ public class RichTextPresenter : Control
                 _textPresenter.FontSize = _defaultFontSize;
             else
             {
-                //TODO: this should be changeable in style options
                 _textPresenter.FontSize = _defaultFontSize * 0.75;
                 _textPresenter.Margin = new Thickness(0, -2, 0, -2);
 
@@ -144,9 +147,13 @@ public class RichTextPresenter : Control
 
     public RichTextPresenter()
     {
+        VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
         _textPresenter = new()
         {
             Background = Brushes.Transparent,
+            CaretBrush = CaretBrush,
+            SelectionBrush = SelectionBrush,
         };
 
         _defaultFontFamily = _textPresenter.FontFamily;
@@ -154,6 +161,24 @@ public class RichTextPresenter : Control
 
         LogicalChildren.Add(_textPresenter);
         VisualChildren.Add(_textPresenter);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == FontSizeProperty)
+            _textPresenter.FontSize = change.GetNewValue<double>();
+        else if (change.Property == CaretBrushProperty)
+            _textPresenter.CaretBrush = change.GetNewValue<IBrush?>();
+        else if (change.Property == SelectionBrushProperty)
+            _textPresenter.SelectionBrush = change.GetNewValue<IBrush?>();
+        else if (change.Property == ForegroundProperty)
+            _textPresenter.Foreground = change.GetNewValue<IBrush?>();
+        else if (change.Property == FontWeightProperty)
+            _textPresenter.FontWeight = change.GetNewValue<FontWeight>();
+        else if (change.Property == FontStyleProperty)
+            _textPresenter.FontStyle = change.GetNewValue<FontStyle>();
     }
 
     public override void Render(DrawingContext context)
@@ -168,9 +193,9 @@ public class RichTextPresenter : Control
         if (IsCodeInline)
             context.DrawRectangle(CodeInlineBrush, null, new Rect(0, 0, _textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height), 5);
 
-        var rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
+        Point rightDownCorner = new Point(_textPresenter.DesiredSize.Width, _textPresenter.DesiredSize.Height);
 
-        var pen = new Pen(CaretBrush, 2);
+        Pen pen = new Pen(CaretBrush, 2);
 
         if (ShowUnderline)
             context.DrawLine(pen, new Point(0, rightDownCorner.Y), rightDownCorner);
@@ -189,4 +214,6 @@ public class RichTextPresenter : Control
 
         return _textPresenter.DesiredSize;
     }
+
+    public void AddClass(string className) => _textPresenter.Classes.Add(className);
 }

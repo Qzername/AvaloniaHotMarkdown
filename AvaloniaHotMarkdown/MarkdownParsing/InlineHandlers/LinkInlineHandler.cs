@@ -43,18 +43,23 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
             }
             else
             {
-                //TODO: change it later...
-                context.CurrentPresenter.Foreground = Brushes.Blue;
+                string resourceKey = $"HotMarkdownLinkForeground";
 
-                context.CurrentPresenter.PointerPressed += (s, e) => {
-                    ProcessStartInfo psi = new()
+                if (context.CurrentLine.TryFindResource(resourceKey, out var resValue) && resValue is Brush custom)
+                    context.CurrentPresenter.Foreground = custom;
+                else
+                    context.CurrentPresenter.Foreground = Brushes.Blue;
+
+                context.CurrentPresenter.PointerPressed += (s, e) =>
                     {
-                        FileName = linkInline.Url,
-                        UseShellExecute = true
-                    };
+                        ProcessStartInfo psi = new()
+                        {
+                            FileName = linkInline.Url,
+                            UseShellExecute = true
+                        };
 
-                    Process.Start(psi);
-                };
+                        Process.Start(psi);
+                    };
             }
         }
     }

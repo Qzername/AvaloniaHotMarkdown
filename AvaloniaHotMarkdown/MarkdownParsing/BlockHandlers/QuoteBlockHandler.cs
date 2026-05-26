@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
@@ -55,14 +56,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
 
     Control ParseAsQuoteBlock(QuoteBlock quoteBlock, string markdown, LineInformation[] lineInformations)
     {
-        //TODO: this should be stylized...
-        Border mainContainer = new()
-        {
-            BorderThickness = new Thickness(4, 0, 0, 0),
-            BorderBrush = Brushes.Gray,
-            Padding = new Thickness(15, 10),
-            Margin = new Thickness(0, 10)
-        };
+        QuoteBorderControl mainContainer = new();
 
         StackPanel linesContainer = new()
         {
