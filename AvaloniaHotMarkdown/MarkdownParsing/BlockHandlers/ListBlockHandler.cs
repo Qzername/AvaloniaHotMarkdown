@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.VisualTree;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -20,7 +21,7 @@ internal class ListBlockHandler : BlockHandler
             if (listBlock[i] is not ListItemBlock listItem)
                 continue;
 
-            WrapPanel itemContainer = new();
+            StretchWrapPanel itemContainer = new();
             itemContainer.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
 
             string prefix = string.Empty;
@@ -72,7 +73,7 @@ internal class ListBlockHandler : BlockHandler
             if (i >= mainTree.Count)
                 return;
 
-            var itemTree = (mainTree[i] as WrapPanel).Children;
+            var itemTree = (mainTree[i] as StretchWrapPanel).Children;
             int prefixLength = (itemTree[0] as RichTextPresenter).Text.Length;
 
             var caretIndex = lineInformations[i].CaretIndex!.Value;
@@ -91,7 +92,7 @@ internal class ListBlockHandler : BlockHandler
 
                 List<RichTextPresenter> texts = new();
 
-                foreach (WrapPanel line in paragraphTree)
+                foreach (StretchWrapPanel line in paragraphTree)
                     texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
 
 
@@ -119,7 +120,7 @@ internal class ListBlockHandler : BlockHandler
                 continue;
             if (i >= mainTree.Count)
                 return;
-            var itemTree = (mainTree[i] as WrapPanel).Children;
+            var itemTree = (mainTree[i] as StretchWrapPanel).Children;
             var selectionInformation = lineInformations[i].SelectionInformation!.Value;
             if (selectionInformation.EndIndex <= 2)
             {
@@ -135,7 +136,7 @@ internal class ListBlockHandler : BlockHandler
 
                 List<RichTextPresenter> texts = new();
 
-                foreach (WrapPanel line in paragraphTree)
+                foreach (StretchWrapPanel line in paragraphTree)
                     texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
 
                 foreach (RichTextPresenter presenter in texts)
@@ -145,7 +146,6 @@ internal class ListBlockHandler : BlockHandler
                     {
                         presenter.SelectionStart = selectionInformation.StartIndex - temp - 2;
                         presenter.SelectionEnd = selectionInformation.EndIndex - temp - 2;
-                        presenter.ShowCaret();
                     }
                     temp += presenter.Text.Length;
                 }

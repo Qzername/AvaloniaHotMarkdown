@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -18,12 +19,12 @@ internal class HeadingBlockHandler(StandardMarkdownParser parser) : BlockHandler
         {
             var richTextPresenter = StylizationHelper.CreateNewPresenter();
             richTextPresenter.Text = prefix;
-            (container.Children[0] as WrapPanel).Children.Insert(0, richTextPresenter);
+            (container.Children[0] as StretchWrapPanel).Children.Insert(0, richTextPresenter);
         }
 
         List<Control> richTexts = [];
 
-        foreach (WrapPanel wrapPanel in container.Children)
+        foreach (StretchWrapPanel wrapPanel in container.Children)
             richTexts.AddRange(wrapPanel.Children.ToList());
 
         string resourceKey = $"HotMarkdownHeading{headingBlock.Level}Size";

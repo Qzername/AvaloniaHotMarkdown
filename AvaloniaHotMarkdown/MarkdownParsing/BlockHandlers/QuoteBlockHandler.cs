@@ -6,6 +6,7 @@ using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -43,7 +44,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
             presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);
 
             //WrapPanel for builtin updatetexteffects to work
-            WrapPanel lineContainer = new();
+            StretchWrapPanel lineContainer = new();
             lineContainer.Children.Add(presenter);
 
             container.Children.Add(lineContainer);

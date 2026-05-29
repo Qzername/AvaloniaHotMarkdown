@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Extensions.Tables;
 using Markdig.Syntax;
 
@@ -50,7 +51,7 @@ internal class TableHandler(StandardMarkdownParser parser) : BlockHandler(parser
             presenter.Tag = new CaretPositionOffset(0, lineInformation[i].LineYIndex);
 
             //wrappanel for builtin updatetexteffects to work
-            WrapPanel lineContainer = new();
+            StretchWrapPanel lineContainer = new();
             lineContainer.Children.Add(presenter);
 
             container.Children.Add(lineContainer);

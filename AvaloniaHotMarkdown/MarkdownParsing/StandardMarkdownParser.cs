@@ -128,6 +128,16 @@ public class StandardMarkdownParser : IMarkdownParser
                             emptyBlock.ShowCaret();
                         }
 
+                        //check for selection as well
+                        if (caretInformation.SelectionInformation is not null &&
+                            j >= selectionStart.Y
+                            && j <= selectionEnd.Y)
+                        {
+                            emptyBlock.Text = " ";
+                            emptyBlock.SelectionStart = 0;
+                            emptyBlock.SelectionEnd = 1;
+                        }
+
                         emptyBlock.Tag = new CaretPositionOffset(0, j);
 
                         controls.Add(emptyBlock);

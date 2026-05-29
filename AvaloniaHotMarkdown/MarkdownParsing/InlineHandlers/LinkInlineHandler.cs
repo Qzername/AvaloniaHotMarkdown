@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Diagnostics;
@@ -72,7 +73,7 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
         context.DefaultFinalizationOfLine();
 
         var stackPanel = ParseInline(linkInline.ToArray(), context.ParseAsFullText, context.XOffset + prefix.Length) as StackPanel;
-        var wrapPanel = stackPanel.Children[0] as WrapPanel;
+        var wrapPanel = stackPanel.Children[0] as StretchWrapPanel;
 
         for (int i = wrapPanel.Children.Count - 1; i >= 0; i--)
         {

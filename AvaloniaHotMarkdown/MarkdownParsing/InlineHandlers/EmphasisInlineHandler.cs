@@ -43,11 +43,15 @@ public class EmphasisInlineHandler(StandardMarkdownParser parser) : InlineHandle
 
             RichTextPresenter openingEndingObject = StylizationHelper.CreateNewPresenter();
             openingEndingObject.Text = ending;
+            openingEndingObject.Tag = context.CurrentPresenter.Tag;
+            context.XOffset += 2;
+            context.CurrentPresenter.Tag = new CaretPositionOffset(context.XOffset, 0);
 
             context.CurrentLine.Children.Insert(index, openingEndingObject);
 
             RichTextPresenter closingEndingObject = StylizationHelper.CreateNewPresenter();
             closingEndingObject.Text = ending;
+            context.DefaultFinalizationQueue.Add(closingEndingObject);
 
             context.CurrentLine.Children.Insert(index + 2, closingEndingObject);
         }

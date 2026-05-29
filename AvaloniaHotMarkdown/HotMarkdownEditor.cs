@@ -3,7 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using AvaloniaHotMarkdown.MarkdownParsing;
+using System.Diagnostics;
+using System.Diagnostics.Tracing;
 
 namespace AvaloniaHotMarkdown;
 
@@ -29,6 +32,8 @@ public class HotMarkdownEditor : ContentControl
     readonly StackPanel markdownContainer;
     readonly IMarkdownParser markdownParser;
     readonly MyTextInputClient textInputClient;
+
+    const int IndexZeroFailsafe = 100;
 
     public string Text
     {
@@ -100,14 +105,27 @@ public class HotMarkdownEditor : ContentControl
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        var point = e.GetCurrentPoint(this);
+        var pointer = e.GetCurrentPoint(this);
 
-        if (!point.Properties.IsLeftButtonPressed)
+        if (!pointer.Properties.IsLeftButtonPressed)
             return;
 
-        int index = FindIndexOfClickedObject(e.Source, e.GetPosition(e.Source as Visual));
+        var point = e.GetPosition(this);
+        
+        Control hit = e.Source as Control;
+
+        if (hit is HotMarkdownEditor)
+            hit = FindRealHit(e);
+        
+        if (hit is null)
+            return;
+
+        int index = FindIndexOfClickedObject(hit, e.GetPosition(e.Source as Visual));
 
         if (index == -1)
+            return;
+
+        if (index == 0 && point.Y > IndexZeroFailsafe)
             return;
 
         _isSelecting = true;
@@ -142,6 +160,18 @@ public class HotMarkdownEditor : ContentControl
 
         _isSelecting = false;
         e.Pointer.Capture(null);
+    }
+
+    Control FindRealHit(PointerEventArgs e)
+    {
+        var pointInRoot = e.GetPosition(this);
+        var visuals = this.GetVisualsAt(new Point(10, pointInRoot.Y));
+
+        foreach (var visual in visuals)
+            if (visual is Control control && control != this)
+                return control;
+
+        return null;
     }
 
     int FindIndexOfClickedObject(object? sender, Point? position)

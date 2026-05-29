@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -15,7 +16,7 @@ internal class ThematicBreakBlockHandler(StandardMarkdownParser parser) : BlockH
         {
             //required for default caret/selection method
             StackPanel mainContainer = new();
-            WrapPanel lineContainer = new();
+            StretchWrapPanel lineContainer = new();
 
             mainContainer.Children.Add(lineContainer);
 

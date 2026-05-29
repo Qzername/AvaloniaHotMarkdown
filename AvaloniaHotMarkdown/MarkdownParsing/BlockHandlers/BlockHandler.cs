@@ -1,17 +1,11 @@
 ﻿using Avalonia.Controls;
+using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
-internal abstract class BlockHandler
+internal abstract class BlockHandler(StandardMarkdownParser parser)
 {
-    StandardMarkdownParser _parser;
-
-    public BlockHandler(StandardMarkdownParser parser)
-    {
-        _parser = parser;
-    }
-
     public abstract Control Handle(Block block, string markdown, LineInformation[] lineInformations);
     public virtual void UpdateTextEffects(Control control, LineInformation[] lineInformations)
     {
@@ -30,7 +24,7 @@ internal abstract class BlockHandler
             if (mainTree.Count <= i)
                 break;
 
-            if (lineInformations[i].CaretIndex is not null && mainTree[i] is WrapPanel wrapPanel)
+            if (lineInformations[i].CaretIndex is not null && mainTree[i] is StretchWrapPanel wrapPanel)
                 foreach (RichTextPresenter presenter in wrapPanel.Children)
                 {
                     if (temp + presenter.Text.Length >= caretIndex)
@@ -60,7 +54,7 @@ internal abstract class BlockHandler
             int minSelectionStart = Math.Min(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
             int maxSelectionStart = Math.Max(selectionInformation.Value.StartIndex, selectionInformation.Value.EndIndex);
 
-            if (mainTree[i] is not WrapPanel wrapPanel)
+            if (mainTree[i] is not StretchWrapPanel wrapPanel)
                 continue;
 
             foreach (RichTextPresenter presenter in wrapPanel.Children)
@@ -85,7 +79,7 @@ internal abstract class BlockHandler
     /// 
     /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
     /// </summary>
-    protected Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation) => _parser.ParseBlock(block, markdownText, lineInformation);
+    protected Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation) => parser.ParseBlock(block, markdownText, lineInformation);
 
     /// <summary>
     /// Parses a collection of inline Markdown objects and returns a control that visually represents the formatted text
@@ -96,5 +90,5 @@ internal abstract class BlockHandler
     /// render the content without additional emphasis.</param>
     /// <param name="defaultXOffset">The initial horizontal offset, in pixels, to apply to the parsed content for positioning within the container.</param>
     /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
-    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0) => _parser.ParseInline(inlineObjects, parseAsFullText, defaultXOffset);
+    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0) => parser.ParseInline(inlineObjects, parseAsFullText, defaultXOffset);
 }
