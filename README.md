@@ -26,6 +26,8 @@ See AvaloniaHotMarkdown.Demo for a ready-to-use example.
 
 If you need any feature, please open an issue or submit a PR. I will try to add it as soon as possible.
 
+<img width="852" height="892" alt="image" src="https://github.com/user-attachments/assets/f2080d8e-1738-4e86-bb09-de63dd25bd3e" />
+
 ## Install the Library
 
 Open your terminal in the project root directory. Run this command to install the package:
