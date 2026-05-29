@@ -19,6 +19,19 @@ public class HotMarkdownEditor : ContentControl
                (o, v) => o.Text = v,
                defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
+    public static readonly DirectProperty<HotMarkdownEditor, bool> IsReadOnlyProperty =
+           AvaloniaProperty.RegisterDirect<HotMarkdownEditor, bool>(
+               nameof(IsReadOnly),
+               o => o.IsReadOnly,
+               (o, v) => o.IsReadOnly = v);
+
+    public static readonly DirectProperty<HotMarkdownEditor, bool> IsSelectableProperty =
+           AvaloniaProperty.RegisterDirect<HotMarkdownEditor, bool>(
+               nameof(IsSelectable),
+               o => o.IsSelectable,
+               (o, v) => o.IsSelectable = v);
+
+
     //this is a bit of a hack,
     //but it allows us to use the TextBox's built-in text editing capabilities
     //while still rendering the markdown in real-time.
@@ -43,6 +56,27 @@ public class HotMarkdownEditor : ContentControl
             textProcessor.Text = value;
             ConstructChildren();
             RaisePropertyChanged(TextProperty, value, textProcessor.Text);
+        }
+    }
+
+    public bool IsReadOnly
+    {
+        get => textProcessor.IsReadOnly;
+        set => textProcessor.IsReadOnly = value;
+    }
+
+    bool _isSelectable;
+    public bool IsSelectable
+    {
+        get => _isSelectable;
+        set
+        {
+            _isSelectable = value;
+
+            Focusable = value;
+            IsHitTestVisible = value;
+
+            textProcessor.CaretIndex = -1;
         }
     }
 
@@ -243,7 +277,7 @@ public class HotMarkdownEditor : ContentControl
 
         var caretInformation = new CaretInformation
         {
-            CaretIndex = textProcessor.CaretIndex,
+            CaretIndex = IsSelectable ? textProcessor.CaretIndex : -1,
         };
 
         if (!string.IsNullOrEmpty(textProcessor.SelectedText))
