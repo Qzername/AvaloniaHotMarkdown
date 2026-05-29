@@ -170,7 +170,7 @@ public class StandardMarkdownParser : IMarkdownParser
                 lineInformation.Add(new LineInformation
                 {
                     LineYIndex = j,
-                    CaretIndex = j == caretPosition.Y ? caretPosition.X : null,
+                    CaretIndex = j == caretPosition.Y && caretInformation.CaretIndex != -1 ? caretPosition.X : null,
                     ShowFullText = fullTextLinesIndexes.Contains(j),
                     SelectionInformation = selectionInformation
                 });
