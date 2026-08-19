@@ -26,6 +26,6 @@
         <vm:MainViewModel />
     </Design.DataContext>
     <Panel>
-		<HotMarkdown:HotMarkdownEditor IsReadOnly="True" IsSelectable="True" Text="{Binding TextSource}" Padding="10"/>
+		<HotMarkdown:HotMarkdownEditor IsReadOnly="False" IsSelectable="True" Text="{Binding TextSource}" Padding="10"/>
 	</Panel>
 </UserControl>
