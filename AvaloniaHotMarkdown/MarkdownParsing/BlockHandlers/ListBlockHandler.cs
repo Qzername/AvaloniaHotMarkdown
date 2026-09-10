@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.VisualTree;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;

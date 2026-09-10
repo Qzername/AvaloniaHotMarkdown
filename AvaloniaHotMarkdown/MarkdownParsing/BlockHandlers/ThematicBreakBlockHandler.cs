@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -24,7 +23,7 @@ internal class ThematicBreakBlockHandler(StandardMarkdownParser parser) : BlockH
             richTextPresenter.Text = new string(thematicBreakBlock.ThematicChar, thematicBreakBlock.ThematicCharCount);
 
             lineContainer.Children.Add(richTextPresenter);
-            
+
             return mainContainer;
         }
 

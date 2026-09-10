@@ -1,12 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Layout;
-using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
-using Markdig;
-using Markdig.Extensions.Tables;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -24,7 +19,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
             result = ParseAsText(quoteBlock, markdown, lineInformations);
         else
             result = ParseAsQuoteBlock(quoteBlock, markdown, lineInformations);
-            
+
         return result;
     }
 

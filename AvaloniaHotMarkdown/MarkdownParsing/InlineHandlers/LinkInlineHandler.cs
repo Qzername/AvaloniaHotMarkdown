@@ -2,7 +2,6 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Diagnostics;
@@ -28,12 +27,12 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
                 };
 
                 var uri = new Uri(linkInline.Url);
-                
+
                 try
                 {
                     image.Source = new Bitmap(AssetLoader.Open(uri));
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     FullText(linkInline, context, textUpdateHandler);
                     return;
@@ -67,7 +66,7 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
 
     void FullText(LinkInline linkInline, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler)
     {
-        string prefix = (linkInline.IsImage ? "!" : string.Empty)+ "[";
+        string prefix = (linkInline.IsImage ? "!" : string.Empty) + "[";
 
         context.CurrentPresenter.Text = $"[";
         context.DefaultFinalizationOfLine();
@@ -82,7 +81,7 @@ public class LinkInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
             wrapPanel.Children.Remove(item);
             context.CurrentLine.Children.Insert(context.CurrentLine.Children.Count - 1, item);
         }
-        
+
         context.CurrentPresenter.Text = $"]({linkInline.Url})";
         context.DefaultFinalizationOfLine();
 

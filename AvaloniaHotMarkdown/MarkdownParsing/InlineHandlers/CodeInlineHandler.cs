@@ -11,7 +11,7 @@ public class CodeInlineHandler(StandardMarkdownParser parser) : InlineHandler(pa
 
         var presenter = context.CurrentPresenter;
 
-        if(context.ParseAsFullText)
+        if (context.ParseAsFullText)
             presenter.Text = $"`{codeInline.Content.ToString()}`";
         else
             presenter.Text = codeInline.Content.ToString();

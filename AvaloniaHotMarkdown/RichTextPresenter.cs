@@ -28,7 +28,7 @@ public class RichTextPresenter : Control
     public static readonly StyledProperty<IBrush?> CodeInlineBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(CodeInlineBrush), new ImmutableSolidColorBrush(Color.FromRgb(53, 55, 72)));
     public static readonly StyledProperty<FontWeight> FontWeightProperty = AvaloniaProperty.Register<RichTextPresenter, FontWeight>(nameof(FontWeight));
     public static readonly StyledProperty<FontStyle> FontStyleProperty = AvaloniaProperty.Register<RichTextPresenter, FontStyle>(nameof(FontStyle));
-    
+
     public string Text
     {
         get => _textPresenter.Text;

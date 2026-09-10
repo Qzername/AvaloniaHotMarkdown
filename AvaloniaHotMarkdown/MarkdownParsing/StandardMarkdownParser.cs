@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
@@ -12,7 +11,6 @@ using Markdig.Syntax.Inlines;
 using System.Drawing;
 
 #if DEBUG
-using System.Diagnostics;
 #endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -61,8 +59,8 @@ public class StandardMarkdownParser : IMarkdownParser
         var builder = new MarkdownPipelineBuilder()
          .UseTaskLists()
          .UsePipeTables()
-         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | 
-                            EmphasisExtraOptions.Marked | 
+         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough |
+                            EmphasisExtraOptions.Marked |
                             EmphasisExtraOptions.Superscript |
                             EmphasisExtraOptions.Subscript)
          .DisableHtml()
@@ -95,8 +93,6 @@ public class StandardMarkdownParser : IMarkdownParser
         controls.AddRange(GenerateEmptyLines(0, endOfEmptyLinesAtStart, caretPosition));
 
         var document = Markdown.Parse(markdown, markdownPipeline);
-
-        //Debug.WriteLine(document.ToAstString());
 
         Point selectionStart = new(0, 0);
         Point selectionEnd = new(0, 0);
@@ -143,12 +139,14 @@ public class StandardMarkdownParser : IMarkdownParser
                         controls.Add(emptyBlock);
                     }
 
-            //check where does block end
+
+            //TODO: optimize this
+            int blockStart = IndexToTextPosition(block.Span.Start, lines).Y;
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = [];
 
-            for (int j = block.Line; j < blockEnd; j++)
+            for (int j = blockStart; j < blockEnd; j++)
             {
                 // we need to check for empty lines
                 if (string.IsNullOrWhiteSpace(lines[j].Replace('\n', ' ')))

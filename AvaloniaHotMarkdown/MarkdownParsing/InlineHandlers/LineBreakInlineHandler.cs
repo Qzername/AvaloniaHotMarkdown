@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
-using Markdig.Syntax;
+﻿using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 

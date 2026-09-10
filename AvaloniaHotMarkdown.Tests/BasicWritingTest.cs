@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
-using Avalonia.Input;
 
 namespace AvaloniaHotMarkdown.Tests;
 

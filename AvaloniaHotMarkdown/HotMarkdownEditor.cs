@@ -5,8 +5,6 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaHotMarkdown.MarkdownParsing;
-using System.Diagnostics;
-using System.Diagnostics.Tracing;
 
 namespace AvaloniaHotMarkdown;
 
@@ -128,7 +126,7 @@ public class HotMarkdownEditor : ContentControl
         if (!PropertiesToWatch.Contains(e.Property.Name))
             return;
 
-        if(e.Property.Name == nameof(TextBox.Text))
+        if (e.Property.Name == nameof(TextBox.Text))
             RaisePropertyChanged(TextProperty, (string)e.OldValue, textProcessor.Text);
 
         ConstructChildren();
@@ -145,12 +143,12 @@ public class HotMarkdownEditor : ContentControl
             return;
 
         var point = e.GetPosition(this);
-        
+
         Control hit = e.Source as Control;
 
         if (hit is HotMarkdownEditor)
             hit = FindRealHit(e);
-        
+
         if (hit is null)
             return;
 
@@ -268,7 +266,7 @@ public class HotMarkdownEditor : ContentControl
 
     void ConstructChildren()
     {
-        if (markdownContainer == null) 
+        if (markdownContainer == null)
             return;
 
         markdownContainer.Children.Clear();

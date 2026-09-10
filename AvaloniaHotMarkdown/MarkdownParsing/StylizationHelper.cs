@@ -1,9 +1,4 @@
-﻿
-using Avalonia.Layout;
-using Avalonia.Media;
-using Avalonia.Media.Immutable;
-
-namespace AvaloniaHotMarkdown.MarkdownParsing;
+﻿namespace AvaloniaHotMarkdown.MarkdownParsing;
 
 internal static class StylizationHelper
 {
