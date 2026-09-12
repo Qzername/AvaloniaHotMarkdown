@@ -8,10 +8,8 @@ using Markdig.Extensions.Tables;
 using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
 using System.Drawing;
-
-#if DEBUG
-#endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -38,6 +36,7 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(Table), new TableHandler(this)  },
             { typeof(ThematicBreakBlock), new ThematicBreakBlockHandler(this) },
             { typeof(QuoteBlock), new QuoteBlockHandler(this) },
+            { typeof(EmptyBlock), new EmptyBlockHandler(this) }
         };
 
         inlineHandlers = new()
@@ -63,6 +62,7 @@ public class StandardMarkdownParser : IMarkdownParser
                             EmphasisExtraOptions.Marked |
                             EmphasisExtraOptions.Superscript |
                             EmphasisExtraOptions.Subscript)
+         .EnableTrackTrivia()
          .DisableHtml()
          .UseSoftlineBreakAsHardlineBreak();
 
@@ -72,9 +72,9 @@ public class StandardMarkdownParser : IMarkdownParser
         return builder.Build();
     }
 
-    public Control[] Parse(string markdown, CaretInformation caretInformation)
+    public Control?[] Parse(string markdown, CaretInformation caretInformation)
     {
-        List<Control> controls = [];
+        List<Control?> controls = [];
 
         var lines = markdown.Split('\n'); //for empty line parsing
 
@@ -93,6 +93,8 @@ public class StandardMarkdownParser : IMarkdownParser
         controls.AddRange(GenerateEmptyLines(0, endOfEmptyLinesAtStart, caretPosition));
 
         var document = Markdown.Parse(markdown, markdownPipeline);
+
+        Debug.WriteLine(document.ToAstString());
 
         Point selectionStart = new(0, 0);
         Point selectionEnd = new(0, 0);
@@ -269,7 +271,7 @@ public class StandardMarkdownParser : IMarkdownParser
         return new Point(0, lines.Length - 1);
     }
 
-    public Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
+    public Control? ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
     {
         Type type = block.GetType();
 

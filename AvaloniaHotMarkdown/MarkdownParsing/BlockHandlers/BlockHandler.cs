@@ -5,7 +5,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 internal abstract class BlockHandler(StandardMarkdownParser parser)
 {
-    public abstract Control Handle(Block block, string markdown, LineInformation[] lineInformations);
+    public abstract Control? Handle(Block block, string markdown, LineInformation[] lineInformations);
     public virtual void UpdateTextEffects(Control control, LineInformation[] lineInformations)
     {
         if (control is not StackPanel stackPanel)
