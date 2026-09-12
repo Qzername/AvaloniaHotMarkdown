@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
