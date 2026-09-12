@@ -13,9 +13,32 @@ internal abstract class BlockHandler(StandardMarkdownParser parser)
 
         var mainTree = stackPanel.Children;
 
+        UpdateCaret(mainTree, lineInformations);
+        UpdateSelection(mainTree, lineInformations);
+    }
+
+    /// <summary>
+    /// Parses the specified block and returns a corresponding control representation.
+    /// 
+    /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
+    /// </summary>
+    protected Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation) => parser.ParseBlock(block, markdownText, lineInformation);
+
+    /// <summary>
+    /// Parses a collection of inline Markdown objects and returns a control that visually represents the formatted text
+    /// according to Markdown styling rules.
+    /// </summary>
+    /// <param name="inlineObjects">An enumerable collection of MarkdownObject instances representing the inline elements to be parsed and rendered.</param>
+    /// <param name="parseAsFullText">true to parse the content as full text, applying emphasis delimiters to the entire literal; otherwise, false to
+    /// render the content without additional emphasis.</param>
+    /// <param name="defaultXOffset">The initial horizontal offset, in pixels, to apply to the parsed content for positioning within the container.</param>
+    /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
+    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0) => parser.ParseInline(inlineObjects, parseAsFullText, defaultXOffset);
+
+    void UpdateCaret(Avalonia.Controls.Controls mainTree, LineInformation[] lineInformations)
+    {
         int temp = 0;
 
-        //update caret
         for (int i = 0; i < lineInformations.Length; i++)
         {
             int? caretIndex = lineInformations[i].CaretIndex;
@@ -38,8 +61,12 @@ internal abstract class BlockHandler(StandardMarkdownParser parser)
 
             temp = 0;
         }
+    }
 
-        //update selection
+    void UpdateSelection(Avalonia.Controls.Controls mainTree, LineInformation[] lineInformations)
+    {
+        int temp = 0;
+
         for (int i = 0; i < lineInformations.Length; i++)
         {
             var selectionInformation = lineInformations[i].SelectionInformation;
@@ -56,14 +83,14 @@ internal abstract class BlockHandler(StandardMarkdownParser parser)
             if (mainTree[i] is not StretchWrapPanel wrapPanel)
                 continue;
 
-            foreach (RichTextPresenter presenter in wrapPanel.Children)
+            foreach (RichTextPresenter presenter in wrapPanel.Children.Cast<RichTextPresenter>())
             {
                 if (temp + presenter.Text.Length >= minSelectionStart &&
                     temp <= maxSelectionStart)
                 {
                     presenter.SelectionStart = minSelectionStart - temp;
                     presenter.SelectionEnd = maxSelectionStart - temp;
-                    presenter.ShowCaret();
+                    presenter.HideCaret();
                 }
 
                 temp += presenter.Text.Length;
@@ -72,22 +99,4 @@ internal abstract class BlockHandler(StandardMarkdownParser parser)
             temp = 0;
         }
     }
-
-    /// <summary>
-    /// Parses the specified block and returns a corresponding control representation.
-    /// 
-    /// This is due to the fact that some blocks (like list blocks) have nested blocks and inlines, so this method is used to parse those nested elements.
-    /// </summary>
-    protected Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation) => parser.ParseBlock(block, markdownText, lineInformation);
-
-    /// <summary>
-    /// Parses a collection of inline Markdown objects and returns a control that visually represents the formatted text
-    /// according to Markdown styling rules.
-    /// </summary>
-    /// <param name="inlineObjects">An enumerable collection of MarkdownObject instances representing the inline elements to be parsed and rendered.</param>
-    /// <param name="parseAsFullText">true to parse the content as full text, applying emphasis delimiters to the entire literal; otherwise, false to
-    /// render the content without additional emphasis.</param>
-    /// <param name="defaultXOffset">The initial horizontal offset, in pixels, to apply to the parsed content for positioning within the container.</param>
-    /// <returns>A StackPanel control containing the formatted text representation of the parsed inline Markdown objects.</returns>
-    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0) => parser.ParseInline(inlineObjects, parseAsFullText, defaultXOffset);
 }

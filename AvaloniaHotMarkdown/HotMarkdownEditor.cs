@@ -250,7 +250,7 @@ public class HotMarkdownEditor : ContentControl
 
         int totalIndex = 0;
 
-        for (int i = 0; i < line; i++)
+        for (int i = 0; i < line && i < lines.Length; i++)
             totalIndex += lines[i].Length + 1;
 
         totalIndex += caretIndexInLine;
