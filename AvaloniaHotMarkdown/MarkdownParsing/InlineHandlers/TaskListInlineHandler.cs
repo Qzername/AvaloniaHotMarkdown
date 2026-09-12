@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
@@ -32,6 +33,13 @@ internal class TaskListInlineHandler(StandardMarkdownParser parser) : InlineHand
             var checkbox = new CheckBox
             {
                 IsChecked = taskList.Checked
+            };
+
+            //for some reason this is required for the mobile version to make button work
+            checkbox.Tapped += (s, e) =>
+            {
+                CheckBox checkbox = (CheckBox)s;
+                checkbox.IsChecked = !checkbox.IsChecked;
             };
 
             checkbox.IsCheckedChanged += (s, e) =>
