@@ -1,6 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.VisualTree;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
@@ -21,135 +19,57 @@ internal class ListBlockHandler : BlockHandler
             if (listBlock[i] is not ListItemBlock listItem)
                 continue;
 
-            StretchWrapPanel itemContainer = new();
-            itemContainer.Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex);
+            StretchWrapPanel itemContainer = new()
+            {
+                Tag = new CaretPositionOffset(0, lineInformations[i].LineYIndex)
+            };
 
             string prefix = string.Empty;
 
             if (lineInformations[i].ShowFullText)
-                prefix = listBlock.IsOrdered ? $"{i + 1}. " : "- ";
+                prefix = listBlock.IsOrdered ? $"{i + 1}." : "-";
             else
-                prefix = listBlock.IsOrdered ? $"{i + 1}. " : "• ";
+                prefix = listBlock.IsOrdered ? $"{i + 1}." : "•";
 
             var prefixTextPresenter = StylizationHelper.CreateNewPresenter();
             prefixTextPresenter.Text = prefix;
+
+            if (listItem.Count == 0)
+                prefixTextPresenter.Text += " ";
+
             itemContainer.Children.Add(prefixTextPresenter);
 
             foreach (var segment in listItem)
             {
                 var container = ParseBlock(segment, markdownText, lineInformations);
-                CaretPositionOffset prefixOffset = new CaretPositionOffset(prefix.Length, 0);
 
-                //remove y offset from container
-                container.Tag = (container.Tag is CaretPositionOffset offset ?
-                    new CaretPositionOffset(offset.XInLineOffset + prefixOffset.XInLineOffset, 0) :
-                    prefixOffset);
+                //move children of container to current object
+                if (container is not StackPanel stackPanel || stackPanel.Children[0] is not StretchWrapPanel wrapPanel)
+                {
+                    itemContainer.Children.Add(container);
+                    continue;
+                }
 
-                itemContainer.Children.Add(container);
+                CaretPositionOffset curretOffset = new(prefix.Length, 0);
+
+                while (wrapPanel.Children.Count > 0)
+                {
+                    var child = wrapPanel.Children[0];
+
+                    if (child is RichTextPresenter presenter)
+                    {
+                        child.Tag = curretOffset;
+                        curretOffset += new CaretPositionOffset(presenter.Text.Length, 0);
+                    }
+
+                    wrapPanel.Children.Remove(child);
+                    itemContainer.Children.Add(child);
+                }
             }
 
             mainContainer.Children.Add(itemContainer);
         }
 
         return mainContainer;
-    }
-
-    public override void UpdateTextEffects(Control control, LineInformation[] lineInformations)
-    {
-        //TODO: part of this code is vibecoded, it would be nice to optimize it in the future xd
-        UpdateCaret(control, lineInformations);
-        UpdateSelection(control, lineInformations);
-    }
-
-    void UpdateCaret(Control control, LineInformation[] lineInformations)
-    {
-        var mainTree = (control as StackPanel).Children;
-
-        for (int i = 0; i < lineInformations.Length; i++)
-        {
-            if (lineInformations[i].CaretIndex is null)
-                continue;
-
-            if (i >= mainTree.Count)
-                return;
-
-            var itemTree = (mainTree[i] as StretchWrapPanel).Children;
-            int prefixLength = (itemTree[0] as RichTextPresenter).Text.Length;
-
-            var caretIndex = lineInformations[i].CaretIndex!.Value;
-
-            if (caretIndex <= prefixLength)
-            {
-                var richTextPresenter = (itemTree[0] as RichTextPresenter);
-                richTextPresenter.CaretIndex = caretIndex;
-                richTextPresenter.ShowCaret();
-            }
-            else
-            {
-                var paragraphTree = (itemTree[1] as StackPanel).Children;
-
-                int temp = 1;
-
-                List<RichTextPresenter> texts = new();
-
-                foreach (StretchWrapPanel line in paragraphTree)
-                    texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
-
-
-                foreach (RichTextPresenter presenter in texts)
-                {
-                    if (temp + presenter.Text.Length >= caretIndex - prefixLength)
-                    {
-                        presenter.CaretIndex = caretIndex - temp - prefixLength + 1;
-                        presenter.ShowCaret();
-                        return;
-                    }
-
-                    temp += presenter.Text.Length;
-                }
-            }
-        }
-    }
-
-    void UpdateSelection(Control control, LineInformation[] lineInformations)
-    {
-        var mainTree = (control as StackPanel).Children;
-        for (int i = 0; i < lineInformations.Length; i++)
-        {
-            if (lineInformations[i].SelectionInformation is null)
-                continue;
-            if (i >= mainTree.Count)
-                return;
-            var itemTree = (mainTree[i] as StretchWrapPanel).Children;
-            var selectionInformation = lineInformations[i].SelectionInformation!.Value;
-            if (selectionInformation.EndIndex <= 2)
-            {
-                var richTextPresenter = (itemTree[0] as RichTextPresenter);
-                richTextPresenter.SelectionStart = selectionInformation.StartIndex;
-                richTextPresenter.SelectionEnd = selectionInformation.EndIndex;
-                richTextPresenter.ShowCaret();
-            }
-            else
-            {
-                var paragraphTree = (itemTree[1] as StackPanel).Children;
-                int temp = 1;
-
-                List<RichTextPresenter> texts = new();
-
-                foreach (StretchWrapPanel line in paragraphTree)
-                    texts.AddRange(line.GetVisualDescendants().OfType<RichTextPresenter>());
-
-                foreach (RichTextPresenter presenter in texts)
-                {
-                    if (temp + presenter.Text.Length >= selectionInformation.StartIndex &&
-                        temp <= selectionInformation.EndIndex)
-                    {
-                        presenter.SelectionStart = selectionInformation.StartIndex - temp - 2;
-                        presenter.SelectionEnd = selectionInformation.EndIndex - temp - 2;
-                    }
-                    temp += presenter.Text.Length;
-                }
-            }
-        }
     }
 }

@@ -4,7 +4,7 @@ using Avalonia.Media;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 
-internal class QuoteBorderControl :Border
+internal class QuoteBorderControl : Border
 {
     public QuoteBorderControl()
     {

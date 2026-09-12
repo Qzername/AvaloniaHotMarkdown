@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
@@ -10,10 +9,6 @@ using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Drawing;
-
-#if DEBUG
-using System.Diagnostics;
-#endif
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -40,6 +35,7 @@ public class StandardMarkdownParser : IMarkdownParser
             { typeof(Table), new TableHandler(this)  },
             { typeof(ThematicBreakBlock), new ThematicBreakBlockHandler(this) },
             { typeof(QuoteBlock), new QuoteBlockHandler(this) },
+            { typeof(EmptyBlock), new EmptyBlockHandler(this) }
         };
 
         inlineHandlers = new()
@@ -61,10 +57,11 @@ public class StandardMarkdownParser : IMarkdownParser
         var builder = new MarkdownPipelineBuilder()
          .UseTaskLists()
          .UsePipeTables()
-         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough | 
-                            EmphasisExtraOptions.Marked | 
+         .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough |
+                            EmphasisExtraOptions.Marked |
                             EmphasisExtraOptions.Superscript |
                             EmphasisExtraOptions.Subscript)
+         .EnableTrackTrivia()
          .DisableHtml()
          .UseSoftlineBreakAsHardlineBreak();
 
@@ -74,9 +71,9 @@ public class StandardMarkdownParser : IMarkdownParser
         return builder.Build();
     }
 
-    public Control[] Parse(string markdown, CaretInformation caretInformation)
+    public Control?[] Parse(string markdown, CaretInformation caretInformation)
     {
-        List<Control> controls = [];
+        List<Control?> controls = [];
 
         var lines = markdown.Split('\n'); //for empty line parsing
 
@@ -143,12 +140,14 @@ public class StandardMarkdownParser : IMarkdownParser
                         controls.Add(emptyBlock);
                     }
 
-            //check where does block end
+
+            //TODO: optimize this
+            int blockStart = IndexToTextPosition(block.Span.Start, lines).Y;
             int blockEnd = (i == document.Count - 1 ? lines.Length : document[i + 1].Line);
 
             List<LineInformation> lineInformation = [];
 
-            for (int j = block.Line; j < blockEnd; j++)
+            for (int j = blockStart; j < blockEnd; j++)
             {
                 // we need to check for empty lines
                 if (string.IsNullOrWhiteSpace(lines[j].Replace('\n', ' ')))
@@ -271,7 +270,7 @@ public class StandardMarkdownParser : IMarkdownParser
         return new Point(0, lines.Length - 1);
     }
 
-    public Control ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
+    public Control? ParseBlock(Block block, string markdownText, LineInformation[] lineInformation)
     {
         Type type = block.GetType();
 

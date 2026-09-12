@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
@@ -29,7 +28,7 @@ public class InlineParsingContext
     {
         XOffset += CurrentPresenter.Text.Length;
 
-        foreach(var element in DefaultFinalizationQueue)
+        foreach (var element in DefaultFinalizationQueue)
         {
             element.Tag = new CaretPositionOffset(XOffset, 0);
             XOffset += element.Text.Length;

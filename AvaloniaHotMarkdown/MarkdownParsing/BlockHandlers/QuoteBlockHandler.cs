@@ -1,12 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Layout;
-using Avalonia.Media;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Controls;
-using Markdig;
-using Markdig.Extensions.Tables;
 using Markdig.Syntax;
-using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
@@ -24,7 +19,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
             result = ParseAsText(quoteBlock, markdown, lineInformations);
         else
             result = ParseAsQuoteBlock(quoteBlock, markdown, lineInformations);
-            
+
         return result;
     }
 
@@ -36,7 +31,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
         string tableText = markdownText.Substring(block.Span.Start, block.Span.End - block.Span.Start + 1);
         string[] lines = tableText.Split(["\n", "\r\n"], StringSplitOptions.None);
 
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < lineInformation.Length; i++)
         {
             var presenter = StylizationHelper.CreateNewPresenter();
 

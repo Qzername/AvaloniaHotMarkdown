@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AvaloniaHotMarkdown.Demo.Views;
-using System.Linq.Expressions;
 
 namespace AvaloniaHotMarkdown.Demo
 {
@@ -23,7 +22,7 @@ namespace AvaloniaHotMarkdown.Demo
             {
                 desktop.MainWindow = new MainWindow();
             }
-            else if(ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
             {
                 singleView.MainView = new MainView();
             }

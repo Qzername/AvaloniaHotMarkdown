@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
+using AvaloniaHotMarkdown.MarkdownParsing;
 
 namespace AvaloniaHotMarkdown;
 
@@ -28,7 +29,7 @@ public class RichTextPresenter : Control
     public static readonly StyledProperty<IBrush?> CodeInlineBrushProperty = AvaloniaProperty.Register<RichTextPresenter, IBrush?>(nameof(CodeInlineBrush), new ImmutableSolidColorBrush(Color.FromRgb(53, 55, 72)));
     public static readonly StyledProperty<FontWeight> FontWeightProperty = AvaloniaProperty.Register<RichTextPresenter, FontWeight>(nameof(FontWeight));
     public static readonly StyledProperty<FontStyle> FontStyleProperty = AvaloniaProperty.Register<RichTextPresenter, FontStyle>(nameof(FontStyle));
-    
+
     public string Text
     {
         get => _textPresenter.Text;
@@ -144,6 +145,15 @@ public class RichTextPresenter : Control
             }
         }
     }
+
+#if DEBUG
+    /*
+     * since new devtools do not show value of structs in tag,
+     * this is a "workaround"
+     */
+    public int TagX => ((CaretPositionOffset)Tag).XInLineOffset;
+    public int TagY => ((CaretPositionOffset)Tag).YLineOffset;
+#endif
 
     public RichTextPresenter()
     {
