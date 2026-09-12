@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
+using AvaloniaHotMarkdown.MarkdownParsing;
 
 namespace AvaloniaHotMarkdown;
 
@@ -144,6 +145,15 @@ public class RichTextPresenter : Control
             }
         }
     }
+
+#if DEBUG
+    /*
+     * since new devtools do not show value of structs in tag,
+     * this is a "workaround"
+     */
+    public int TagX => ((CaretPositionOffset)Tag).XInLineOffset;
+    public int TagY => ((CaretPositionOffset)Tag).YLineOffset;
+#endif
 
     public RichTextPresenter()
     {

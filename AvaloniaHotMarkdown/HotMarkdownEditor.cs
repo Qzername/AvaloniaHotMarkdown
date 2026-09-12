@@ -286,8 +286,8 @@ public class HotMarkdownEditor : ContentControl
             };
 
         foreach (var control in markdownParser.Parse(currentText, caretInformation))
-            if(control is not null)
-               markdownContainer.Children.Add(control);
+            if (control is not null)
+                markdownContainer.Children.Add(control);
 
         textProcessor.Focus(NavigationMethod.Pointer);
         textInputClient.OnTapped();

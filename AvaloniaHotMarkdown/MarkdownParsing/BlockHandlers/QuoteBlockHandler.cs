@@ -31,7 +31,7 @@ internal class QuoteBlockHandler(StandardMarkdownParser parser) : BlockHandler(p
         string tableText = markdownText.Substring(block.Span.Start, block.Span.End - block.Span.Start + 1);
         string[] lines = tableText.Split(["\n", "\r\n"], StringSplitOptions.None);
 
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < lineInformation.Length; i++)
         {
             var presenter = StylizationHelper.CreateNewPresenter();
 
