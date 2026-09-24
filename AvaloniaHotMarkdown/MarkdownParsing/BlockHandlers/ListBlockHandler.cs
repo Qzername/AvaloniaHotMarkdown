@@ -26,8 +26,8 @@ internal class ListBlockHandler : BlockHandler
 
             string prefix = string.Empty;
 
-            if (lineInformations[i].ShowFullText)
-                prefix = listBlock.IsOrdered ? $"{i + 1}." : "-";
+            if (lineInformations[i].ShowFullText) 
+                prefix = listBlock.IsOrdered ? $"{i + 1}." : listBlock.BulletType.ToString();
             else
                 prefix = listBlock.IsOrdered ? $"{i + 1}." : "•";
 
