@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Documents;
+using Avalonia.Media;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Diagnostics;
@@ -30,13 +31,14 @@ internal class ParagraphBlockHandler : BlockHandler
 
         foreach(var inline in inlineObjects)
         {
-            Run run;
+            Run[] runs = [];
 
             if (inline is LiteralInline literal)
-                run = CreateLiteralInline(literal);
-
+                runs = [CreateLiteralInline(literal)];
             else if (inline is EmphasisInline emphasis)
-                run = CreateEmphasisInline(emphasis);
+                runs = CreateEmphasisInline(emphasis);
+
+            inlineCollection.AddRange(runs);
 
             Debug.WriteLine(inline.GetType().Name);
         }
@@ -55,10 +57,24 @@ internal class ParagraphBlockHandler : BlockHandler
         };
     }
 
-    Run CreateEmphasisInline(EmphasisInline emphasis)
+    Run[] CreateEmphasisInline(EmphasisInline emphasis)
     {
-        return new Run()
+        var test = emphasis.GetEnumerator();
+
+        List<Run> runs = new List<Run>();
+
+        do
         {
-        };
+            if (test.Current is LiteralInline literal)
+            {
+                var run = CreateLiteralInline(literal);
+                run.FontWeight = FontWeight.Bold;
+
+                runs.Add(run);
+            }
+        }
+        while (test.MoveNext());
+
+        return runs.ToArray();
     }
 }
