@@ -7,7 +7,7 @@ public class MainViewModel : ViewModelBase
 {
     string _textSource =
             """
-            asdasdasasdas **asdasda** asdsad
+            **sad**
             """;
 
     public string TextSource

@@ -1,11 +1,19 @@
-﻿using Avalonia.Controls;
-using Markdig.Syntax;
+﻿using AvaloniaInline = Avalonia.Controls.Documents;
+using MarkdigInline = Markdig.Syntax.Inlines;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 
-public abstract class InlineHandler(StandardMarkdownParser parser)
+public abstract class InlineHandler<T> : InlineHandlerBase where T : MarkdigInline.Inline
 {
-    public abstract void Handle(MarkdownObject inlineObject, InlineParsingContext context, TextUpdateRequestHandler textUpdateHandler);
+    public override bool CanHandle(object inline) => inline is T;
 
-    protected Control ParseInline(IEnumerable<MarkdownObject> inlineObjects, bool parseAsFullText, int defaultXOffset = 0) => parser.ParseInline(inlineObjects, parseAsFullText, defaultXOffset);
+    public override AvaloniaInline.Inline[] Parse(object inline)
+    {
+        if (inline is T typedInline)
+            return Parse(typedInline);
+
+        throw new ArgumentException($"Expected inline of type {typeof(T).Name}, but got {inline?.GetType().Name}.");
+    }
+
+    public abstract AvaloniaInline.Inline[] Parse(T inline);
 }

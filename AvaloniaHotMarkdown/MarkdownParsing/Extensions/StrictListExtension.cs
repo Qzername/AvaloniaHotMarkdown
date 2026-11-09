@@ -3,6 +3,8 @@ using Markdig.Parsers;
 using Markdig.Renderers;
 using Markdig.Syntax;
 
+namespace AvaloniaHotMarkdown.MarkdownParsing.Extensions;
+
 /// <summary>
 /// Handles lists, splitting them into two when lists have gap between them
 /// </summary>

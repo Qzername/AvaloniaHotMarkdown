@@ -3,7 +3,7 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
-internal abstract class BlockHandler(StandardMarkdownParser parser)
+public abstract class BlockHandler<T> : BlockHandlerBase where T : Block 
 {
     public abstract Control? Handle(Block block, string markdown, LineInformation[] lineInformations);
     public virtual void UpdateTextEffects(Control control, LineInformation[] lineInformations)
@@ -98,5 +98,8 @@ internal abstract class BlockHandler(StandardMarkdownParser parser)
 
             temp = 0;
         }
+        throw new ArgumentException("Content is not of the expected type", nameof(content));
     }
+    
+    public abstract Control[] Parse(T content);
 }

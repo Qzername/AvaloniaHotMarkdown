@@ -85,7 +85,7 @@ public class HotMarkdownEditor : ContentControl
 
     public HotMarkdownEditor()
     {
-        markdownParser = new StandardMarkdownParser(TextUpdateRequestHandler);
+        markdownParser = new MarkdownParser();
         AddHandler(TextInputMethodClientRequestedEvent, (s, e) =>
         {
             e.Client = textInputClient;
