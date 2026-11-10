@@ -1,11 +1,8 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using AvaloniaInline = Avalonia.Controls.Documents;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 using Markdig.Syntax.Inlines;
-using System.Diagnostics;
-using System.Text;
 using MarkdigInline = Markdig.Syntax.Inlines;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -14,7 +11,6 @@ public static class InlineParser
 {
     static InlineHandlerBase[] handlers = [
         new LiteralInlineHandler(),
-        new TaskListInlineHandler(),
         new EmphasisInlineHandler(),
         new CodeInlineHandler(),
         new LineBreakInlineHandler(),
