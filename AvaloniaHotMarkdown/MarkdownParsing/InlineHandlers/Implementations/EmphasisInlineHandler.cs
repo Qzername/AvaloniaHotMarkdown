@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Documents;
+using AvaloniaInlines = Avalonia.Controls.Documents;
 using Avalonia.Media;
 using Markdig.Syntax.Inlines;
 
@@ -6,13 +7,14 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 
 internal class EmphasisInlineHandler : InlineHandler<EmphasisInline>
 {
-    public override Avalonia.Controls.Documents.Inline[] Parse(EmphasisInline inline)
+    public override AvaloniaInlines.Inline[] Parse(EmphasisInline inline)
     {
-        List<Avalonia.Controls.Documents.Inline> inlines = new();
+        List<AvaloniaInlines.Inline> inlines = new();
 
         // Get the first child only (emphasis typically contains a single container with all the content)
         var firstChild = inline.FirstOrDefault();
-        if (firstChild != null)
+
+        if (firstChild is not null)
         {
             var parsedInlines = InlineParser.ParseInline(firstChild);
 

@@ -12,7 +12,8 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations
 
             var run = new Run(codeText)
             {
-                FontFamily = new FontFamily("Consolas, Courier New, monospace")
+                FontFamily = new FontFamily("Consolas, Courier New, monospace"),
+                Background = Brushes.LightGray,
             };
 
             return [ run ];

@@ -17,11 +17,14 @@ namespace AvaloniaHotMarkdown.MarkdownParsing;
 /// </summary>
 internal class MarkdownParser : IMarkdownParser
 {
-    static BlockHandlerBase[] handlers = [
+    readonly static BlockHandlerBase[] handlers = [
         new EmptyBlockHandler(),
         new HeadingBlockHandler(),
         new ListBlockHandler(),
-        new ParagraphBlockHandler()
+        new QuoteBlockHandler(),
+        new TableHandler(),
+        new ParagraphBlockHandler(),
+        new ThematicBreakBlockHandler(),
     ];
 
     static MarkdownPipeline BuildPipeline()

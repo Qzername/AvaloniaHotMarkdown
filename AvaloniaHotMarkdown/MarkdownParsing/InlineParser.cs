@@ -9,11 +9,13 @@ namespace AvaloniaHotMarkdown.MarkdownParsing;
 
 public static class InlineParser
 {
-    static InlineHandlerBase[] handlers = [
+    readonly static InlineHandlerBase[] handlers = [
         new LiteralInlineHandler(),
         new EmphasisInlineHandler(),
         new CodeInlineHandler(),
+        new TaskListInlineHandler(),
         new LineBreakInlineHandler(),
+        new LinkInlineHandler(),
     ];
 
     public static TextBlock ParseContainer(ContainerInline containerInline)
