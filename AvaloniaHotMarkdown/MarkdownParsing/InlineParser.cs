@@ -1,8 +1,9 @@
 ﻿using Avalonia.Controls;
-using AvaloniaInline = Avalonia.Controls.Documents;
+using AvaloniaHotMarkdown.Controls;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 using Markdig.Syntax.Inlines;
+using AvaloniaInline = Avalonia.Controls.Documents;
 using MarkdigInline = Markdig.Syntax.Inlines;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
@@ -18,7 +19,7 @@ public static class InlineParser
         new LinkInlineHandler(),
     ];
 
-    public static TextBlock ParseContainer(ContainerInline containerInline)
+    public static CaretSelectableTextBlock ParseContainer(ContainerInline containerInline)
     {
         List<AvaloniaInline.Inline> inlines = new();
 
@@ -30,9 +31,10 @@ public static class InlineParser
             inlines.AddRange(ParseInline(inline));
         }
 
-        return new TextBlock()
+        return new CaretSelectableTextBlock()
         {
-            Inlines = [.. inlines]
+            Inlines = [.. inlines],
+            CaretIndex = 3
         };
     }
 

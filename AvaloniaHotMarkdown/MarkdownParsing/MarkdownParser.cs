@@ -48,24 +48,30 @@ internal class MarkdownParser : IMarkdownParser
 
     public Control[] Parse(string markdown, CaretInformation caretInformation)
     {
-        List<Control> controls = new();
+        List<Control> resultControls = new();
 
         string preparedMarkdown = MarkdownPreparer.PrepareForcedBreaks(markdown);
         var document = Markdown.Parse(preparedMarkdown, BuildPipeline());
 
-        foreach(var control in document)
+        foreach(var block in document)
         {
-            var handler = FindHandler(control);
+            var handler = FindHandler(block);
 
-            var parsedControls = handler.Parse(control);
+            int start = block.Span.Start;
+            int end = block.Span.End;          // inclusive
+            int length = block.Span.Length;
+
+            Debug.WriteLine($"{start} {end} {length}");
+
+            var parsedControls = handler.Parse(block);
 
             foreach(var parsedControl in parsedControls)
                 MarkdownPreparer.RemovePreparationFromControl(parsedControl);
 
-            controls.AddRange(parsedControls);
+            resultControls.AddRange(parsedControls);
         }
 
-        return controls.ToArray();
+        return resultControls.ToArray();
     }
 
     static BlockHandlerBase FindHandler(Block block) 
