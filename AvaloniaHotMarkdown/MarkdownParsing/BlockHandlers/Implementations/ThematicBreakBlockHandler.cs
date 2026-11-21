@@ -18,4 +18,8 @@ internal class ThematicBreakBlockHandler : BlockHandler<ThematicBreakBlock>
             VerticalAlignment = VerticalAlignment.Center
         }];
     }
+
+    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
+    {
+    }
 }

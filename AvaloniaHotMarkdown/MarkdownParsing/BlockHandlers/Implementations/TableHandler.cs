@@ -80,4 +80,8 @@ public class TableHandler : BlockHandler<Table>
 
         return new TextBlock();
     }
+
+    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
+    {
+    }
 }

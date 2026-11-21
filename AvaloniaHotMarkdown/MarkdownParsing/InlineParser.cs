@@ -37,7 +37,6 @@ public static class InlineParser
         return new CaretSelectableTextBlock()
         {
             Inlines = [.. inlines],
-            CaretIndex = 3
         };
     }
 

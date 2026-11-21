@@ -55,4 +55,8 @@ internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
         else
             return [];
     }
+
+    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
+    {
+    }
 }

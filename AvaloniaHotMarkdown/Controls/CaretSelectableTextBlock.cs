@@ -10,8 +10,8 @@ namespace AvaloniaHotMarkdown.Controls;
 
 public class CaretSelectableTextBlock : SelectableTextBlock
 {
-    public static readonly StyledProperty<int> CaretIndexProperty =
-        AvaloniaProperty.Register<CaretSelectableTextBlock, int>(nameof(CaretIndex));
+    public static readonly StyledProperty<int?> CaretIndexProperty =
+        AvaloniaProperty.Register<CaretSelectableTextBlock, int?>(nameof(CaretIndex));
 
     /// <summary>Caret color. When null, the control's Foreground is used.</summary>
     public static readonly StyledProperty<IBrush?> CaretBrushProperty =
@@ -45,9 +45,11 @@ public class CaretSelectableTextBlock : SelectableTextBlock
            // _blink.Stop();
             InvalidateVisual();
         };
+
+        ResetBlink();
     }
 
-    public int CaretIndex
+    public int? CaretIndex
     {
         get => GetValue(CaretIndexProperty);
         set => SetValue(CaretIndexProperty, value);
@@ -65,14 +67,12 @@ public class CaretSelectableTextBlock : SelectableTextBlock
     {
         _caretVisible = true;
         //_blink.Stop();
-        if (IsFocused)
-            _blink.Start();
+        _blink.Start();
         InvalidateVisual();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        _blink.Stop();
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -84,20 +84,29 @@ public class CaretSelectableTextBlock : SelectableTextBlock
         if (!_caretVisible)
             return;
 
+        if (CaretIndex is not null)
+            DrawCaret(context, origin);
+
+    }
+
+    void DrawCaret(DrawingContext context, Point origin)
+    {
         var brush = CaretBrush ?? Foreground;
         if (brush is null)
             return;
 
+        int caretIndex = CaretIndex!.Value;
+
         var layout = TextLayout;
         var length = layout.TextLines.Sum(l => l.Length);
-        var rect = layout.HitTestTextPosition(Math.Clamp(CaretIndex, 0, length));
+        var rect = layout.HitTestTextPosition(Math.Clamp(caretIndex, 0, length));
 
         // origin already contains padding and any vertical alignment offset
         var x = origin.X + rect.X;
         var y = origin.Y + rect.Y;
         var height = rect.Height > 0 ? rect.Height : FontSize * 1.2;
 
-        context.DrawLine(new Pen(brush, 5), new Point(x, y), new Point(x, y + height));
+        context.DrawLine(new Pen(brush, 4), new Point(x, y), new Point(x, y + height));
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -106,7 +115,7 @@ public class CaretSelectableTextBlock : SelectableTextBlock
         if (e.Handled)
             return;
 
-        var index = CaretIndex;
+        var index = CaretIndex.Value;
         switch (e.Key)
         {
             case Key.Left: index = Math.Max(0, index - 1); break;
@@ -120,7 +129,7 @@ public class CaretSelectableTextBlock : SelectableTextBlock
         if (extend)
         {
             if (SelectionStart == SelectionEnd)
-                SelectionStart = CaretIndex;
+                SelectionStart = CaretIndex.Value;
             SelectionEnd = index;
         }
         else

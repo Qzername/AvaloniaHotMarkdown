@@ -75,4 +75,8 @@ internal class ListBlockHandler : BlockHandler<ListBlock>
 
         return [mainContainer];
     }
+
+    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
+    {
+    }
 }

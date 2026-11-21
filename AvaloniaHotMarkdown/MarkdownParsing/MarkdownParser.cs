@@ -53,13 +53,23 @@ internal class MarkdownParser : IMarkdownParser
         List<Control> resultControls = new();
 
         var document = Markdown.Parse(markdown, BuildPipeline());
-        Debug.WriteLine(document.ToAstString());
 
         foreach(var block in document)
         {
             var handler = FindHandler(block);
 
             var parsedControls = handler.Parse(block);
+
+            int start = block.Span.Start;
+            int end = block.Span.End;
+
+            int currentCaretIndex = caretInformation.CaretIndex;
+
+            if(start < currentCaretIndex && end > currentCaretIndex)
+                handler.UpdateSelectionAndCaret(parsedControls, new CaretInformation()
+                {
+                    CaretIndex = currentCaretIndex - start
+                });
 
             resultControls.AddRange(parsedControls);
         }

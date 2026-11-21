@@ -116,4 +116,8 @@ internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
         }
         // LineBreak and other inline types don't have text styling
     }
+
+    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
+    {
+    }
 }
