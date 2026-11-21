@@ -18,6 +18,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing;
 internal class MarkdownParser : IMarkdownParser
 {
     readonly static BlockHandlerBase[] handlers = [
+        new BlankBlockHandler(),
         new EmptyBlockHandler(),
         new HeadingBlockHandler(),
         new ListBlockHandler(),
@@ -40,8 +41,9 @@ internal class MarkdownParser : IMarkdownParser
             .DisableHtml()
             .UseSoftlineBreakAsHardlineBreak();
 
-        builder.Extensions.Insert(0, new StrictListExtension());
-        builder.Extensions.Insert(1, new UnlistTaskListExtension());
+        builder.Extensions.Insert(0, new BlankLineBlocksExtension());
+        builder.Extensions.Insert(1, new StrictListExtension());
+        builder.Extensions.Insert(2, new UnlistTaskListExtension());
 
         return builder.Build();
     }
@@ -50,23 +52,14 @@ internal class MarkdownParser : IMarkdownParser
     {
         List<Control> resultControls = new();
 
-        string preparedMarkdown = MarkdownPreparer.PrepareForcedBreaks(markdown);
-        var document = Markdown.Parse(preparedMarkdown, BuildPipeline());
+        var document = Markdown.Parse(markdown, BuildPipeline());
+        Debug.WriteLine(document.ToAstString());
 
         foreach(var block in document)
         {
             var handler = FindHandler(block);
 
-            int start = block.Span.Start;
-            int end = block.Span.End;          // inclusive
-            int length = block.Span.Length;
-
-            Debug.WriteLine($"{start} {end} {length}");
-
             var parsedControls = handler.Parse(block);
-
-            foreach(var parsedControl in parsedControls)
-                MarkdownPreparer.RemovePreparationFromControl(parsedControl);
 
             resultControls.AddRange(parsedControls);
         }

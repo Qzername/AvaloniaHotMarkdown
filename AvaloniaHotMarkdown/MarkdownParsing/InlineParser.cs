@@ -28,6 +28,9 @@ public static class InlineParser
             if (inline is null)
                 continue;
 
+            if (inline is LineBreakInline && inline.NextSibling is null)
+                continue;
+
             inlines.AddRange(ParseInline(inline));
         }
 

@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig.Extensions.Tables;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
@@ -38,6 +39,9 @@ public class TableHandler : BlockHandler<Table>
         // Populate table cells
         for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++)
         {
+            if (table[rowIndex] is SpacerBlock)
+                continue;
+
             var row = (TableRow)table[rowIndex];
 
             for (int colIndex = 0; colIndex < columnsCount; colIndex++)
