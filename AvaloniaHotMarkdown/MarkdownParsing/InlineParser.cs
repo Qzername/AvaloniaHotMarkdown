@@ -19,7 +19,7 @@ public static class InlineParser
         new LinkInlineHandler(),
     ];
 
-    public static CaretSelectableTextBlock ParseContainer(ContainerInline containerInline)
+    public static CaretSelectableTextBlock ParseContainer(ContainerInline containerInline, CaretInformation caretInformation)
     {
         List<AvaloniaInline.Inline> inlines = new();
 
@@ -31,7 +31,7 @@ public static class InlineParser
             if (inline is LineBreakInline && inline.NextSibling is null)
                 continue;
 
-            inlines.AddRange(ParseInline(inline));
+            inlines.AddRange(ParseInline(inline, caretInformation));
         }
 
         return new CaretSelectableTextBlock()
@@ -40,7 +40,7 @@ public static class InlineParser
         };
     }
 
-    public static AvaloniaInline.Inline[] ParseInline(MarkdigInline.Inline inline) => FindHandler(inline).Parse(inline);
+    public static AvaloniaInline.Inline[] ParseInline(MarkdigInline.Inline inline, CaretInformation caretInformation) => FindHandler(inline).Parse(inline, caretInformation);
 
     static InlineHandlerBase FindHandler(MarkdigInline.Inline inline)
     {

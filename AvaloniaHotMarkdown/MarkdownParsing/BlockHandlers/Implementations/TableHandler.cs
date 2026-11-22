@@ -15,7 +15,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
 public class TableHandler : BlockHandler<Table>
 {
-    public override Control[] Parse(Table table)
+    public override Control[] Parse(Table table, CaretInformation caretInformation)
     {
         if (table.Count == 0)
             return [];
@@ -50,7 +50,7 @@ public class TableHandler : BlockHandler<Table>
                     continue;
 
                 var cell = (TableCell)row[colIndex];
-                var cellContent = ParseCellContent(cell);
+                var cellContent = ParseCellContent(cell, caretInformation);
 
                 var cellContainer = new Border
                 {
@@ -69,19 +69,15 @@ public class TableHandler : BlockHandler<Table>
         return [tableControl];
     }
 
-    static TextBlock ParseCellContent(TableCell cell)
+    static TextBlock ParseCellContent(TableCell cell, CaretInformation caretInformation)
     {
         if (cell.Count == 0)
             return new TextBlock();
 
         if (cell[0] is Markdig.Syntax.ParagraphBlock paragraphBlock && 
             paragraphBlock.Inline is not null)
-            return InlineParser.ParseContainer(paragraphBlock.Inline);
+            return InlineParser.ParseContainer(paragraphBlock.Inline, caretInformation);
 
         return new TextBlock();
-    }
-
-    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
-    {
     }
 }

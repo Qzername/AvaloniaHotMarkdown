@@ -8,7 +8,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
 internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
 {
-    public override Control[] Parse(HeadingBlock heading)
+    public override Control[] Parse(HeadingBlock heading, CaretInformation caretInformation)
     {
         if (heading.Inline is null)
             return [];
@@ -18,7 +18,19 @@ internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
             RebuildSetextInlines(heading);
 
         // Parse inline content into a TextBlock
-        var textBlock = InlineParser.ParseContainer(heading.Inline);
+        var textBlock = InlineParser.ParseContainer(heading.Inline, caretInformation);
+
+        if (heading.IsSetext)
+        {
+            var setextLine = heading.Lines.Lines[heading.Lines.Count - 1].Slice.ToString();
+            textBlock.Inlines.Add(new LineBreak());
+            textBlock.Inlines.Add(new Run(setextLine));
+        }
+        else
+        {
+            var prefix = new string('#', heading.Level) + " ";
+            textBlock.Inlines.Insert(0, new Run(prefix));
+        }
 
         // Apply heading-level font sizing
         //TODO: Consider making this configurable via a resource dictionary or theme
@@ -115,9 +127,5 @@ internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
                 ApplyFontSizeToInline(child, fontSize);
         }
         // LineBreak and other inline types don't have text styling
-    }
-
-    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
-    {
     }
 }

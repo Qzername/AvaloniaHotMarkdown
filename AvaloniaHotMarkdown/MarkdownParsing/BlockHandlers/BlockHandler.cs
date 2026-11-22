@@ -7,13 +7,13 @@ public abstract class BlockHandler<T> : BlockHandlerBase where T : Block
 {
     public override bool CanHandle(object content) => content is T;
 
-    public override Control[] Parse(object content)
+    public override Control[] Parse(object content, CaretInformation caretInformation)
     {
         if (content is T block)
-            return Parse(block);
+            return Parse(block, caretInformation);
 
         throw new ArgumentException("Content is not of the expected type", nameof(content));
     }
     
-    public abstract Control[] Parse(T content);
+    public abstract Control[] Parse(T content, CaretInformation caretInformation);
 }

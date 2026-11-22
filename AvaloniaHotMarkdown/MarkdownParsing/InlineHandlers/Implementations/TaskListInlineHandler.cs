@@ -8,7 +8,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 
 internal class TaskListInlineHandler : InlineHandler<TaskList>
 {
-    public override Inline[] Parse(TaskList taskList)
+    public override Inline[] Parse(TaskList taskList, CaretInformation caretInformation)
     {
         var checkbox = new CheckBox
         {

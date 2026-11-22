@@ -7,7 +7,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
 internal class ListBlockHandler : BlockHandler<ListBlock>
 {
-    public override Control[] Parse(ListBlock listBlock)
+    public override Control[] Parse(ListBlock listBlock, CaretInformation caretInformation)
     {
         var mainContainer = new StackPanel();
 
@@ -36,7 +36,7 @@ internal class ListBlockHandler : BlockHandler<ListBlock>
                 if (block is ParagraphBlock paragraphBlock && paragraphBlock.Inline is not null)
                 {
                     // Parse the inline content of the paragraph
-                    var inlineRuns = InlineParser.ParseInline(paragraphBlock.Inline.FirstChild!);
+                    var inlineRuns = InlineParser.ParseInline(paragraphBlock.Inline.FirstChild!, caretInformation);
                     inlines.AddRange(inlineRuns);
 
                     // Add remaining children
@@ -49,14 +49,14 @@ internal class ListBlockHandler : BlockHandler<ListBlock>
                             continue;
                         }
 
-                        inlines.AddRange(InlineParser.ParseInline(currentChild));
+                        inlines.AddRange(InlineParser.ParseInline(currentChild, caretInformation));
                         currentChild = currentChild.NextSibling;
                     }
                 }
                 else if (block is ListBlock nestedList)
                 {
                     // Handle nested lists - add them as separate controls
-                    var nestedControls = Parse(nestedList);
+                    var nestedControls = Parse(nestedList, caretInformation);
                  
                     foreach (var nestedControl in nestedControls)
                         itemPanel.Children.Add(nestedControl);
@@ -74,9 +74,5 @@ internal class ListBlockHandler : BlockHandler<ListBlock>
         }
 
         return [mainContainer];
-    }
-
-    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
-    {
     }
 }

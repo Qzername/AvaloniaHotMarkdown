@@ -58,7 +58,7 @@ internal class MarkdownParser : IMarkdownParser
         {
             var handler = FindHandler(block);
 
-            var parsedControls = handler.Parse(block);
+            var parsedControls = handler.Parse(block, caretInformation);
 
             int start = block.Span.Start;
             int end = block.Span.End;

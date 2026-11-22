@@ -6,7 +6,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 
 internal class LineBreakInlineHandler : InlineHandler<LineBreakInline>
 {
-    public override AvaloniaInline.Inline[] Parse(LineBreakInline inline)
+    public override AvaloniaInline.Inline[] Parse(LineBreakInline inline, CaretInformation caretInformation)
     {
         return [new LineBreak()];
     }

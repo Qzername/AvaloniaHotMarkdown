@@ -7,7 +7,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 
 internal class LinkDelimiterInlineHandler : InlineHandler<MarkdigInlines.LinkDelimiterInline>
 {
-    public override AvaloniaInlines.Inline[] Parse(MarkdigInlines.LinkDelimiterInline inline)
+    public override AvaloniaInlines.Inline[] Parse(MarkdigInlines.LinkDelimiterInline inline, CaretInformation caretInformation)
     {
         return [new Run() {
             Text = inline.Type == DelimiterType.Open ? "[" : "]"

@@ -15,12 +15,12 @@ internal class LinkInlineHandler : InlineHandler<MarkdigInlines.LinkInline>
 {
     const string LinkForegroundKey = "HotMarkdownLinkForeground";
 
-    public override AvaloniaInlines.Inline[] Parse(MarkdigInlines.LinkInline inline)
+    public override AvaloniaInlines.Inline[] Parse(MarkdigInlines.LinkInline inline, CaretInformation caretInformation)
     {
-        return inline.IsImage ? ParseImage(inline) : ParseLink(inline);
+        return inline.IsImage ? ParseImage(inline) : ParseLink(inline, caretInformation);
     }
 
-    static AvaloniaInlines.Inline[] ParseLink(MarkdigInlines.LinkInline inline)
+    static AvaloniaInlines.Inline[] ParseLink(MarkdigInlines.LinkInline inline, CaretInformation caretInformation)
     {
         var textBlock = new TextBlock
         {
@@ -31,7 +31,7 @@ internal class LinkInlineHandler : InlineHandler<MarkdigInlines.LinkInline>
 
         // Link text (may contain bold/italic/code etc.)
         foreach (var child in inline)
-            textBlock.Inlines!.AddRange(InlineParser.ParseInline(child)); // <- your base-class helper
+            textBlock.Inlines!.AddRange(InlineParser.ParseInline(child, caretInformation)); // <- your base-class helper
 
         // Theme override, resolved once the control is in the tree
         textBlock.AttachedToVisualTree += (_, _) =>

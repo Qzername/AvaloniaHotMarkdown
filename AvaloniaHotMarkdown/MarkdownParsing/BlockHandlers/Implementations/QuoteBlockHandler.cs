@@ -11,7 +11,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 /// </summary>
 internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
 {
-    public override Control[] Parse(QuoteBlock quoteBlock)
+    public override Control[] Parse(QuoteBlock quoteBlock, CaretInformation caretInformation)
     {
         var quoteBorderControl = new QuoteBorderControl();
 
@@ -26,7 +26,7 @@ internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
         foreach (var childBlock in quoteBlock)
         {
             // Recursively parse child blocks and add them to the quote container
-            var childControls = ParseBlock(childBlock);
+            var childControls = ParseBlock(childBlock, caretInformation);
             foreach (var control in childControls)
             {
                 linesContainer.Children.Add(control);
@@ -39,24 +39,20 @@ internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
     /// <summary>
     /// Recursively parses a block using the appropriate handler.
     /// </summary>
-    private Control[] ParseBlock(Block block)
+    private Control[] ParseBlock(Block block, CaretInformation caretInformation)
     {
         // This will delegate to the appropriate handler based on block type
         if (block is HeadingBlock headingBlock)
-            return new HeadingBlockHandler().Parse(headingBlock);
+            return new HeadingBlockHandler().Parse(headingBlock, caretInformation);
         else if (block is ListBlock listBlock)
-            return new ListBlockHandler().Parse(listBlock);
+            return new ListBlockHandler().Parse(listBlock, caretInformation);
         else if (block is ParagraphBlock paragraphBlock)
-            return new ParagraphBlockHandler().Parse(paragraphBlock);
+            return new ParagraphBlockHandler().Parse(paragraphBlock, caretInformation);
         else if (block is QuoteBlock innerQuoteBlock)
-            return Parse(innerQuoteBlock);
+            return Parse(innerQuoteBlock, caretInformation);
         else if (block is Table table)
-            return new TableHandler().Parse(table);
+            return new TableHandler().Parse(table, caretInformation);
         else
             return [];
-    }
-
-    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
-    {
     }
 }

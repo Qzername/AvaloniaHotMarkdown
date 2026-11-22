@@ -5,7 +5,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.InlineHandlers.Implementations;
 
 internal class LiteralInlineHandler : InlineHandler<LiteralInline>
 {
-    public override Run[] Parse(LiteralInline literal)
+    public override Run[] Parse(LiteralInline literal, CaretInformation caretInformation)
     {
         return [new()
         {

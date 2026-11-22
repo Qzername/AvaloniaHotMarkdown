@@ -7,7 +7,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
 internal class ThematicBreakBlockHandler : BlockHandler<ThematicBreakBlock>
 {
-    public override Control[] Parse(ThematicBreakBlock content)
+    public override Control[] Parse(ThematicBreakBlock content, CaretInformation caretInformation)
     {
         //todo: make it customizable 
         return [new Border
@@ -17,9 +17,5 @@ internal class ThematicBreakBlockHandler : BlockHandler<ThematicBreakBlock>
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Center
         }];
-    }
-
-    public override void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)
-    {
     }
 }
