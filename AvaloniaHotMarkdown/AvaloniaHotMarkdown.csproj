@@ -9,8 +9,8 @@
     <Title>AvaloniaHotMarkdown</Title>
     <Authors>Qzername</Authors>
     <Company>Qzername</Company>
-    <Description>Work-in-progress prototype of a live-preview markdown editor for Avalonia</Description>
-    <Version>1.0.0</Version>
+    <Description> A live-preview markdown editor for Avalonia</Description>
+    <Version>1.1.0</Version>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageIcon>icon.png</PackageIcon>
 	<PackageReadmeFile>README.md</PackageReadmeFile>

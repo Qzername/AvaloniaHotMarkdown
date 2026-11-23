@@ -1,6 +1,6 @@
 ﻿namespace AvaloniaHotMarkdown.MarkdownParsing;
 
-public struct CaretInformation
+public class CaretInformation
 {
     public int CaretIndex;
     public SelectionInformation? SelectionInformation;
