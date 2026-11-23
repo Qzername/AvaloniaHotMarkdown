@@ -1,13 +1,21 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.Controls;
 
+public delegate void TextBlockClickedCallback(TextBlockSpan span, int index);
+
+/// <summary>
+/// Special textblock that supports caret rendering and has specific functionality made for AvaloniaHotMarkdown library
+/// </summary>
 public class CaretSelectableTextBlock : SelectableTextBlock
 {
     public static readonly StyledProperty<int?> CaretIndexProperty =
@@ -16,6 +24,9 @@ public class CaretSelectableTextBlock : SelectableTextBlock
     /// <summary>Caret color. When null, the control's Foreground is used.</summary>
     public static readonly StyledProperty<IBrush?> CaretBrushProperty =
         AvaloniaProperty.Register<CaretSelectableTextBlock, IBrush?>(nameof(CaretBrush));
+
+    readonly TextBlockClickedCallback _textBlockClickedCallback;
+    readonly TextBlockSpan _sourceSpan;
 
     private readonly DispatcherTimer _blink = new() { Interval = TimeSpan.FromMilliseconds(530) };
     private bool _caretVisible = true;
@@ -31,8 +42,11 @@ public class CaretSelectableTextBlock : SelectableTextBlock
             (c, _) => c.CaretIndex = c.SelectionEnd);
     }
 
-    public CaretSelectableTextBlock()
+    public CaretSelectableTextBlock(TextBlockClickedCallback textBlockClickedCallback, TextBlockSpan textBlockSpan)
     {
+        _textBlockClickedCallback = textBlockClickedCallback;
+        _sourceSpan = textBlockSpan;
+
         _blink.Tick += (_, _) =>
         {
             _caretVisible = !_caretVisible;
@@ -140,5 +154,15 @@ public class CaretSelectableTextBlock : SelectableTextBlock
 
         CaretIndex = index;
         e.Handled = true;
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+
+        if (CaretIndex is null)
+            return;
+
+        _textBlockClickedCallback(_sourceSpan, CaretIndex.Value);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.Controls;
 using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
-internal class ThematicBreakBlockHandler : BlockHandler<ThematicBreakBlock>
+internal class ThematicBreakBlockHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<ThematicBreakBlock>(textBlockClickedCallback)
 {
     public override Control[] Parse(ThematicBreakBlock content, CaretInformation caretInformation)
     {

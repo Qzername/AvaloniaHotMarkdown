@@ -1,32 +1,34 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Documents;
-using AvaloniaHotMarkdown.MarkdownParsing;
+using AvaloniaHotMarkdown.Controls;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 using AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
 /// <summary>
 /// New markdown parser aiming to move onto new Run controls instead of creating seperate textblocks for every Inline type
 /// </summary>
-internal class MarkdownParser : IMarkdownParser
+internal class StandardMarkdownParser : MarkdownParser
 {
-    readonly static BlockHandlerBase[] handlers = [
-        new BlankBlockHandler(),
-        new EmptyBlockHandler(),
-        new HeadingBlockHandler(),
-        new ListBlockHandler(),
-        new QuoteBlockHandler(),
-        new TableHandler(),
-        new ParagraphBlockHandler(),
-        new ThematicBreakBlockHandler(),
-    ];
+    readonly BlockHandlerBase[] handlers;
+
+    public StandardMarkdownParser(TextBlockClickedCallback textBlockClickedCallback) : base(textBlockClickedCallback)
+    {
+        handlers = [
+            new BlankBlockHandler(textBlockClickedCallback),
+            new EmptyBlockHandler(textBlockClickedCallback),
+            new HeadingBlockHandler(textBlockClickedCallback),
+            new ListBlockHandler(textBlockClickedCallback),
+            new QuoteBlockHandler(textBlockClickedCallback),
+            new TableHandler(textBlockClickedCallback),
+            new ParagraphBlockHandler(textBlockClickedCallback),
+            new ThematicBreakBlockHandler(textBlockClickedCallback),
+        ];
+    }
 
     static MarkdownPipeline BuildPipeline()
     {
@@ -48,7 +50,7 @@ internal class MarkdownParser : IMarkdownParser
         return builder.Build();
     }
 
-    public Control[] Parse(string markdown, CaretInformation caretInformation)
+    public override Control[] Parse(string markdown, CaretInformation caretInformation)
     {
         List<Control> resultControls = new();
 
@@ -77,6 +79,6 @@ internal class MarkdownParser : IMarkdownParser
         return resultControls.ToArray();
     }
 
-    static BlockHandlerBase FindHandler(Block block) 
+    BlockHandlerBase FindHandler(Block block) 
         => handlers.Single(x => x.CanHandle(block));
 }

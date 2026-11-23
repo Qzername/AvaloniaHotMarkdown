@@ -41,7 +41,7 @@ public class HotMarkdownEditor : ContentControl
     public string SelectedText => textProcessor.SelectedText;
 
     readonly StackPanel markdownContainer;
-    readonly IMarkdownParser markdownParser;
+    readonly MarkdownParser markdownParser;
     readonly MyTextInputClient textInputClient;
 
     const int IndexZeroFailsafe = 100;
@@ -85,7 +85,7 @@ public class HotMarkdownEditor : ContentControl
 
     public HotMarkdownEditor()
     {
-        markdownParser = new MarkdownParser();
+        markdownParser = new StandardMarkdownParser(TextBlockClickedCallback);
         AddHandler(TextInputMethodClientRequestedEvent, (s, e) =>
         {
             e.Client = textInputClient;
@@ -301,6 +301,12 @@ public class HotMarkdownEditor : ContentControl
         base.Render(context);
     }
 
+    void TextBlockClickedCallback(TextBlockSpan span, int index)
+    {
+        textProcessor.CaretIndex = span.Start + index;
+    }
+
+    [Obsolete("Due to new markdownparser, probably deadcode")]
     void TextUpdateRequestHandler(Control sender, int oldTextLength, string newText)
     {
         int index = FindIndexOfClickedObject(sender, null);

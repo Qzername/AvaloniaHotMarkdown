@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using AvaloniaHotMarkdown.Controls;
 using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig.Extensions.Tables;
 
@@ -13,8 +14,10 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 | 4 | 5 | 6 |
  */
 
-public class TableHandler : BlockHandler<Table>
+public class TableHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<Table>(textBlockClickedCallback)
 {
+    private readonly TextBlockClickedCallback _textBlockClickedCallback = textBlockClickedCallback;
+
     public override Control[] Parse(Table table, CaretInformation caretInformation)
     {
         if (table.Count == 0)
@@ -69,14 +72,14 @@ public class TableHandler : BlockHandler<Table>
         return [tableControl];
     }
 
-    static TextBlock ParseCellContent(TableCell cell, CaretInformation caretInformation)
+    TextBlock ParseCellContent(TableCell cell, CaretInformation caretInformation)
     {
         if (cell.Count == 0)
             return new TextBlock();
 
         if (cell[0] is Markdig.Syntax.ParagraphBlock paragraphBlock && 
             paragraphBlock.Inline is not null)
-            return InlineParser.ParseContainer(paragraphBlock.Inline, caretInformation);
+            return InlineParser.ParseContainer(paragraphBlock.Inline, caretInformation, _textBlockClickedCallback);
 
         return new TextBlock();
     }

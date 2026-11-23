@@ -5,6 +5,13 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers;
 
 public abstract class BlockHandlerBase
 {
+    protected TextBlockClickedCallback TextBlockClickedCallback { get; private set; }
+
+    public BlockHandlerBase(TextBlockClickedCallback textBlockClickedCallback)
+    {
+        TextBlockClickedCallback = textBlockClickedCallback;
+    }
+
     public abstract bool CanHandle(object content);
     public abstract Control[] Parse(object content, CaretInformation caretInformation);
     public virtual void UpdateSelectionAndCaret(Control[] controls, CaretInformation caretInformation)

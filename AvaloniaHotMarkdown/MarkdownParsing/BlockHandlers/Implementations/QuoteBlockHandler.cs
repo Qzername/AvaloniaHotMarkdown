@@ -9,7 +9,7 @@ namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 /// <summary>
 /// Handles rendering of Markdown block quotes with a styled left border.
 /// </summary>
-internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
+internal class QuoteBlockHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<QuoteBlock>(textBlockClickedCallback)
 {
     public override Control[] Parse(QuoteBlock quoteBlock, CaretInformation caretInformation)
     {
@@ -39,19 +39,20 @@ internal class QuoteBlockHandler : BlockHandler<QuoteBlock>
     /// <summary>
     /// Recursively parses a block using the appropriate handler.
     /// </summary>
+   //TODO: change this!
     private Control[] ParseBlock(Block block, CaretInformation caretInformation)
     {
         // This will delegate to the appropriate handler based on block type
         if (block is HeadingBlock headingBlock)
-            return new HeadingBlockHandler().Parse(headingBlock, caretInformation);
+            return new HeadingBlockHandler(TextBlockClickedCallback).Parse(headingBlock, caretInformation);
         else if (block is ListBlock listBlock)
-            return new ListBlockHandler().Parse(listBlock, caretInformation);
+            return new ListBlockHandler(TextBlockClickedCallback).Parse(listBlock, caretInformation);
         else if (block is ParagraphBlock paragraphBlock)
-            return new ParagraphBlockHandler().Parse(paragraphBlock, caretInformation);
+            return new ParagraphBlockHandler(TextBlockClickedCallback).Parse(paragraphBlock, caretInformation);
         else if (block is QuoteBlock innerQuoteBlock)
             return Parse(innerQuoteBlock, caretInformation);
         else if (block is Table table)
-            return new TableHandler().Parse(table, caretInformation);
+            return new TableHandler(TextBlockClickedCallback).Parse(table, caretInformation);
         else
             return [];
     }

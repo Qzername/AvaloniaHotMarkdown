@@ -1,11 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
+using AvaloniaHotMarkdown.Controls;
 using Markdig.Syntax;
 using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
-internal class ListBlockHandler : BlockHandler<ListBlock>
+internal class ListBlockHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<ListBlock>(textBlockClickedCallback)
 {
     public override Control[] Parse(ListBlock listBlock, CaretInformation caretInformation)
     {

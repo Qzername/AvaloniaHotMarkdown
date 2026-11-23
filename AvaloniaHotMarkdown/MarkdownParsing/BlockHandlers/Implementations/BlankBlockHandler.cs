@@ -5,7 +5,7 @@ using Markdig.Syntax;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
-internal class BlankBlockHandler : BlockHandler<SpacerBlock>
+internal class BlankBlockHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<SpacerBlock>(textBlockClickedCallback)
 {
-    public override Control[] Parse(SpacerBlock content, CaretInformation caretInformation) => [new CaretSelectableTextBlock()];
+    public override Control[] Parse(SpacerBlock content, CaretInformation caretInformation) => [new CaretSelectableTextBlock(TextBlockClickedCallback, content.Span)];
 }

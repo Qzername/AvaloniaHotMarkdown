@@ -19,7 +19,7 @@ public static class InlineParser
         new LinkInlineHandler(),
     ];
 
-    public static CaretSelectableTextBlock ParseContainer(ContainerInline containerInline, CaretInformation caretInformation)
+    public static CaretSelectableTextBlock ParseContainer(ContainerInline containerInline, CaretInformation caretInformation, TextBlockClickedCallback textBlockClickedCallback)
     {
         List<AvaloniaInline.Inline> inlines = new();
 
@@ -34,7 +34,7 @@ public static class InlineParser
             inlines.AddRange(ParseInline(inline, caretInformation));
         }
 
-        return new CaretSelectableTextBlock()
+        return new CaretSelectableTextBlock(textBlockClickedCallback, containerInline.Span)
         {
             Inlines = [.. inlines],
         };

@@ -3,10 +3,11 @@ using Avalonia.Controls.Documents;
 using AvaloniaInline = Avalonia.Controls.Documents.Inline;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using AvaloniaHotMarkdown.Controls;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing.BlockHandlers.Implementations;
 
-internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
+internal class HeadingBlockHandler(TextBlockClickedCallback textBlockClickedCallback) : BlockHandler<HeadingBlock>(textBlockClickedCallback)
 {
     public override Control[] Parse(HeadingBlock heading, CaretInformation caretInformation)
     {
@@ -18,7 +19,7 @@ internal class HeadingBlockHandler : BlockHandler<HeadingBlock>
             RebuildSetextInlines(heading);
 
         // Parse inline content into a TextBlock
-        var textBlock = InlineParser.ParseContainer(heading.Inline, caretInformation);
+        var textBlock = InlineParser.ParseContainer(heading.Inline, caretInformation, TextBlockClickedCallback);
 
         if (heading.IsSetext)
         {
