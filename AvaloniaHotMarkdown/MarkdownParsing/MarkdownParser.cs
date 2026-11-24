@@ -6,6 +6,7 @@ using AvaloniaHotMarkdown.MarkdownParsing.Extensions;
 using Markdig;
 using Markdig.Extensions.EmphasisExtras;
 using Markdig.Syntax;
+using System.Diagnostics;
 
 namespace AvaloniaHotMarkdown.MarkdownParsing;
 
@@ -19,7 +20,7 @@ internal class StandardMarkdownParser : MarkdownParser
     public StandardMarkdownParser(TextBlockClickedCallback textBlockClickedCallback) : base(textBlockClickedCallback)
     {
         handlers = [
-            new BlankBlockHandler(textBlockClickedCallback),
+            new SpacerBlockHandler(textBlockClickedCallback),
             new EmptyBlockHandler(textBlockClickedCallback),
             new HeadingBlockHandler(textBlockClickedCallback),
             new ListBlockHandler(textBlockClickedCallback),
@@ -43,7 +44,7 @@ internal class StandardMarkdownParser : MarkdownParser
             .DisableHtml()
             .UseSoftlineBreakAsHardlineBreak();
 
-        builder.Extensions.Insert(0, new BlankLineBlocksExtension());
+        builder.Extensions.Insert(0, new SpacerBlockExtension());
         builder.Extensions.Insert(1, new StrictListExtension());
         builder.Extensions.Insert(2, new UnlistTaskListExtension());
 
@@ -56,6 +57,8 @@ internal class StandardMarkdownParser : MarkdownParser
 
         var document = Markdown.Parse(markdown, BuildPipeline());
 
+        SkipEmptyBlockIfSpacersAreInDocument(document);
+
         foreach(var block in document)
         {
             var handler = FindHandler(block);
@@ -67,16 +70,32 @@ internal class StandardMarkdownParser : MarkdownParser
 
             int currentCaretIndex = caretInformation.CaretIndex;
 
-            if(start < currentCaretIndex && end > currentCaretIndex)
+            //check if caret is within this bl|ock
+            if((start <= currentCaretIndex && end+1 > currentCaretIndex) || 
+                //... or check if it is after last character of last element|
+                (currentCaretIndex == markdown.Length && block == document[^1]))
+            {
                 handler.UpdateSelectionAndCaret(parsedControls, new CaretInformation()
                 {
                     CaretIndex = currentCaretIndex - start
                 });
+            }
 
             resultControls.AddRange(parsedControls);
         }
 
         return resultControls.ToArray();
+    }
+
+    static void SkipEmptyBlockIfSpacersAreInDocument(MarkdownDocument document)
+    {
+        if (document.Count < 2)
+            return;
+
+        if (document[0] is not EmptyBlock)
+            return;
+
+        document.RemoveAt(0);
     }
 
     BlockHandlerBase FindHandler(Block block) 
